@@ -137,19 +137,36 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html { scroll-behavior: smooth; }
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.35s ease, color 0.35s ease;
+    transition:
+      background-color 0.35s ease,
+      color 0.35s ease;
   }
-  h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; }
-  .font-display { font-family: var(--font-display); }
-  .font-mono { font-family: var(--font-mono); }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
 }
 
 @layer utilities {
@@ -166,5 +183,7 @@
   .glow-lime {
     box-shadow: 0 0 60px -10px oklch(0.86 0.18 120 / 50%);
   }
-  .text-balance { text-wrap: balance; }
+  .text-balance {
+    text-wrap: balance;
+  }
 }

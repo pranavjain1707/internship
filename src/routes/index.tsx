@@ -1,15 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, FileText, MessageSquare, Search, Shield, Sparkles, Zap } from "lucide-react";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "EKBA — Conversational access to enterprise knowledge" },
-      { name: "description", content: "Reduce information retrieval time by 80%. EKBA turns PDFs, wikis, and SharePoint into a single AI assistant employees actually use." },
+      {
+        name: "description",
+        content:
+          "Reduce information retrieval time by 80%. EKBA turns PDFs, wikis, and SharePoint into a single AI assistant employees actually use.",
+      },
       { property: "og:title", content: "EKBA — Conversational access to enterprise knowledge" },
-      { property: "og:description", content: "Retrieval-augmented intelligence for every document, policy, and procedure inside your organization." },
+      {
+        property: "og:description",
+        content:
+          "Retrieval-augmented intelligence for every document, policy, and procedure inside your organization.",
+      },
     ],
   }),
   component: Home,
@@ -51,15 +63,22 @@ function Hero() {
         </h1>
 
         <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-          EKBA is a retrieval-augmented assistant that reads every PDF, wiki, deck, and policy your organization owns — then answers in plain language, with citations.
+          EKBA is a retrieval-augmented assistant that reads every PDF, wiki, deck, and policy your
+          organization owns — then answers in plain language, with citations.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
-          <Link to="/contact" className="group inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90">
+          <Link
+            to="/contact"
+            className="group inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+          >
             Request a demo
             <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
-          <Link to="/platform" className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium hover:bg-secondary">
+          <Link
+            to="/platform"
+            className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium hover:bg-secondary"
+          >
             See how it works
           </Link>
         </div>
@@ -73,7 +92,9 @@ function Hero() {
           ].map(([n, l]) => (
             <div key={l} className="bg-background p-6">
               <div className="font-display text-4xl text-primary">{n}</div>
-              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{l}</div>
+              <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                {l}
+              </div>
             </div>
           ))}
         </div>
@@ -112,12 +133,19 @@ function Problem() {
     <section className="border-b border-border/60">
       <div className="mx-auto grid max-w-7xl gap-16 px-6 py-28 md:grid-cols-12">
         <div className="md:col-span-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">01 — The problem</p>
-          <h2 className="mt-6 font-display text-5xl leading-tight">Your company doesn't have a knowledge problem. It has a <em className="text-primary">retrieval</em> problem.</h2>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            01 — The problem
+          </p>
+          <h2 className="mt-6 font-display text-5xl leading-tight">
+            Your company doesn't have a knowledge problem. It has a{" "}
+            <em className="text-primary">retrieval</em> problem.
+          </h2>
         </div>
         <div className="md:col-span-7">
           <p className="text-lg text-muted-foreground">
-            Critical information lives in PDFs, SharePoint folders, Confluence wikis, Slack threads, and the heads of senior staff. Employees spend an average of 2.5 hours a day looking for it.
+            Critical information lives in PDFs, SharePoint folders, Confluence wikis, Slack threads,
+            and the heads of senior staff. Employees spend an average of 2.5 hours a day looking for
+            it.
           </p>
           <div className="mt-10 space-y-px">
             {[
@@ -147,10 +175,15 @@ function Chat() {
     <section className="border-b border-border/60 bg-secondary/30">
       <div className="mx-auto grid max-w-7xl gap-16 px-6 py-28 md:grid-cols-12">
         <div className="md:col-span-5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">02 — The interface</p>
-          <h2 className="mt-6 font-display text-5xl leading-tight">Ask in English. Get answers with receipts.</h2>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            02 — The interface
+          </p>
+          <h2 className="mt-6 font-display text-5xl leading-tight">
+            Ask in English. Get answers with receipts.
+          </h2>
           <p className="mt-6 text-muted-foreground">
-            Every response is grounded in your documents and cites the exact source — file, page, and section. No hallucinations. No "I'm not sure."
+            Every response is grounded in your documents and cites the exact source — file, page,
+            and section. No hallucinations. No "I'm not sure."
           </p>
         </div>
         <div className="md:col-span-7">
@@ -161,7 +194,9 @@ function Chat() {
                 <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
                 <span className="h-2.5 w-2.5 rounded-full bg-lime/60" />
               </div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">ekba · live</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                ekba · live
+              </span>
             </div>
 
             <div className="space-y-5 p-6">
@@ -176,7 +211,9 @@ function Chat() {
                   <Sparkles className="h-3.5 w-3.5" />
                 </div>
                 <div className="max-w-xl space-y-3 text-sm">
-                  <p className="text-foreground">The leave approval process requires three steps:</p>
+                  <p className="text-foreground">
+                    The leave approval process requires three steps:
+                  </p>
                   <ol className="space-y-1.5 pl-5 text-muted-foreground">
                     <li>1. Submit a request through the HRMS portal.</li>
                     <li>2. Receive manager approval within 48 hours.</li>
@@ -198,8 +235,12 @@ function Chat() {
 
             <div className="flex items-center gap-3 border-t border-border bg-background/50 px-4 py-3">
               <Search className="h-4 w-4 text-muted-foreground" />
-              <span className="flex-1 text-sm text-muted-foreground">Ask EKBA anything about your company…</span>
-              <kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">⌘ K</kbd>
+              <span className="flex-1 text-sm text-muted-foreground">
+                Ask EKBA anything about your company…
+              </span>
+              <kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">
+                ⌘ K
+              </kbd>
             </div>
           </div>
         </div>
@@ -210,22 +251,53 @@ function Chat() {
 
 function Pillars() {
   const items = [
-    { icon: Search, t: "Semantic search", d: "Vector embeddings understand intent, not just keywords." },
-    { icon: MessageSquare, t: "Conversational UI", d: "Natural follow-ups. Context carries across the thread." },
-    { icon: FileText, t: "Document intelligence", d: "Ingest PDFs, DOCX, PPTX, and TXT. We handle the rest." },
-    { icon: Shield, t: "Source citations", d: "Every answer links back to the file, page, and section." },
-    { icon: Zap, t: "Sub-3-second answers", d: "Engineered for retrieval at enterprise volume and latency." },
-    { icon: Sparkles, t: "Feedback learning", d: "Thumbs up, thumbs down, reports. Quality compounds." },
+    {
+      icon: Search,
+      t: "Semantic search",
+      d: "Vector embeddings understand intent, not just keywords.",
+    },
+    {
+      icon: MessageSquare,
+      t: "Conversational UI",
+      d: "Natural follow-ups. Context carries across the thread.",
+    },
+    {
+      icon: FileText,
+      t: "Document intelligence",
+      d: "Ingest PDFs, DOCX, PPTX, and TXT. We handle the rest.",
+    },
+    {
+      icon: Shield,
+      t: "Source citations",
+      d: "Every answer links back to the file, page, and section.",
+    },
+    {
+      icon: Zap,
+      t: "Sub-3-second answers",
+      d: "Engineered for retrieval at enterprise volume and latency.",
+    },
+    {
+      icon: Sparkles,
+      t: "Feedback learning",
+      d: "Thumbs up, thumbs down, reports. Quality compounds.",
+    },
   ];
   return (
     <section className="border-b border-border/60">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <div className="flex items-end justify-between gap-8">
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">03 — What's inside</p>
-            <h2 className="mt-6 max-w-2xl font-display text-5xl leading-tight">Six things every enterprise assistant should do. Most don't.</h2>
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              03 — What's inside
+            </p>
+            <h2 className="mt-6 max-w-2xl font-display text-5xl leading-tight">
+              Six things every enterprise assistant should do. Most don't.
+            </h2>
           </div>
-          <Link to="/platform" className="hidden shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-primary md:inline-flex">
+          <Link
+            to="/platform"
+            className="hidden shrink-0 items-center gap-1.5 text-sm text-muted-foreground hover:text-primary md:inline-flex"
+          >
             All capabilities <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
         </div>
@@ -257,17 +329,24 @@ function RagFlow() {
     <section className="border-b border-border/60 bg-secondary/30">
       <div className="mx-auto max-w-7xl px-6 py-28">
         <div className="max-w-2xl">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">04 — Architecture</p>
-          <h2 className="mt-6 font-display text-5xl leading-tight">Retrieval-augmented generation, end to end.</h2>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            04 — Architecture
+          </p>
+          <h2 className="mt-6 font-display text-5xl leading-tight">
+            Retrieval-augmented generation, end to end.
+          </h2>
           <p className="mt-6 text-muted-foreground">
-            RAG keeps answers tied to source material. No fabricated quotes, no out-of-date policies — just the document, retrieved.
+            RAG keeps answers tied to source material. No fabricated quotes, no out-of-date policies
+            — just the document, retrieved.
           </p>
         </div>
 
         <div className="mt-16 grid gap-px overflow-hidden rounded-lg border border-border/60 bg-border/60 md:grid-cols-6">
           {steps.map(([t, d], i) => (
             <div key={t} className="relative bg-background p-6">
-              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Step {String(i + 1).padStart(2, "0")}</div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                Step {String(i + 1).padStart(2, "0")}
+              </div>
               <h3 className="mt-4 font-display text-2xl text-primary">{t}</h3>
               <p className="mt-2 text-xs text-muted-foreground">{d}</p>
             </div>
@@ -288,8 +367,12 @@ function Personas() {
   return (
     <section className="border-b border-border/60">
       <div className="mx-auto max-w-7xl px-6 py-28">
-        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">05 — Built for everyone</p>
-        <h2 className="mt-6 max-w-3xl font-display text-5xl leading-tight">One assistant. Every role.</h2>
+        <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+          05 — Built for everyone
+        </p>
+        <h2 className="mt-6 max-w-3xl font-display text-5xl leading-tight">
+          One assistant. Every role.
+        </h2>
 
         <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {people.map(({ r, n }, i) => (
@@ -317,13 +400,20 @@ function CTA() {
           <em className="text-primary">Start asking.</em>
         </h2>
         <p className="mx-auto mt-8 max-w-xl text-muted-foreground">
-          Book a 30-minute demo and see EKBA answer questions about your own documents within the call.
+          Book a 30-minute demo and see EKBA answer questions about your own documents within the
+          call.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link to="/contact" className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
             Request demo <ArrowUpRight className="h-4 w-4" />
           </Link>
-          <Link to="/security" className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm hover:bg-secondary">
+          <Link
+            to="/security"
+            className="inline-flex items-center gap-2 rounded-md border border-border px-6 py-3 text-sm hover:bg-secondary"
+          >
             Review our security
           </Link>
         </div>
@@ -336,32 +426,36 @@ function FAQ() {
   const faqs = [
     {
       q: "How does EKBA prevent LLM hallucinations?",
-      a: "EKBA uses Retrieval-Augmented Generation (RAG). Instead of relying on the LLM's static training data, we query your company's vector index to pull relevant text chunks, present them to the LLM, and instruct it to answer only based on the provided context. Every statement is backed by a clickable citation (file name, page, and section)."
+      a: "EKBA uses Retrieval-Augmented Generation (RAG). Instead of relying on the LLM's static training data, we query your company's vector index to pull relevant text chunks, present them to the LLM, and instruct it to answer only based on the provided context. Every statement is backed by a clickable citation (file name, page, and section).",
     },
     {
       q: "What document types and integrations do you support?",
-      a: "Out of the box, we support PDF, DOCX, PPTX, and TXT files. Through our custom connectors SDK, we integrate with SharePoint, Confluence, Microsoft Teams, Slack, Google Drive, and Notion to index your data where it already lives."
+      a: "Out of the box, we support PDF, DOCX, PPTX, and TXT files. Through our custom connectors SDK, we integrate with SharePoint, Confluence, Microsoft Teams, Slack, Google Drive, and Notion to index your data where it already lives.",
     },
     {
       q: "Is our enterprise data secure with EKBA?",
-      a: "Absolutely. EKBA supports enterprise security standards like SAML SSO and OAuth 2.0. All data is encrypted using AES-256 at rest and TLS 1.3 in transit. For highly regulated clients, we offer customer-managed encryption keys, single-tenant private cloud deployments, and strict role-based access control (RBAC)."
+      a: "Absolutely. EKBA supports enterprise security standards like SAML SSO and OAuth 2.0. All data is encrypted using AES-256 at rest and TLS 1.3 in transit. For highly regulated clients, we offer customer-managed encryption keys, single-tenant private cloud deployments, and strict role-based access control (RBAC).",
     },
     {
       q: "How long does it take to ingest and set up our knowledge base?",
-      a: "For standard file shares and cloud storage, setup takes less than an hour. Our ingestion engine processes and indexes documents in real-time, meaning new uploads are searchable within seconds."
+      a: "For standard file shares and cloud storage, setup takes less than an hour. Our ingestion engine processes and indexes documents in real-time, meaning new uploads are searchable within seconds.",
     },
     {
       q: "Does EKBA support multilingual search and translation?",
-      a: "Yes. EKBA leverages semantic embeddings that align concepts across different languages. Users can ask questions in Spanish, Japanese, or French, and retrieve answers from documents originally written in English, complete with translated explanations and reference notes."
-    }
+      a: "Yes. EKBA leverages semantic embeddings that align concepts across different languages. Users can ask questions in Spanish, Japanese, or French, and retrieve answers from documents originally written in English, complete with translated explanations and reference notes.",
+    },
   ];
 
   return (
     <section className="border-b border-border/60 bg-secondary/30">
       <div className="mx-auto max-w-4xl px-6 py-28">
         <div className="text-center">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">06 — F.A.Q.</p>
-          <h2 className="mt-6 font-display text-5xl leading-tight">Frequently asked <em className="text-primary">questions</em></h2>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            06 — F.A.Q.
+          </p>
+          <h2 className="mt-6 font-display text-5xl leading-tight">
+            Frequently asked <em className="text-primary">questions</em>
+          </h2>
           <p className="mt-4 text-sm text-muted-foreground">
             Have questions about security, setup, or accuracy? We've got you covered.
           </p>
@@ -370,7 +464,11 @@ function FAQ() {
         <div className="mt-16">
           <Accordion type="single" collapsible className="w-full space-y-4">
             {faqs.map((faq, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border border-border bg-card px-6 py-1 rounded-lg">
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="border border-border bg-card px-6 py-1 rounded-lg"
+              >
                 <AccordionTrigger className="font-display text-2xl hover:text-primary hover:no-underline py-4">
                   {faq.q}
                 </AccordionTrigger>
@@ -385,4 +483,3 @@ function FAQ() {
     </section>
   );
 }
-

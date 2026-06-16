@@ -6,7 +6,11 @@ export const Route = createFileRoute("/roadmap")({
   head: () => ({
     meta: [
       { title: "Roadmap — EKBA" },
-      { name: "description", content: "Three phases from MVP to multilingual enterprise scale. Plus a look at what's next." },
+      {
+        name: "description",
+        content:
+          "Three phases from MVP to multilingual enterprise scale. Plus a look at what's next.",
+      },
       { property: "og:title", content: "Roadmap — EKBA" },
       { property: "og:description", content: "Where EKBA is today and where it's going." },
     ],
@@ -20,21 +24,37 @@ const phases = [
     n: "MVP",
     w: "8 weeks",
     s: "Shipped",
-    items: ["Knowledge search", "Conversational chat", "Document upload (PDF / DOCX / PPTX / TXT)", "OAuth + SSO", "Source citations"],
+    items: [
+      "Knowledge search",
+      "Conversational chat",
+      "Document upload (PDF / DOCX / PPTX / TXT)",
+      "OAuth + SSO",
+      "Source citations",
+    ],
   },
   {
     p: "Phase 02",
     n: "Advanced AI",
     w: "6 weeks",
     s: "In progress",
-    items: ["Feedback-driven re-ranking", "Per-team fine-tuning", "Analytics dashboard", "Slack & Teams integration"],
+    items: [
+      "Feedback-driven re-ranking",
+      "Per-team fine-tuning",
+      "Analytics dashboard",
+      "Slack & Teams integration",
+    ],
   },
   {
     p: "Phase 03",
     n: "Enterprise Scale",
     w: "8 weeks",
     s: "Q3 2026",
-    items: ["Multi-language support", "Advanced governance & DLP", "On-prem & air-gapped deployment", "Custom connectors SDK"],
+    items: [
+      "Multi-language support",
+      "Advanced governance & DLP",
+      "On-prem & air-gapped deployment",
+      "Custom connectors SDK",
+    ],
   },
 ];
 
@@ -48,7 +68,9 @@ const future = [
 
 function Roadmap() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<"All" | "Shipped" | "In progress" | "Upcoming">("All");
+  const [selectedStatus, setSelectedStatus] = useState<
+    "All" | "Shipped" | "In progress" | "Upcoming"
+  >("All");
 
   // Filtering phases
   const filteredPhases = phases
@@ -71,9 +93,7 @@ function Roadmap() {
         phase.n.toLowerCase().includes(query) ||
         phase.s.toLowerCase().includes(query);
 
-      const filteredItems = phase.items.filter((item) =>
-        item.toLowerCase().includes(query)
-      );
+      const filteredItems = phase.items.filter((item) => item.toLowerCase().includes(query));
 
       if (phaseMatches || filteredItems.length > 0) {
         return {
@@ -104,10 +124,15 @@ function Roadmap() {
     <div>
       <section className="border-b border-border/60">
         <div className="mx-auto max-w-7xl px-6 pb-20 pt-24">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Roadmap</p>
-          <h1 className="mt-6 max-w-4xl font-display text-7xl leading-[0.95]">A 22-week path to <em className="text-primary">enterprise scale.</em></h1>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            Roadmap
+          </p>
+          <h1 className="mt-6 max-w-4xl font-display text-7xl leading-[0.95]">
+            A 22-week path to <em className="text-primary">enterprise scale.</em>
+          </h1>
           <p className="mt-8 max-w-2xl text-lg text-muted-foreground">
-            Three phases, opinionated scope, no roadmap theater. Each phase ships production-ready features your team can use the day they release.
+            Three phases, opinionated scope, no roadmap theater. Each phase ships production-ready
+            features your team can use the day they release.
           </p>
         </div>
       </section>
@@ -153,7 +178,9 @@ function Roadmap() {
         <div className="mx-auto max-w-7xl px-6 py-24">
           {!hasAnyResults ? (
             <div className="text-center py-16 border border-dashed border-border rounded-lg bg-card/40 max-w-xl mx-auto">
-              <p className="font-mono text-sm text-muted-foreground">No features matched your search parameters.</p>
+              <p className="font-mono text-sm text-muted-foreground">
+                No features matched your search parameters.
+              </p>
               <button
                 onClick={() => {
                   setSearchQuery("");
@@ -171,19 +198,28 @@ function Roadmap() {
                 const isInProgress = ph.s === "In progress";
 
                 return (
-                  <div key={ph.p} className="grid grid-cols-12 gap-6 rounded-lg border border-border bg-card p-8 transition-all hover:shadow-md duration-300">
+                  <div
+                    key={ph.p}
+                    className="grid grid-cols-12 gap-6 rounded-lg border border-border bg-card p-8 transition-all hover:shadow-md duration-300"
+                  >
                     <div className="col-span-12 md:col-span-3">
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{ph.p}</span>
+                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                        {ph.p}
+                      </span>
                       <h2 className="mt-3 font-display text-5xl text-primary">{ph.n}</h2>
                       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                        <span className="rounded border border-border bg-secondary/50 px-2 py-1 font-mono text-muted-foreground">{ph.w}</span>
-                        <span className={`rounded px-2 py-1 font-mono ${
-                          isShipped 
-                            ? "bg-primary/15 text-primary" 
-                            : isInProgress 
-                              ? "bg-accent/20 text-accent-foreground animate-pulse" 
-                              : "bg-muted text-muted-foreground"
-                        }`}>
+                        <span className="rounded border border-border bg-secondary/50 px-2 py-1 font-mono text-muted-foreground">
+                          {ph.w}
+                        </span>
+                        <span
+                          className={`rounded px-2 py-1 font-mono ${
+                            isShipped
+                              ? "bg-primary/15 text-primary"
+                              : isInProgress
+                                ? "bg-accent/20 text-accent-foreground animate-pulse"
+                                : "bg-muted text-muted-foreground"
+                          }`}
+                        >
                           {ph.s}
                         </span>
                       </div>
@@ -191,11 +227,18 @@ function Roadmap() {
                     <div className="col-span-12 md:col-span-9">
                       <ul className="grid gap-3 md:grid-cols-2">
                         {ph.items.map((it) => {
-                          const isMatch = searchQuery && it.toLowerCase().includes(searchQuery.toLowerCase().trim());
+                          const isMatch =
+                            searchQuery &&
+                            it.toLowerCase().includes(searchQuery.toLowerCase().trim());
                           return (
-                            <li key={it} className={`flex items-start gap-3 border-l-2 py-1.5 pl-4 text-sm transition duration-300 ${
-                              isMatch ? "border-primary bg-primary/5 font-medium" : "border-primary/40 text-foreground"
-                            }`}>
+                            <li
+                              key={it}
+                              className={`flex items-start gap-3 border-l-2 py-1.5 pl-4 text-sm transition duration-300 ${
+                                isMatch
+                                  ? "border-primary bg-primary/5 font-medium"
+                                  : "border-primary/40 text-foreground"
+                              }`}
+                            >
                               {it}
                             </li>
                           );
@@ -211,31 +254,43 @@ function Roadmap() {
       </section>
 
       {/* Future Section (Only if status filter matches or results exist) */}
-      {selectedStatus !== "Shipped" && selectedStatus !== "In progress" && filteredFuture.length > 0 && (
-        <section className="border-b border-border/60 bg-secondary/30">
-          <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 md:grid-cols-12">
-            <div className="md:col-span-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Future enhancements</p>
-              <h2 className="mt-6 font-display text-5xl leading-tight font-light">What we're <em className="text-primary">excited</em> about next.</h2>
+      {selectedStatus !== "Shipped" &&
+        selectedStatus !== "In progress" &&
+        filteredFuture.length > 0 && (
+          <section className="border-b border-border/60 bg-secondary/30">
+            <div className="mx-auto grid max-w-7xl gap-16 px-6 py-24 md:grid-cols-12">
+              <div className="md:col-span-5">
+                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+                  Future enhancements
+                </p>
+                <h2 className="mt-6 font-display text-5xl leading-tight font-light">
+                  What we're <em className="text-primary">excited</em> about next.
+                </h2>
+              </div>
+              <div className="md:col-span-7">
+                <ul className="space-y-px overflow-hidden rounded-lg border border-border/60 bg-border/60">
+                  {filteredFuture.map((f, i) => {
+                    const isMatch =
+                      searchQuery && f.toLowerCase().includes(searchQuery.toLowerCase().trim());
+                    return (
+                      <li
+                        key={f}
+                        className={`flex items-baseline gap-5 p-5 transition duration-300 ${
+                          isMatch ? "bg-primary/5 font-medium" : "bg-background"
+                        }`}
+                      >
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="font-display text-2xl">{f}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             </div>
-            <div className="md:col-span-7">
-              <ul className="space-y-px overflow-hidden rounded-lg border border-border/60 bg-border/60">
-                {filteredFuture.map((f, i) => {
-                  const isMatch = searchQuery && f.toLowerCase().includes(searchQuery.toLowerCase().trim());
-                  return (
-                    <li key={f} className={`flex items-baseline gap-5 p-5 transition duration-300 ${
-                      isMatch ? "bg-primary/5 font-medium" : "bg-background"
-                    }`}>
-                      <span className="font-mono text-xs text-muted-foreground">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="font-display text-2xl">{f}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
 
       <section className="border-b border-border/60">
         <div className="mx-auto max-w-4xl px-6 py-24 text-center">
@@ -243,7 +298,10 @@ function Roadmap() {
           <p className="mx-auto mt-6 max-w-xl text-muted-foreground">
             Design partners shape the next quarter of EKBA. We listen carefully.
           </p>
-          <Link to="/contact" className="mt-8 inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link
+            to="/contact"
+            className="mt-8 inline-flex items-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
             Become a design partner
           </Link>
         </div>
