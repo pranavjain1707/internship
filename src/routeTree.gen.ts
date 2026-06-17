@@ -12,9 +12,22 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as RoadmapRouteImport } from './routes/roadmap'
+import { Route as PortalRouteImport } from './routes/portal'
 import { Route as PlatformRouteImport } from './routes/platform'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
+import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiFeedbackRouteImport } from './routes/api/feedback'
+import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
+import { Route as ApiUsersIndexRouteImport } from './routes/api/users/index'
+import { Route as ApiUsersUpdateRoleRouteImport } from './routes/api/users/update-role'
+import { Route as ApiUsersRegisterRouteImport } from './routes/api/users/register'
+import { Route as ApiUsersKickRouteImport } from './routes/api/users/kick'
+import { Route as ApiUsersDbRouteImport } from './routes/api/users/db'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -29,6 +42,11 @@ const SecurityRoute = SecurityRouteImport.update({
 const RoadmapRoute = RoadmapRouteImport.update({
   id: '/roadmap',
   path: '/roadmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalRoute = PortalRouteImport.update({
+  id: '/portal',
+  path: '/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlatformRoute = PlatformRouteImport.update({
@@ -46,31 +64,130 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSearchRoute = ApiSearchRouteImport.update({
+  id: '/api/search',
+  path: '/api/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiFeedbackRoute = ApiFeedbackRouteImport.update({
+  id: '/api/feedback',
+  path: '/api/feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
+  id: '/api/documents',
+  path: '/api/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
+  id: '/api/analytics',
+  path: '/api/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersIndexRoute = ApiUsersIndexRouteImport.update({
+  id: '/api/users/',
+  path: '/api/users/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersUpdateRoleRoute = ApiUsersUpdateRoleRouteImport.update({
+  id: '/api/users/update-role',
+  path: '/api/users/update-role',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersRegisterRoute = ApiUsersRegisterRouteImport.update({
+  id: '/api/users/register',
+  path: '/api/users/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersKickRoute = ApiUsersKickRouteImport.update({
+  id: '/api/users/kick',
+  path: '/api/users/kick',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUsersDbRoute = ApiUsersDbRouteImport.update({
+  id: '/api/users/db',
+  path: '/api/users/db',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
   '/platform': typeof PlatformRoute
+  '/portal': typeof PortalRoute
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/documents': typeof ApiDocumentsRoute
+  '/api/feedback': typeof ApiFeedbackRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/search': typeof ApiSearchRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/users/db': typeof ApiUsersDbRoute
+  '/api/users/kick': typeof ApiUsersKickRoute
+  '/api/users/register': typeof ApiUsersRegisterRoute
+  '/api/users/update-role': typeof ApiUsersUpdateRoleRoute
+  '/api/users/': typeof ApiUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
   '/platform': typeof PlatformRoute
+  '/portal': typeof PortalRoute
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/documents': typeof ApiDocumentsRoute
+  '/api/feedback': typeof ApiFeedbackRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/search': typeof ApiSearchRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/users/db': typeof ApiUsersDbRoute
+  '/api/users/kick': typeof ApiUsersKickRoute
+  '/api/users/register': typeof ApiUsersRegisterRoute
+  '/api/users/update-role': typeof ApiUsersUpdateRoleRoute
+  '/api/users': typeof ApiUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contact': typeof ContactRoute
   '/platform': typeof PlatformRoute
+  '/portal': typeof PortalRoute
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/documents': typeof ApiDocumentsRoute
+  '/api/feedback': typeof ApiFeedbackRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/search': typeof ApiSearchRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/users/db': typeof ApiUsersDbRoute
+  '/api/users/kick': typeof ApiUsersKickRoute
+  '/api/users/register': typeof ApiUsersRegisterRoute
+  '/api/users/update-role': typeof ApiUsersUpdateRoleRoute
+  '/api/users/': typeof ApiUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,28 +195,86 @@ export interface FileRouteTypes {
     | '/'
     | '/contact'
     | '/platform'
+    | '/portal'
     | '/roadmap'
     | '/security'
     | '/sitemap.xml'
+    | '/api/analytics'
+    | '/api/chat'
+    | '/api/documents'
+    | '/api/feedback'
+    | '/api/health'
+    | '/api/search'
+    | '/api/upload'
+    | '/api/users/db'
+    | '/api/users/kick'
+    | '/api/users/register'
+    | '/api/users/update-role'
+    | '/api/users/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/contact' | '/platform' | '/roadmap' | '/security' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/contact'
+    | '/platform'
+    | '/portal'
+    | '/roadmap'
+    | '/security'
+    | '/sitemap.xml'
+    | '/api/analytics'
+    | '/api/chat'
+    | '/api/documents'
+    | '/api/feedback'
+    | '/api/health'
+    | '/api/search'
+    | '/api/upload'
+    | '/api/users/db'
+    | '/api/users/kick'
+    | '/api/users/register'
+    | '/api/users/update-role'
+    | '/api/users'
   id:
     | '__root__'
     | '/'
     | '/contact'
     | '/platform'
+    | '/portal'
     | '/roadmap'
     | '/security'
     | '/sitemap.xml'
+    | '/api/analytics'
+    | '/api/chat'
+    | '/api/documents'
+    | '/api/feedback'
+    | '/api/health'
+    | '/api/search'
+    | '/api/upload'
+    | '/api/users/db'
+    | '/api/users/kick'
+    | '/api/users/register'
+    | '/api/users/update-role'
+    | '/api/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactRoute: typeof ContactRoute
   PlatformRoute: typeof PlatformRoute
+  PortalRoute: typeof PortalRoute
   RoadmapRoute: typeof RoadmapRoute
   SecurityRoute: typeof SecurityRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiAnalyticsRoute: typeof ApiAnalyticsRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiDocumentsRoute: typeof ApiDocumentsRoute
+  ApiFeedbackRoute: typeof ApiFeedbackRoute
+  ApiHealthRoute: typeof ApiHealthRoute
+  ApiSearchRoute: typeof ApiSearchRoute
+  ApiUploadRoute: typeof ApiUploadRoute
+  ApiUsersDbRoute: typeof ApiUsersDbRoute
+  ApiUsersKickRoute: typeof ApiUsersKickRoute
+  ApiUsersRegisterRoute: typeof ApiUsersRegisterRoute
+  ApiUsersUpdateRoleRoute: typeof ApiUsersUpdateRoleRoute
+  ApiUsersIndexRoute: typeof ApiUsersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoadmapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portal': {
+      id: '/portal'
+      path: '/portal'
+      fullPath: '/portal'
+      preLoaderRoute: typeof PortalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/platform': {
       id: '/platform'
       path: '/platform'
@@ -146,6 +328,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/search': {
+      id: '/api/search'
+      path: '/api/search'
+      fullPath: '/api/search'
+      preLoaderRoute: typeof ApiSearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/feedback': {
+      id: '/api/feedback'
+      path: '/api/feedback'
+      fullPath: '/api/feedback'
+      preLoaderRoute: typeof ApiFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/documents': {
+      id: '/api/documents'
+      path: '/api/documents'
+      fullPath: '/api/documents'
+      preLoaderRoute: typeof ApiDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics': {
+      id: '/api/analytics'
+      path: '/api/analytics'
+      fullPath: '/api/analytics'
+      preLoaderRoute: typeof ApiAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/': {
+      id: '/api/users/'
+      path: '/api/users'
+      fullPath: '/api/users/'
+      preLoaderRoute: typeof ApiUsersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/update-role': {
+      id: '/api/users/update-role'
+      path: '/api/users/update-role'
+      fullPath: '/api/users/update-role'
+      preLoaderRoute: typeof ApiUsersUpdateRoleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/register': {
+      id: '/api/users/register'
+      path: '/api/users/register'
+      fullPath: '/api/users/register'
+      preLoaderRoute: typeof ApiUsersRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/kick': {
+      id: '/api/users/kick'
+      path: '/api/users/kick'
+      fullPath: '/api/users/kick'
+      preLoaderRoute: typeof ApiUsersKickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/users/db': {
+      id: '/api/users/db'
+      path: '/api/users/db'
+      fullPath: '/api/users/db'
+      preLoaderRoute: typeof ApiUsersDbRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -153,9 +419,22 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactRoute: ContactRoute,
   PlatformRoute: PlatformRoute,
+  PortalRoute: PortalRoute,
   RoadmapRoute: RoadmapRoute,
   SecurityRoute: SecurityRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiAnalyticsRoute: ApiAnalyticsRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiDocumentsRoute: ApiDocumentsRoute,
+  ApiFeedbackRoute: ApiFeedbackRoute,
+  ApiHealthRoute: ApiHealthRoute,
+  ApiSearchRoute: ApiSearchRoute,
+  ApiUploadRoute: ApiUploadRoute,
+  ApiUsersDbRoute: ApiUsersDbRoute,
+  ApiUsersKickRoute: ApiUsersKickRoute,
+  ApiUsersRegisterRoute: ApiUsersRegisterRoute,
+  ApiUsersUpdateRoleRoute: ApiUsersUpdateRoleRoute,
+  ApiUsersIndexRoute: ApiUsersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

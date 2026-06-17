@@ -10,13 +10,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "EKBA — Conversational access to enterprise knowledge" },
+      { title: "EKABA — Conversational access to company knowledge" },
       {
         name: "description",
         content:
-          "Reduce information retrieval time by 80%. EKBA turns PDFs, wikis, and SharePoint into a single AI assistant employees actually use.",
+          "Reduce information retrieval time by 80%. EKABA turns PDFs, wikis, and SharePoint into a single AI assistant employees actually use.",
       },
-      { property: "og:title", content: "EKBA — Conversational access to enterprise knowledge" },
+      { property: "og:title", content: "EKABA — Conversational access to company knowledge" },
       {
         property: "og:description",
         content:
@@ -63,7 +63,7 @@ function Hero() {
         </h1>
 
         <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-          EKBA is a retrieval-augmented assistant that reads every PDF, wiki, deck, and policy your
+          EKABA is a retrieval-augmented assistant that reads every PDF, wiki, deck, and policy your
           organization owns — then answers in plain language, with citations.
         </p>
 
@@ -74,6 +74,12 @@ function Hero() {
           >
             Request a demo
             <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </Link>
+          <Link
+            to="/portal"
+            className="inline-flex items-center gap-2 rounded-md border border-primary bg-primary/5 px-6 py-3 text-sm font-medium hover:bg-primary/10 text-primary transition"
+          >
+            Login to Portal
           </Link>
           <Link
             to="/platform"
@@ -195,7 +201,7 @@ function Chat() {
                 <span className="h-2.5 w-2.5 rounded-full bg-lime/60" />
               </div>
               <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                ekba · live
+                ekaba · live
               </span>
             </div>
 
@@ -236,7 +242,7 @@ function Chat() {
             <div className="flex items-center gap-3 border-t border-border bg-background/50 px-4 py-3">
               <Search className="h-4 w-4 text-muted-foreground" />
               <span className="flex-1 text-sm text-muted-foreground">
-                Ask EKBA anything about your company…
+                Ask EKABA anything about your company…
               </span>
               <kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px]">
                 ⌘ K
@@ -361,7 +367,7 @@ function Personas() {
   const people = [
     { r: "Employees", n: "Get answers without pinging five people on Slack." },
     { r: "Managers", n: "Pull team processes and historical context in seconds." },
-    { r: "HR officers", n: "Stop re-explaining policy. Let EKBA handle the FAQs." },
+    { r: "HR officers", n: "Stop re-explaining policy. Let EKABA handle the FAQs." },
     { r: "IT admins", n: "Granular roles, audit logs, and SSO control on day one." },
   ];
   return (
@@ -400,7 +406,7 @@ function CTA() {
           <em className="text-primary">Start asking.</em>
         </h2>
         <p className="mx-auto mt-8 max-w-xl text-muted-foreground">
-          Book a 30-minute demo and see EKBA answer questions about your own documents within the
+          Book a 30-minute demo and see EKABA answer questions about your own documents within the
           call.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
@@ -425,24 +431,24 @@ function CTA() {
 function FAQ() {
   const faqs = [
     {
-      q: "How does EKBA prevent LLM hallucinations?",
-      a: "EKBA uses Retrieval-Augmented Generation (RAG). Instead of relying on the LLM's static training data, we query your company's vector index to pull relevant text chunks, present them to the LLM, and instruct it to answer only based on the provided context. Every statement is backed by a clickable citation (file name, page, and section).",
+      q: "How does EKABA prevent LLM hallucinations?",
+      a: "EKABA uses Retrieval-Augmented Generation (RAG). Instead of relying on the LLM's static training data, we query your company's vector index to pull relevant text chunks, present them to the LLM, and instruct it to answer only based on the provided context. Every statement is backed by a clickable citation (file name, page, and section).",
     },
     {
       q: "What document types and integrations do you support?",
       a: "Out of the box, we support PDF, DOCX, PPTX, and TXT files. Through our custom connectors SDK, we integrate with SharePoint, Confluence, Microsoft Teams, Slack, Google Drive, and Notion to index your data where it already lives.",
     },
     {
-      q: "Is our enterprise data secure with EKBA?",
-      a: "Absolutely. EKBA supports enterprise security standards like SAML SSO and OAuth 2.0. All data is encrypted using AES-256 at rest and TLS 1.3 in transit. For highly regulated clients, we offer customer-managed encryption keys, single-tenant private cloud deployments, and strict role-based access control (RBAC).",
+      q: "Is our data secure with EKABA?",
+      a: "Absolutely. EKABA supports enterprise security standards like SAML SSO and OAuth 2.0. All data is encrypted using AES-256 at rest and TLS 1.3 in transit. For highly regulated clients, we offer customer-managed encryption keys, single-tenant private cloud deployments, and strict role-based access control (RBAC).",
     },
     {
       q: "How long does it take to ingest and set up our knowledge base?",
       a: "For standard file shares and cloud storage, setup takes less than an hour. Our ingestion engine processes and indexes documents in real-time, meaning new uploads are searchable within seconds.",
     },
     {
-      q: "Does EKBA support multilingual search and translation?",
-      a: "Yes. EKBA leverages semantic embeddings that align concepts across different languages. Users can ask questions in Spanish, Japanese, or French, and retrieve answers from documents originally written in English, complete with translated explanations and reference notes.",
+      q: "Does EKABA support multilingual search and translation?",
+      a: "Yes. EKABA leverages semantic embeddings that align concepts across different languages. Users can ask questions in Spanish, Japanese, or French, and retrieve answers from documents originally written in English, complete with translated explanations and reference notes.",
     },
   ];
 

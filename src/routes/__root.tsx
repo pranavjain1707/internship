@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  useLocation,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
@@ -70,13 +71,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EKBA — Enterprise Knowledge Base Assistant" },
+      { title: "EKABA — Knowledge Base Assistant" },
       {
         name: "description",
         content:
           "An AI-powered enterprise assistant that retrieves your organization's knowledge through natural conversation. Cut information retrieval time by 80%.",
       },
-      { property: "og:title", content: "EKBA — Enterprise Knowledge Base Assistant" },
+      { property: "og:title", content: "EKABA — Knowledge Base Assistant" },
       {
         property: "og:description",
         content:
@@ -84,7 +85,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "EKBA — Enterprise Knowledge Base Assistant" },
+      { name: "twitter:title", content: "EKABA — Knowledge Base Assistant" },
       {
         name: "twitter:description",
         content:
@@ -142,7 +143,7 @@ function SiteHeader() {
           <div className="grid h-7 w-7 place-items-center rounded-sm bg-primary text-primary-foreground">
             <span className="font-display text-lg leading-none">E</span>
           </div>
-          <span className="font-display text-xl tracking-tight">EKBA</span>
+          <span className="font-display text-xl tracking-tight">EKABA</span>
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground md:inline">
             v1.0
           </span>
@@ -199,13 +200,21 @@ function SiteHeader() {
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </button>
 
-          {/* Request Demo - Desktop */}
-          <Link
-            to="/contact"
-            className="hidden sm:inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-          >
-            Request demo
-          </Link>
+          {/* Action buttons - Desktop */}
+          <div className="hidden sm:flex items-center gap-3">
+            <Link
+              to="/portal"
+              className="inline-flex rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/contact"
+              className="inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            >
+              Request demo
+            </Link>
+          </div>
 
           {/* Hamburger Icon - Mobile */}
           <button
@@ -264,7 +273,14 @@ function SiteHeader() {
             >
               Contact
             </Link>
-            <div className="border-t border-border pt-4 mt-2">
+            <div className="border-t border-border pt-4 mt-2 flex flex-col gap-2">
+              <Link
+                to="/portal"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex w-full items-center justify-center rounded-md border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground hover:bg-secondary transition"
+              >
+                Login
+              </Link>
               <Link
                 to="/contact"
                 onClick={() => setMobileMenuOpen(false)}
@@ -290,7 +306,7 @@ function SiteFooter() {
               <div className="grid h-7 w-7 place-items-center rounded-sm bg-primary text-primary-foreground">
                 <span className="font-display text-lg leading-none">E</span>
               </div>
-              <span className="font-display text-xl">EKBA</span>
+              <span className="font-display text-xl">EKABA</span>
             </div>
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
               Enterprise Knowledge Base Assistant — retrieval-augmented intelligence for the
@@ -343,7 +359,7 @@ function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border/60 pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
-          <p>© 2026 EKBA. All rights reserved.</p>
+          <p>© 2026 EKABA. All rights reserved.</p>
           <p className="font-mono">SOC 2 · ISO 27001 · GDPR · HIPAA</p>
         </div>
       </div>
@@ -353,15 +369,18 @@ function SiteFooter() {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+  const isPortal = location.pathname.startsWith("/portal");
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <div className="flex min-h-screen flex-col">
-          <SiteHeader />
+          {!isPortal && <SiteHeader />}
           <main className="flex-1">
             <Outlet />
           </main>
-          <SiteFooter />
+          {!isPortal && <SiteFooter />}
         </div>
       </ThemeProvider>
     </QueryClientProvider>

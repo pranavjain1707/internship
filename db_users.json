@@ -1,0 +1,342 @@
+{
+  "companyUsers": {
+    "ekaba": [
+      {
+        "id": "u-pranav-jain",
+        "name": "Pranav Jain",
+        "email": "jainpranav1707@gmail.com",
+        "role": "Owner",
+        "avatar": "PJ"
+      },
+      {
+        "id": "u-varsha-jain",
+        "name": "Varsha Jain",
+        "email": "vj26@gmail.com",
+        "role": "IT Administrator",
+        "avatar": "VJ"
+      },
+      {
+        "id": "u-riya",
+        "name": "Riya",
+        "email": "Riya12@gmail.com",
+        "role": "Employee",
+        "avatar": "R"
+      }
+    ],
+    "ekaba internal": [
+      {
+        "id": "u-pranav-jain",
+        "name": "Pranav Jain",
+        "email": "jainpranav1707@gmail.com",
+        "role": "Owner",
+        "avatar": "PJ"
+      }
+    ],
+    "google": [
+      {
+        "id": "u-sundar-pichai",
+        "name": "Sundar Pichai",
+        "email": "sundar.pichai@google.com",
+        "role": "Owner",
+        "avatar": "SP"
+      },
+      {
+        "id": "u-larry-page",
+        "name": "Larry Page",
+        "email": "larry.page@google.com",
+        "role": "Employee",
+        "avatar": "LP"
+      },
+      {
+        "id": "u-sergey-brin",
+        "name": "Sergey Brin",
+        "email": "sergey.brin@google.com",
+        "role": "Manager",
+        "avatar": "SB"
+      },
+      {
+        "id": "u-ruth-porat",
+        "name": "Ruth Porat",
+        "email": "ruth.porat@google.com",
+        "role": "HR Officer",
+        "avatar": "RP"
+      },
+      {
+        "id": "u-jeff-dean",
+        "name": "Jeff Dean",
+        "email": "jeff.dean@google.com",
+        "role": "IT Administrator",
+        "avatar": "JD"
+      }
+    ],
+    "acme corp": [
+      {
+        "id": "u-wile-e-coyote",
+        "name": "Wile E. Coyote",
+        "email": "wile.e@acme.com",
+        "role": "Owner",
+        "avatar": "WC"
+      },
+      {
+        "id": "u-road-runner",
+        "name": "Road Runner",
+        "email": "road.runner@acme.com",
+        "role": "Employee",
+        "avatar": "RR"
+      },
+      {
+        "id": "u-bugs-bunny",
+        "name": "Bugs Bunny",
+        "email": "bugs.bunny@acme.com",
+        "role": "Manager",
+        "avatar": "BB"
+      },
+      {
+        "id": "u-daffy-duck",
+        "name": "Daffy Duck",
+        "email": "daffy.duck@acme.com",
+        "role": "HR Officer",
+        "avatar": "DD"
+      },
+      {
+        "id": "u-elmer-fudd",
+        "name": "Elmer Fudd",
+        "email": "elmer.fudd@acme.com",
+        "role": "IT Administrator",
+        "avatar": "EF"
+      }
+    ],
+    "microsoft": [
+      {
+        "id": "u-satya-nadella",
+        "name": "Satya Nadella",
+        "email": "satya.nadella@microsoft.com",
+        "role": "Owner",
+        "avatar": "SN"
+      },
+      {
+        "id": "u-bill-gates",
+        "name": "Bill Gates",
+        "email": "bill.gates@microsoft.com",
+        "role": "Employee",
+        "avatar": "BG"
+      },
+      {
+        "id": "u-paul-allen",
+        "name": "Paul Allen",
+        "email": "paul.allen@microsoft.com",
+        "role": "Manager",
+        "avatar": "PA"
+      },
+      {
+        "id": "u-steve-ballmer",
+        "name": "Steve Ballmer",
+        "email": "steve.ballmer@microsoft.com",
+        "role": "HR Officer",
+        "avatar": "SB"
+      },
+      {
+        "id": "u-kevin-scott",
+        "name": "Kevin Scott",
+        "email": "kevin.scott@microsoft.com",
+        "role": "IT Administrator",
+        "avatar": "KS"
+      }
+    ],
+    "apple": [
+      {
+        "id": "u-tim-cook",
+        "name": "Tim Cook",
+        "email": "tim.cook@apple.com",
+        "role": "Owner",
+        "avatar": "TC"
+      },
+      {
+        "id": "u-steve-jobs",
+        "name": "Steve Jobs",
+        "email": "steve.jobs@apple.com",
+        "role": "Employee",
+        "avatar": "SJ"
+      },
+      {
+        "id": "u-steve-wozniak",
+        "name": "Steve Wozniak",
+        "email": "steve.wozniak@apple.com",
+        "role": "Manager",
+        "avatar": "SW"
+      },
+      {
+        "id": "u-craig-federighi",
+        "name": "Craig Federighi",
+        "email": "craig.federighi@apple.com",
+        "role": "HR Officer",
+        "avatar": "CF"
+      },
+      {
+        "id": "u-phil-schiller",
+        "name": "Phil Schiller",
+        "email": "phil.schiller@apple.com",
+        "role": "IT Administrator",
+        "avatar": "PS"
+      }
+    ]
+  },
+  "companyUsersDb": {
+    "ekaba": {
+      "pranav jain": {
+        "name": "Pranav Jain",
+        "domain": "jainpranav1707@gmail.com",
+        "password": "Pj@17072006",
+        "role": "Owner"
+      },
+      "varsha jain": {
+        "name": "Varsha Jain",
+        "domain": "vj26@gmail.com",
+        "password": "vj@26",
+        "role": "IT Administrator"
+      },
+      "riya": {
+        "name": "Riya",
+        "domain": "Riya12@gmail.com",
+        "password": "R@12",
+        "role": "Employee"
+      }
+    },
+    "ekaba internal": {
+      "pranav jain": {
+        "name": "Pranav Jain",
+        "domain": "jainpranav1707@gmail.com",
+        "password": "Pj@17072006",
+        "role": "Owner"
+      }
+    },
+    "google": {
+      "sundar pichai": {
+        "name": "Sundar Pichai",
+        "domain": "google.com",
+        "password": "GoogleOwner@2026",
+        "role": "Owner"
+      },
+      "larry page": {
+        "name": "Larry Page",
+        "domain": "google.com",
+        "password": "GoogleEmp@2026",
+        "role": "Employee"
+      },
+      "sergey brin": {
+        "name": "Sergey Brin",
+        "domain": "google.com",
+        "password": "GoogleMgr@2026",
+        "role": "Manager"
+      },
+      "ruth porat": {
+        "name": "Ruth Porat",
+        "domain": "google.com",
+        "password": "GoogleHR@2026",
+        "role": "HR Officer"
+      },
+      "jeff dean": {
+        "name": "Jeff Dean",
+        "domain": "google.com",
+        "password": "GoogleIT@2026",
+        "role": "IT Administrator"
+      }
+    },
+    "acme corp": {
+      "wile e. coyote": {
+        "name": "Wile E. Coyote",
+        "domain": "acme.com",
+        "password": "AcmeOwner@2026",
+        "role": "Owner"
+      },
+      "road runner": {
+        "name": "Road Runner",
+        "domain": "acme.com",
+        "password": "AcmeEmp@2026",
+        "role": "Employee"
+      },
+      "bugs bunny": {
+        "name": "Bugs Bunny",
+        "domain": "acme.com",
+        "password": "AcmeMgr@2026",
+        "role": "Manager"
+      },
+      "daffy duck": {
+        "name": "Daffy Duck",
+        "domain": "acme.com",
+        "password": "AcmeHR@2026",
+        "role": "HR Officer"
+      },
+      "elmer fudd": {
+        "name": "Elmer Fudd",
+        "domain": "acme.com",
+        "password": "AcmeIT@2026",
+        "role": "IT Administrator"
+      }
+    },
+    "microsoft": {
+      "satya nadella": {
+        "name": "Satya Nadella",
+        "domain": "microsoft.com",
+        "password": "MsftOwner@2026",
+        "role": "Owner"
+      },
+      "bill gates": {
+        "name": "Bill Gates",
+        "domain": "microsoft.com",
+        "password": "MsftEmp@2026",
+        "role": "Employee"
+      },
+      "paul allen": {
+        "name": "Paul Allen",
+        "domain": "microsoft.com",
+        "password": "MsftMgr@2026",
+        "role": "Manager"
+      },
+      "steve ballmer": {
+        "name": "Steve Ballmer",
+        "domain": "microsoft.com",
+        "password": "MsftHR@2026",
+        "role": "HR Officer"
+      },
+      "kevin scott": {
+        "name": "Kevin Scott",
+        "domain": "microsoft.com",
+        "password": "MsftIT@2026",
+        "role": "IT Administrator"
+      }
+    },
+    "apple": {
+      "tim cook": {
+        "name": "Tim Cook",
+        "domain": "apple.com",
+        "password": "AppleOwner@2026",
+        "role": "Owner"
+      },
+      "steve jobs": {
+        "name": "Steve Jobs",
+        "domain": "apple.com",
+        "password": "AppleEmp@2026",
+        "role": "Employee"
+      },
+      "steve wozniak": {
+        "name": "Steve Wozniak",
+        "domain": "apple.com",
+        "password": "AppleMgr@2026",
+        "role": "Manager"
+      },
+      "craig federighi": {
+        "name": "Craig Federighi",
+        "domain": "apple.com",
+        "password": "AppleHR@2026",
+        "role": "HR Officer"
+      },
+      "phil schiller": {
+        "name": "Phil Schiller",
+        "domain": "apple.com",
+        "password": "AppleIT@2026",
+        "role": "IT Administrator"
+      }
+    }
+  }
+}

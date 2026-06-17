@@ -187,3 +187,281 @@
     text-wrap: balance;
   }
 }
+
+/* Global Light & Dark Theme Customization to match Landing Page Ink/Lime theme */
+
+/* Light Mode Customizations (when .dark is not active) */
+:root:not(.dark) {
+  /* Main background gradient of the dashboard */
+  #workspace_parent {
+    background-image: linear-gradient(to bottom right, #fcfcf9, #f9f6f0, #f3ede0) !important;
+    color: oklch(0.18 0.02 250) !important;
+  }
+
+  /* Accent classes (Amber mapped to Medium-Dark Green) */
+  .bg-\[\#d97706\],
+  .bg-amber-600,
+  .bg-amber-500,
+  .bg-amber-700,
+  .bg-primary {
+    background-color: oklch(0.48 0.14 120) !important;
+    color: #ffffff !important;
+  }
+  .hover\:bg-amber-700:hover,
+  .hover\:bg-primary:hover {
+    background-color: oklch(0.42 0.13 120) !important;
+  }
+
+  .text-amber-500,
+  .text-amber-600,
+  .text-primary {
+    color: oklch(0.48 0.14 120) !important;
+  }
+  .text-amber-700,
+  .text-amber-800,
+  .text-amber-805,
+  .text-amber-850,
+  .text-amber-900 {
+    color: #3f6212 !important;
+  }
+  .text-amber-300,
+  .text-amber-400 {
+    color: oklch(0.48 0.14 120 / 80%) !important;
+  }
+  .text-amber-200,
+  .text-amber-100 {
+    color: oklch(0.48 0.14 120 / 60%) !important;
+  }
+
+  /* Translucent backgrounds */
+  .bg-amber-500\/10,
+  .bg-amber-500\/20,
+  .bg-amber-600\/15,
+  .bg-amber-600\/10,
+  .bg-primary\/10,
+  .bg-primary\/20 {
+    background-color: rgba(77, 124, 15, 0.1) !important;
+  }
+  .bg-amber-50,
+  .bg-amber-55 {
+    background-color: #f7fee7 !important;
+    color: #3f6212 !important;
+  }
+
+  /* Borders */
+  .border-amber-500,
+  .border-amber-500\/20,
+  .border-amber-500\/30,
+  .border-amber-250,
+  .border-amber-200,
+  .border-amber-100,
+  .border-primary,
+  .border-primary\/20 {
+    border-color: rgba(77, 124, 15, 0.25) !important;
+  }
+
+  /* Focus states */
+  .focus\:border-amber-600:focus,
+  .focus\:ring-amber-600:focus {
+    border-color: oklch(0.48 0.14 120) !important;
+    --tw-ring-color: rgba(77, 124, 15, 0.2) !important;
+  }
+}
+
+/* Dark Mode Customizations (when .dark is active) */
+.dark {
+  /* Main portal background layout override */
+  #workspace_parent {
+    background-image: linear-gradient(to bottom right, #0f121a, #111520, #0a0c12) !important;
+    color: oklch(0.96 0.02 90) !important;
+  }
+
+  /* Login container background override */
+  #login_container {
+    background-color: #0f121a !important;
+    color: oklch(0.96 0.02 90) !important;
+  }
+
+  /* Specific background overrides */
+  .bg-\[\#FCFAF6\],
+  [class*="bg-[#FCFAF6]"] {
+    background-color: #0f121a !important;
+  }
+
+  /* Card and core panel background override */
+  .bg-white {
+    background-color: #161b26 !important;
+  }
+
+  /* Translucent white panel overrides */
+  .bg-white\/80 {
+    background-color: rgba(22, 27, 38, 0.8) !important;
+  }
+  .bg-white\/90 {
+    background-color: rgba(22, 27, 38, 0.9) !important;
+  }
+  .bg-white\/95 {
+    background-color: rgba(22, 27, 38, 0.95) !important;
+  }
+  .bg-white\/60 {
+    background-color: rgba(22, 27, 38, 0.6) !important;
+  }
+  .bg-white\/70 {
+    background-color: rgba(22, 27, 38, 0.7) !important;
+  }
+
+  /* Light gray panel overrides */
+  .bg-slate-50,
+  .bg-stone-50,
+  .bg-slate-50\/50,
+  .bg-stone-100,
+  .bg-slate-100,
+  .bg-slate-100\/80 {
+    background-color: #1d2433 !important;
+  }
+
+  /* Hover overrides for lists and buttons */
+  .hover\:bg-slate-50:hover,
+  .hover\:bg-stone-50:hover,
+  .hover\:bg-stone-100:hover,
+  .hover\:bg-slate-100:hover,
+  .hover\:bg-slate-800:hover {
+    background-color: #242e42 !important;
+  }
+
+  /* Border color overrides */
+  .border-stone-200,
+  .border-slate-200,
+  .border-stone-200\/80,
+  .border-slate-200\/80,
+  .border-slate-205,
+  .border-slate-250,
+  .border-slate-100,
+  .border-slate-150,
+  .border-stone-100,
+  .border-amber-100,
+  .border-rose-200,
+  .border-rose-100,
+  .border-emerald-100,
+  .border-indigo-100 {
+    border-color: #222b3d !important;
+  }
+
+  /* Gradient layout rails */
+  header[class*="bg-[linear-gradient"],
+  div[class*="bg-[linear-gradient"] {
+    background-image: linear-gradient(to right, #161b26, #1d2433) !important;
+  }
+
+  /* Forms controls override */
+  input,
+  textarea,
+  select {
+    background-color: #111520 !important;
+    border-color: #222b3d !important;
+    color: #f5f5f4 !important;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #4b5563 !important;
+  }
+
+  /* Typography / prose blocks */
+  .prose {
+    color: #d1d5db !important;
+  }
+  .prose strong {
+    color: #f3f4f6 !important;
+  }
+
+  /* Dark mode Accent overrides (Amber mapped to Neon Lime Green) */
+  .bg-\[\#d97706\],
+  .bg-amber-600,
+  .bg-amber-500,
+  .bg-amber-700,
+  .bg-primary {
+    background-color: oklch(0.86 0.18 120) !important;
+    color: #0b0f19 !important;
+  }
+  .hover\:bg-amber-700:hover,
+  .hover\:bg-primary:hover {
+    background-color: oklch(0.82 0.17 120) !important;
+    color: #0b0f19 !important;
+  }
+
+  .text-amber-500,
+  .text-amber-600,
+  .text-amber-700,
+  .text-amber-800,
+  .text-amber-805,
+  .text-amber-850,
+  .text-amber-900,
+  .text-primary {
+    color: oklch(0.86 0.18 120) !important;
+  }
+  .text-amber-305,
+  .text-amber-300,
+  .text-amber-400 {
+    color: oklch(0.86 0.18 120 / 80%) !important;
+  }
+  .text-amber-200,
+  .text-amber-100 {
+    color: oklch(0.86 0.18 120 / 60%) !important;
+  }
+
+  /* Translucent green backgrounds */
+  .bg-amber-500\/10,
+  .bg-amber-500\/20,
+  .bg-amber-600\/15,
+  .bg-amber-600\/10,
+  .bg-primary\/10,
+  .bg-primary\/20 {
+    background-color: rgba(163, 230, 53, 0.12) !important;
+  }
+  .bg-amber-50,
+  .bg-amber-55 {
+    background-color: rgba(163, 230, 53, 0.15) !important;
+    color: oklch(0.86 0.18 120) !important;
+  }
+
+  /* Border color overrides to soft lime border */
+  .border-amber-500,
+  .border-amber-500\/20,
+  .border-amber-500\/30,
+  .border-amber-250,
+  .border-amber-200,
+  .border-amber-100,
+  .border-primary,
+  .border-primary\/20 {
+    border-color: rgba(163, 230, 53, 0.25) !important;
+  }
+
+  /* Focus states */
+  .focus\:border-amber-600:focus,
+  .focus\:ring-amber-600:focus {
+    border-color: oklch(0.86 0.18 120) !important;
+    --tw-ring-color: rgba(163, 230, 53, 0.2) !important;
+  }
+
+  /* Alert boxes */
+  .bg-rose-50 {
+    background-color: rgba(225, 29, 72, 0.15) !important;
+    color: #fecdd3 !important;
+    border-color: rgba(225, 29, 72, 0.25) !important;
+  }
+  .bg-emerald-50 {
+    background-color: rgba(5, 150, 105, 0.15) !important;
+    color: #a7f3d0 !important;
+    border-color: rgba(5, 150, 105, 0.25) !important;
+  }
+  .bg-indigo-50 {
+    background-color: rgba(79, 70, 229, 0.15) !important;
+    color: #c7d2fe !important;
+    border-color: rgba(79, 70, 229, 0.25) !important;
+  }
+  .bg-blue-50 {
+    background-color: rgba(37, 99, 235, 0.15) !important;
+    color: #bfdbfe !important;
+    border-color: rgba(37, 99, 235, 0.25) !important;
+  }
+}
