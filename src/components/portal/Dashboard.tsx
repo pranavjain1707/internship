@@ -61,7 +61,6 @@ const formatCompanyName = (name?: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
-
 export default function Dashboard({ currentUser, onNavigateToChat, companyName }: DashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);

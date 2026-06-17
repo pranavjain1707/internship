@@ -57,7 +57,6 @@ const formatCompanyName = (name: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
-
 const getDefaultOwnerForCompany = (companyKey: string) => {
   const c = companyKey.toLowerCase().trim();
   if (c === "google") {
