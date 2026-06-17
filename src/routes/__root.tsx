@@ -145,7 +145,7 @@ function SiteHeader() {
           </div>
           <span className="font-display text-xl tracking-tight">EKABA</span>
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground md:inline">
-            v1.0
+            v1.1
           </span>
         </Link>
 

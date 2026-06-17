@@ -48,6 +48,20 @@ interface SearchResult {
   snippet: string;
 }
 
+const formatCompanyName = (name?: string) => {
+  if (!name) return "EKABA";
+  const normalized = name.trim().toLowerCase();
+  if (normalized === "ekaba" || normalized === "ekaba internal") return "EKABA";
+  if (normalized === "acme corp" || normalized === "acme") return "Acme Corp";
+  if (normalized === "google" || normalized === "microsoft" || normalized === "apple") {
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+  return normalized
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 export default function Dashboard({ currentUser, onNavigateToChat, companyName }: DashboardProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
@@ -439,7 +453,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-display font-bold text-amber-55 tracking-tight">
-                Secure {companyName || "EKABA"} Portal: Welcome, {currentUser.name}!
+                Secure {formatCompanyName(companyName)} Portal: Welcome, {currentUser.name}!
               </h1>
               <span className="text-[10px] bg-amber-500/10 text-amber-400 font-mono border border-amber-500/30 px-2.5 py-1 rounded-full uppercase font-bold tracking-widest">
                 {currentUser.role}

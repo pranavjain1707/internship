@@ -44,6 +44,20 @@ const AUTHORIZED_COMPANIES: Record<string, string> = {
   "apple": "AAPL-EKABA-77",
 };
 
+const formatCompanyName = (name: string) => {
+  if (!name) return "EKABA";
+  const normalized = name.trim().toLowerCase();
+  if (normalized === "ekaba" || normalized === "ekaba internal") return "EKABA";
+  if (normalized === "acme corp" || normalized === "acme") return "Acme Corp";
+  if (normalized === "google" || normalized === "microsoft" || normalized === "apple") {
+    return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+  return normalized
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
 const getDefaultOwnerForCompany = (companyKey: string) => {
   const c = companyKey.toLowerCase().trim();
   if (c === "google") {
@@ -1119,7 +1133,7 @@ function PortalPage() {
             </div>
             <div>
               <h1 className="font-display font-bold text-slate-100 text-sm tracking-tight leading-none">
-                {currentCompany || "EKABA"} Portal
+                {formatCompanyName(currentCompany)} Portal
               </h1>
               <span className="text-[9px] font-mono font-medium text-slate-500 uppercase tracking-wider block mt-1">
                 EKABA RAG Assistant
