@@ -31,6 +31,8 @@ import ChatInterface from "../components/portal/ChatInterface";
 import DocumentCenter from "../components/portal/DocumentCenter";
 import AdminPanel from "../components/portal/AdminPanel";
 import ProfileSettings from "../components/portal/ProfileSettings";
+import { isSupabaseConfigured } from "../lib/supabase";
+
 
 // ==========================================
 // 1. Full Page SSO Login Screen component
@@ -279,7 +281,8 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       })
       .then((backendDb) => {
         const localDb = getStoredUsers(verifiedCompany);
-        const merged = { ...localDb, ...backendDb };
+        // Overwrite local credentials db if Supabase is active to support deletes properly
+        const merged = isSupabaseConfigured ? backendDb : { ...localDb, ...backendDb };
         saveStoredUsers(merged, verifiedCompany);
       })
       .catch((err) => console.error("Database sync inactive or pending sync:", err));
@@ -304,6 +307,18 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     try {
       kickedUsers = JSON.parse(kickedUsersStr);
     } catch (e) {}
+
+    // When connected to Supabase, we do not want to auto-create mock users locally
+    if (isSupabaseConfigured) {
+      if (data) {
+        try {
+          return JSON.parse(data);
+        } catch (e) {
+          return {};
+        }
+      }
+      return {};
+    }
 
     if (data) {
       try {
