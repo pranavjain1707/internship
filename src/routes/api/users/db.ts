@@ -18,8 +18,9 @@ export const Route = createFileRoute("/api/users/db")({
             
             if (error) throw error;
 
-            const credentialsDb: Record<string, any> = {};
-            if (data) {
+            // If Supabase returned rows, build and return the credentials map
+            if (data && data.length > 0) {
+              const credentialsDb: Record<string, any> = {};
               for (const u of data) {
                 credentialsDb[u.name.toLowerCase().trim()] = {
                   name: u.name,
@@ -29,10 +30,12 @@ export const Route = createFileRoute("/api/users/db")({
                   email: u.email,
                 };
               }
+              return new Response(JSON.stringify(credentialsDb), {
+                headers: { "Content-Type": "application/json" },
+              });
             }
-            return new Response(JSON.stringify(credentialsDb), {
-              headers: { "Content-Type": "application/json" },
-            });
+            // data is empty array — RLS blocking SELECT, fall through to local DB
+            console.warn("Supabase returned 0 users (possible RLS policy block), using local DB fallback.");
           } catch (err) {
             console.error("Supabase credentials fetch failed, falling back:", err);
           }

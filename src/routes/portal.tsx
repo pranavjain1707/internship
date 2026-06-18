@@ -308,18 +308,6 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       kickedUsers = JSON.parse(kickedUsersStr);
     } catch (e) {}
 
-    // When connected to Supabase, we do not want to auto-create mock users locally
-    if (isSupabaseConfigured) {
-      if (data) {
-        try {
-          return JSON.parse(data);
-        } catch (e) {
-          return {};
-        }
-      }
-      return {};
-    }
-
     if (data) {
       try {
         const parsed = JSON.parse(data);
@@ -490,25 +478,28 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     };
 
     // Always fetch latest user DB from the server API at login time.
-    // This prevents stale localStorage causing registered users to be treated as new.
-    // Server-side always has access to env vars at runtime, even if VITE_* vars
-    // were not baked into the frontend bundle during build time.
+    // Server-side always has access to env vars at runtime.
     const compKey = verifiedCompany.trim().toLowerCase() || "ekaba";
     fetch(`/api/users/db?company=${encodeURIComponent(compKey)}`)
       .then((res) => {
         if (res.ok) return res.json();
         throw new Error("DB fetch failed");
       })
-      .then((backendDb) => {
-        // Merge server db with local (server takes priority for existing keys)
+      .then((backendDb: Record<string, StoredUser>) => {
+        // Get defaults/localStorage as the seed base
         const localDb = getStoredUsers();
-        const merged = { ...localDb, ...backendDb };
+        // Supabase data takes priority over defaults for existing keys,
+        // but only if backendDb has entries (non-empty = Supabase working).
+        // If backendDb is empty (RLS blocking), localDb (defaults) are used.
+        const merged = Object.keys(backendDb).length > 0
+          ? { ...localDb, ...backendDb }
+          : localDb;
         saveStoredUsers(merged, verifiedCompany);
         processWithDb(merged);
       })
       .catch(() => {
-        // Fallback to cached localStorage if server API call fails
-        setTimeout(() => processWithDb(getStoredUsers()), 300);
+        // Fallback to defaults/localStorage if server API call fails
+        processWithDb(getStoredUsers());
       });
   };
 
