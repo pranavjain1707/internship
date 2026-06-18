@@ -444,10 +444,9 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
 
-      const db = getStoredUsers();
+    const processWithDb = (db: Record<string, StoredUser>) => {
+      setLoading(false);
       const lowerName = customName.trim().toLowerCase();
 
       if (db[lowerName]) {
@@ -467,7 +466,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           // Email matches! Require password verification
           setIsEmailMismatch(false);
           setPasswordMode("enter");
-          setSelectedRole(registered.role);
+          setSelectedRole(registered.role as UserRole);
           setCustomDomain(registered.domain);
           setPassword("");
           setStep("password");
@@ -488,7 +487,29 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           setSelectedApproverKey("");
         }
       }
-    }, 700);
+    };
+
+    // When Supabase is configured, always fetch the latest user DB from the server
+    // to avoid stale localStorage causing registered users to be treated as new
+    if (isSupabaseConfigured) {
+      const compKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+      fetch(`/api/users/db?company=${encodeURIComponent(compKey)}`)
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("DB fetch failed");
+        })
+        .then((backendDb) => {
+          // Sync to localStorage so future calls are fast
+          saveStoredUsers(backendDb, verifiedCompany);
+          processWithDb(backendDb);
+        })
+        .catch(() => {
+          // Fallback to cached localStorage on error
+          processWithDb(getStoredUsers());
+        });
+    } else {
+      setTimeout(() => processWithDb(getStoredUsers()), 700);
+    }
   };
 
   const handleSendEmailResetRequest = (e: React.FormEvent) => {
