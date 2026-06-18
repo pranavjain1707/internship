@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getCompanyUsers, getCompanyUsersDb, persistDb } from "../../../server/db";
 import { User, UserRole } from "../../../types";
-
+import { supabase, isSupabaseConfigured } from "../../../lib/supabase";
 
 export const Route = createFileRoute("/api/users/register")({
   server: {
@@ -21,8 +21,41 @@ export const Route = createFileRoute("/api/users/register")({
             );
           }
 
-          // Check if user already exists
+          // Check if user already exists locally for matching fallback status
           const existingIndex = usersList.findIndex((u) => u.id === id);
+
+          if (isSupabaseConfigured) {
+            try {
+              const { data, error } = await supabase
+                .from("users")
+                .upsert({
+                  id,
+                  name,
+                  email,
+                  role,
+                  avatar: avatar || "EE",
+                  password: password || "Password@123",
+                  domain: domain || (email.includes("@") ? email.split("@")[1] : "enterprise.com"),
+                  company: companyKey.toLowerCase().trim(),
+                })
+                .select()
+                .single();
+
+              if (error) throw error;
+
+              return new Response(
+                JSON.stringify({
+                  success: true,
+                  message: existingIndex !== -1 ? "User updated in database." : "User registered in database.",
+                  user: data,
+                }),
+                { headers: { "Content-Type": "application/json" } },
+              );
+            } catch (err) {
+              console.error("Supabase user register failed, falling back:", err);
+            }
+          }
+
           if (existingIndex !== -1) {
             const oldName = usersList[existingIndex].name;
             const oldKey = oldName.toLowerCase().trim();

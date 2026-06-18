@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getCompanyUsers, getCompanyUsersDb, persistDb } from "../../../server/db";
+import { supabase, isSupabaseConfigured } from "../../../lib/supabase";
 
 export const Route = createFileRoute("/api/users/kick")({
   server: {
@@ -17,6 +18,44 @@ export const Route = createFileRoute("/api/users/kick")({
               status: 400,
               headers: { "Content-Type": "application/json" },
             });
+          }
+
+          if (isSupabaseConfigured) {
+            try {
+              // 1. Fetch user to verify they are not the Owner
+              const { data: userProfile, error: fetchErr } = await supabase
+                .from("users")
+                .select("role, name")
+                .eq("id", userId)
+                .eq("company", companyKey.toLowerCase().trim())
+                .single();
+
+              if (userProfile && userProfile.role === "Owner") {
+                return new Response(JSON.stringify({ error: "Owner cannot be kicked." }), {
+                  status: 400,
+                  headers: { "Content-Type": "application/json" },
+                });
+              }
+
+              // 2. Perform deletion in Supabase
+              const { error } = await supabase
+                .from("users")
+                .delete()
+                .eq("id", userId)
+                .eq("company", companyKey.toLowerCase().trim());
+              
+              if (error) throw error;
+
+              return new Response(
+                JSON.stringify({
+                  success: true,
+                  message: `Successfully kicked user ${userProfile?.name || userId} from Supabase`,
+                }),
+                { headers: { "Content-Type": "application/json" } },
+              );
+            } catch (err) {
+              console.error("Supabase user delete failed, falling back:", err);
+            }
           }
 
           const index = usersList.findIndex((u) => u.id === userId);
