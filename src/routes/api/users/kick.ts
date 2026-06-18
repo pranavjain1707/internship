@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getCompanyUsers, getCompanyUsersDb, persistDb } from "../../../server/db";
 import { supabase, isSupabaseConfigured } from "../../../lib/supabase";
 
+// Deploys kick/termination endpoint linked to Supabase database
 export const Route = createFileRoute("/api/users/kick")({
   server: {
     handlers: {
