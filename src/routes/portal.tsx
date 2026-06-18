@@ -489,27 +489,27 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       }
     };
 
-    // When Supabase is configured, always fetch the latest user DB from the server
-    // to avoid stale localStorage causing registered users to be treated as new
-    if (isSupabaseConfigured) {
-      const compKey = verifiedCompany.trim().toLowerCase() || "ekaba";
-      fetch(`/api/users/db?company=${encodeURIComponent(compKey)}`)
-        .then((res) => {
-          if (res.ok) return res.json();
-          throw new Error("DB fetch failed");
-        })
-        .then((backendDb) => {
-          // Sync to localStorage so future calls are fast
-          saveStoredUsers(backendDb, verifiedCompany);
-          processWithDb(backendDb);
-        })
-        .catch(() => {
-          // Fallback to cached localStorage on error
-          processWithDb(getStoredUsers());
-        });
-    } else {
-      setTimeout(() => processWithDb(getStoredUsers()), 700);
-    }
+    // Always fetch latest user DB from the server API at login time.
+    // This prevents stale localStorage causing registered users to be treated as new.
+    // Server-side always has access to env vars at runtime, even if VITE_* vars
+    // were not baked into the frontend bundle during build time.
+    const compKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+    fetch(`/api/users/db?company=${encodeURIComponent(compKey)}`)
+      .then((res) => {
+        if (res.ok) return res.json();
+        throw new Error("DB fetch failed");
+      })
+      .then((backendDb) => {
+        // Merge server db with local (server takes priority for existing keys)
+        const localDb = getStoredUsers();
+        const merged = { ...localDb, ...backendDb };
+        saveStoredUsers(merged, verifiedCompany);
+        processWithDb(merged);
+      })
+      .catch(() => {
+        // Fallback to cached localStorage if server API call fails
+        setTimeout(() => processWithDb(getStoredUsers()), 300);
+      });
   };
 
   const handleSendEmailResetRequest = (e: React.FormEvent) => {
