@@ -95,6 +95,64 @@ CREATE INDEX idx_citations_query_id ON citations(query_id);
 CREATE INDEX idx_pending_approvals_status ON pending_approvals(status);
 
 -- =========================================================================
+-- 3b. ROW LEVEL SECURITY (RLS) POLICIES
+-- =========================================================================
+-- IMPORTANT: By default Supabase enables RLS which blocks all reads/writes.
+-- Run these policies in your Supabase SQL editor to allow the app to work.
+-- The app uses the anon key for all operations, so all operations must be
+-- permitted via policies.
+
+-- Option A: Enable RLS with permissive policies (recommended for production)
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE query_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE citations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pending_approvals ENABLE ROW LEVEL SECURITY;
+
+-- Users table: allow full access via anon key
+CREATE POLICY "Allow public select on users" ON users FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on users" ON users FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update on users" ON users FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete on users" ON users FOR DELETE USING (true);
+
+-- Documents table: allow full access
+CREATE POLICY "Allow public select on documents" ON documents FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on documents" ON documents FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update on documents" ON documents FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete on documents" ON documents FOR DELETE USING (true);
+
+-- Query logs: allow full access
+CREATE POLICY "Allow public select on query_logs" ON query_logs FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on query_logs" ON query_logs FOR INSERT WITH CHECK (true);
+
+-- Citations: allow full access
+CREATE POLICY "Allow public select on citations" ON citations FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on citations" ON citations FOR INSERT WITH CHECK (true);
+
+-- Feedback: allow full access
+CREATE POLICY "Allow public select on feedback" ON feedback FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on feedback" ON feedback FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update on feedback" ON feedback FOR UPDATE USING (true);
+
+-- Pending approvals: allow full access
+CREATE POLICY "Allow public select on pending_approvals" ON pending_approvals FOR SELECT USING (true);
+CREATE POLICY "Allow public insert on pending_approvals" ON pending_approvals FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update on pending_approvals" ON pending_approvals FOR UPDATE USING (true);
+CREATE POLICY "Allow public delete on pending_approvals" ON pending_approvals FOR DELETE USING (true);
+
+-- Option B (simpler, less secure): Disable RLS entirely for all tables
+-- Run this INSTEAD of Option A if you just want things to work quickly:
+-- ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE documents DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE query_logs DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE citations DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE feedback DISABLE ROW LEVEL SECURITY;
+-- ALTER TABLE pending_approvals DISABLE ROW LEVEL SECURITY;
+
+
+
+-- =========================================================================
 -- 4. SEED DATA GENERATION
 -- =========================================================================
 
