@@ -125,7 +125,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole>("Employee");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [step, setStep] = useState<"company_verification" | "credentials" | "permission" | "pending_approval" | "password">(
+  const [step, setStep] = useState<"company_verification" | "credentials" | "permission" | "pending_approval" | "password" | "email_reset" | "pending_email_reset">(
     "company_verification",
   );
   const [companyName, setCompanyName] = useState("");
@@ -182,48 +182,85 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   // Custom SSO Profile States
   const [customName, setCustomName] = useState("");
   const [customDomain, setCustomDomain] = useState("");
+  const [customEmail, setCustomEmail] = useState("");
+  const [isEmailMismatch, setIsEmailMismatch] = useState(false);
 
   // Sponsoring Authority Approval States for new users
   const [sponsorInfo, setSponsorInfo] = useState("");
 
   // Local storage check for dynamic request approvals
   useEffect(() => {
-    if (step !== "pending_approval") return;
+    if (step !== "pending_approval" && step !== "pending_email_reset") return;
 
     const interval = setInterval(() => {
       const pollCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
-      const approvalsStr = localStorage.getItem(`kb_portal_pending_approvals_${pollCompKey}`);
-      if (approvalsStr) {
-        try {
-          const approvals: PendingApprovalRequest[] = JSON.parse(approvalsStr);
-          const myReq = approvals.find(
-            (req) => req.name.toLowerCase() === customName.trim().toLowerCase(),
-          );
-          if (myReq && myReq.status === "approved") {
-            setSponsorInfo(`Approved by ${myReq.approvedBy || myReq.sponsorName}`);
-            setPasswordMode("create");
-            setPassword("");
-            setStep("password");
 
-            // Clean up request once processed
-            const updated = approvals.filter(
-              (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
+      if (step === "pending_approval") {
+        const approvalsStr = localStorage.getItem(`kb_portal_pending_approvals_${pollCompKey}`);
+        if (approvalsStr) {
+          try {
+            const approvals: PendingApprovalRequest[] = JSON.parse(approvalsStr);
+            const myReq = approvals.find(
+              (req) => req.name.toLowerCase() === customName.trim().toLowerCase(),
             );
-            localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
-          } else if (myReq && myReq.status === "rejected") {
-            setError(
-              `Your clearance request has been rejected by ${myReq.approvedBy || myReq.sponsorName}.`,
-            );
-            setStep("credentials");
+            if (myReq && myReq.status === "approved") {
+              setSponsorInfo(`Approved by ${myReq.approvedBy || myReq.sponsorName}`);
+              setPasswordMode("create");
+              setPassword("");
+              setStep("password");
 
-            // Clean up request
-            const updated = approvals.filter(
-              (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
-            );
-            localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
+              // Clean up request once processed
+              const updated = approvals.filter(
+                (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
+              );
+              localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
+            } else if (myReq && myReq.status === "rejected") {
+              setError(
+                `Your clearance request has been rejected by ${myReq.approvedBy || myReq.sponsorName}.`,
+              );
+              setStep("credentials");
+
+              // Clean up request
+              const updated = approvals.filter(
+                (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
+              );
+              localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
+            }
+          } catch (err) {
+            console.error("Error reading approvals during poll:", err);
           }
-        } catch (err) {
-          console.error("Error reading approvals during poll:", err);
+        }
+      } else if (step === "pending_email_reset") {
+        const profileStr = localStorage.getItem(`kb_portal_pending_profile_reqs_${pollCompKey}`);
+        if (profileStr) {
+          try {
+            const profileReqs: PendingProfileRequest[] = JSON.parse(profileStr);
+            const myReq = profileReqs.find(
+              (req) => req.userName.toLowerCase() === customName.trim().toLowerCase() && req.status !== "pending",
+            );
+            if (myReq) {
+              if (myReq.status === "approved") {
+                // Success: the email was updated in the DB
+                setCustomEmail(myReq.requestedEmail);
+                setError("");
+                
+                // Show notification and transition directly to entering password
+                setSponsorInfo(`Email reset approved by ${myReq.approvedBy || myReq.sponsorName}`);
+                setPasswordMode("enter");
+                setPassword("");
+                setStep("password");
+              } else if (myReq.status === "rejected") {
+                setError(`Your email reset request was rejected by ${myReq.approvedBy || myReq.sponsorName}.`);
+                setStep("credentials");
+              }
+
+              // Remove request from pending queue
+              const updated = profileReqs.filter((r) => r.id !== myReq.id);
+              localStorage.setItem(`kb_portal_pending_profile_reqs_${pollCompKey}`, JSON.stringify(updated));
+            }
+          } catch (err) {
+            console.error("Error reading profile requests during poll:", err);
+          }
         }
       }
     }, 1500);
@@ -254,6 +291,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     domain: string;
     password: string;
     role: UserRole;
+    email?: string;
   }
 
   const getStoredUsers = (compName = verifiedCompany): Record<string, StoredUser> => {
@@ -282,12 +320,14 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               domain: defaultOwner.domain,
               password: defaultOwner.password,
               role: "Owner",
+              email: "jainpranav1707@gmail.com",
             };
             changed = true;
           } else {
             parsed[ownerKey].password = defaultOwner.password;
             parsed[ownerKey].role = "Owner";
             parsed[ownerKey].domain = defaultOwner.domain;
+            parsed[ownerKey].email = "jainpranav1707@gmail.com";
           }
         }
 
@@ -303,11 +343,13 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             continue;
           }
           if (!parsed[userKey]) {
+            const dynamicEmail = u.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + u.domain;
             parsed[userKey] = {
               name: u.name,
               domain: u.domain,
               password: u.password,
               role: u.role,
+              email: dynamicEmail,
             };
             changed = true;
           }
@@ -333,6 +375,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         domain: defaultOwner.domain,
         password: defaultOwner.password,
         role: "Owner",
+        email: "jainpranav1707@gmail.com",
       };
     }
 
@@ -340,11 +383,13 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     for (const u of defaultUsers) {
       const userKey = u.name.toLowerCase();
       if (kickedUsers.includes(userKey)) continue;
+      const dynamicEmail = u.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + u.domain;
       initialDb[userKey] = {
         name: u.name,
         domain: u.domain,
         password: u.password,
         role: u.role,
+        email: dynamicEmail,
       };
     }
     localStorage.setItem(`kb_portal_users_db_${storedUsersCompKey}`, JSON.stringify(initialDb));
@@ -375,8 +420,8 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
   const handleSendCredentials = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customDomain || !customDomain.includes(".")) {
-      setError("Please provide a valid corporate domain (e.g. enterprise.com).");
+    if (!customEmail || !customEmail.includes("@") || !customEmail.includes(".")) {
+      setError("Please provide a valid corporate email (e.g. employee@company.com).");
       return;
     }
     if (!customName.trim()) {
@@ -391,15 +436,35 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       const lowerName = customName.trim().toLowerCase();
 
       if (db[lowerName]) {
-        // Existing registered user - require verification password
-        setPasswordMode("enter");
-        // Synchronize and update current role and domain to match their profile registration
-        setSelectedRole(db[lowerName].role);
-        setCustomDomain(db[lowerName].domain);
-        setPassword("");
-        setStep("password");
+        // Existing registered user
+        const registered = db[lowerName];
+        
+        // Calculate the expected email for this user
+        const expectedEmail = registered.email || (
+          registered.name.toLowerCase() === "pranav jain"
+            ? "jainpranav1707@gmail.com"
+            : registered.domain.includes("@")
+              ? registered.domain
+              : registered.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + registered.domain
+        );
+
+        if (customEmail.trim().toLowerCase() === expectedEmail.toLowerCase()) {
+          // Email matches! Require password verification
+          setIsEmailMismatch(false);
+          setPasswordMode("enter");
+          setSelectedRole(registered.role);
+          setCustomDomain(registered.domain);
+          setPassword("");
+          setStep("password");
+        } else {
+          // Email mismatch! Show warning and button to reset email
+          setIsEmailMismatch(true);
+          setError(`Email address does not match the registered record for "${registered.name}". Please check the spelling or request an email reset.`);
+        }
       } else {
-        // First-time user registration - MUST get approval from a higher position first!
+        // First-time user registration
+        setIsEmailMismatch(false);
+        setCustomDomain(customEmail.split("@")[1] || "enterprise.com");
         setStep("permission");
         const approvers = getEligibleApprovers(selectedRole);
         if (approvers.length > 0) {
@@ -408,6 +473,58 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           setSelectedApproverKey("");
         }
       }
+    }, 700);
+  };
+
+  const handleSendEmailResetRequest = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customEmail || !customEmail.includes("@") || !customEmail.includes(".")) {
+      setError("Please provide a valid corporate email address (e.g. name@company.com).");
+      return;
+    }
+
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      const db = getStoredUsers();
+      const lowerName = customName.trim().toLowerCase();
+      const userRecord = db[lowerName];
+      if (!userRecord) {
+        setError("User profile not found. Please go back.");
+        return;
+      }
+
+      const approverName = selectedApproverKey.toLowerCase();
+      const approver = db[approverName];
+      const approverFullName = approver ? approver.name : selectedApproverKey;
+
+      const reqCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+      const profileReqs: PendingProfileRequest[] = JSON.parse(
+        localStorage.getItem(`kb_portal_pending_profile_reqs_${reqCompKey}`) || "[]",
+      );
+
+      // Clean up past entries with same name to avoid duplicates
+      const updated = profileReqs.filter(
+        (req) => req.userName.toLowerCase() !== customName.trim().toLowerCase(),
+      );
+
+      const userId = `u-${lowerName.replace(/\s+/g, "-") || Date.now()}`;
+
+      const newRequest: PendingProfileRequest = {
+        id: `req-reset-${Date.now()}`,
+        userId: userId,
+        userName: userRecord.name,
+        requestedEmail: customEmail.trim(),
+        requestedByRole: userRecord.role,
+        sponsorName: approverFullName,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+      };
+
+      updated.push(newRequest);
+      localStorage.setItem(`kb_portal_pending_profile_reqs_${reqCompKey}`, JSON.stringify(updated));
+
+      setStep("pending_email_reset");
     }, 700);
   };
 
@@ -439,7 +556,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       const newRequest: PendingApprovalRequest = {
         id: `req-${Date.now()}`,
         name: customName.trim(),
-        domain: customDomain.trim(),
+        domain: customEmail.trim(),
         role: selectedRole,
         sponsorName: approverFullName,
         status: "pending",
@@ -490,6 +607,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           domain: customDomain.trim(),
           password: password,
           role: selectedRole,
+          email: customEmail.trim(),
         };
         saveStoredUsers(db);
       } else {
@@ -516,11 +634,13 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           .toUpperCase() || "EE";
 
       const constructedEmail =
+        customEmail.trim() || (
         lowerName === "pranav jain"
           ? "jainpranav1707@gmail.com"
           : customDomain.includes("@")
             ? customDomain.trim()
-            : customName.trim().toLowerCase().replace(/\s+/g, ".") + "@" + customDomain.trim();
+            : customName.trim().toLowerCase().replace(/\s+/g, ".") + "@" + customDomain.trim()
+        );
 
       const userId = `u-${lowerName.replace(/\s+/g, "-") || Date.now()}`;
 
@@ -648,13 +768,23 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                         if (matchedUser && role === "Owner") {
                           setCustomName(matchedUser.name);
                           setCustomDomain(matchedUser.domain);
+                          const initialEmail = matchedUser.email || (
+                            matchedUser.name.toLowerCase() === "pranav jain"
+                              ? "jainpranav1707@gmail.com"
+                              : matchedUser.domain.includes("@")
+                                ? matchedUser.domain
+                                : matchedUser.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + matchedUser.domain
+                          );
+                          setCustomEmail(initialEmail);
                         } else {
                           setCustomName("");
                           setCustomDomain("");
+                          setCustomEmail("");
                         }
                       } catch (e) {
                         setCustomName("");
                         setCustomDomain("");
+                        setCustomEmail("");
                       }
                     }}
                     className={`p-2 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
@@ -784,34 +914,29 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                       setCustomName(e.target.value);
                       setError("");
                     }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
                     placeholder={`Enter ${selectedRole.toLowerCase()} name`}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold text-stone-600 font-sans">Domain</label>
+                    <label className="text-xs font-semibold text-stone-600 font-sans">Enter Email Address</label>
                     <span className="text-[9px] text-amber-700 font-mono font-bold uppercase tracking-wider">
-                      Editable Input
+                      Required
                     </span>
                   </div>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-mono text-sm font-semibold">
-                      @
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      value={customDomain}
-                      onChange={(e) => {
-                        setCustomDomain(e.target.value.trim());
-                        setError("");
-                      }}
-                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 pl-9 pr-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
-                      placeholder="enterprise.com"
-                    />
-                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={customEmail}
+                    onChange={(e) => {
+                      setCustomEmail(e.target.value.trim());
+                      setError("");
+                    }}
+                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                    placeholder="e.g. employee@company.com"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -834,6 +959,20 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                   {loading ? "Decrypting SSO Token..." : "Authorize via SSO IDP"}
                   <ArrowRight className="w-4 h-4 text-white" />
                 </button>
+
+                {isEmailMismatch && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setError("");
+                      setStep("email_reset");
+                    }}
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-xl py-3 px-4 font-semibold text-xs transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-[0.98] mt-2"
+                  >
+                    <KeyRound className="w-4.5 h-4.5 text-white animate-pulse" />
+                    <span>Request Email Reset Clearance</span>
+                  </button>
+                )}
               </form>
             ) : step === "permission" ? (
               <form onSubmit={handleVerifyApproval} className="space-y-6">
@@ -951,6 +1090,127 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                     className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
                   >
                     Cancel Registration Request
+                  </button>
+                </div>
+              </div>
+            ) : step === "email_reset" ? (
+              <form onSubmit={handleSendEmailResetRequest} className="space-y-6">
+                <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2 text-stone-700">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-900 uppercase tracking-wide">
+                    <Shield className="w-4 h-4 text-amber-600 animate-pulse" />
+                    Email Reset Sponsoring Required
+                  </div>
+                  <p className="leading-relaxed">
+                    To change the registered email for <strong>{customName}</strong>, an authorized office holder with a higher position must grant SSO verification inside their system dashboard.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-stone-600 block">New Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    value={customEmail}
+                    onChange={(e) => {
+                      setCustomEmail(e.target.value.trim());
+                      setError("");
+                    }}
+                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                    placeholder="Enter new email address"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-stone-600 block">
+                    Sponsoring Authority (Upper Post)
+                  </label>
+                  {getEligibleApprovers(selectedRole).length === 0 ? (
+                    <div className="bg-stone-100 border border-stone-200 rounded-xl p-3 text-xs text-stone-500 font-medium font-mono uppercase">
+                      Pranav Jain (Owner) override applies.
+                    </div>
+                  ) : (
+                    <select
+                      value={selectedApproverKey}
+                      onChange={(e) => {
+                        setSelectedApproverKey(e.target.value);
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-3 text-xs text-stone-850 font-semibold focus:outline-none transition-all shadow-inner"
+                    >
+                      {getEligibleApprovers(selectedRole).map((user) => (
+                        <option key={user.name.toLowerCase()} value={user.name.toLowerCase()}>
+                          {user.name} ({user.role})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStep("credentials");
+                      setError("");
+                    }}
+                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-550 transition-colors cursor-pointer"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
+                  >
+                    {loading ? "Routing Request..." : "Request Reset"}
+                  </button>
+                </div>
+              </form>
+            ) : step === "pending_email_reset" ? (
+              <div className="space-y-6">
+                <div className="bg-amber-50/55 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 animate-subtle-pulse">
+                  <div className="relative">
+                    <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+                    <Shield className="w-5 h-5 text-amber-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-bold text-stone-800 font-display tracking-wide">
+                      Email Reset Clearance Dispatcher
+                    </h3>
+                    <p className="inline-block text-[9px] font-mono text-amber-700 font-bold uppercase tracking-widest bg-amber-100/50 border border-amber-200 px-2 py-0.5 rounded">
+                      Awaiting Upper Post Sign-Off
+                    </p>
+                  </div>
+
+                  <p className="text-stone-600 text-xs leading-relaxed max-w-sm">
+                    An authorization request to update the email address of <strong className="text-stone-850">{customName}</strong> to <strong className="text-stone-850">{customEmail}</strong> is being processed. Sponsoring clearance is required.
+                  </p>
+
+                  <div className="border-t border-amber-200/50 pt-3 w-full font-mono text-[9px] text-amber-700 space-y-1">
+                    <div>CHANNEL STATUS: ACTIVE SECURE POLLING (1.5s)</div>
+                    <div>SPONSORING AUTHORITY: {selectedApproverKey.toUpperCase()}</div>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cancelCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+                      const profileReqs: PendingProfileRequest[] = JSON.parse(
+                        localStorage.getItem(`kb_portal_pending_profile_reqs_${cancelCompKey}`) || "[]",
+                      );
+                      const updated = profileReqs.filter(
+                        (req) => req.userName.toLowerCase() !== customName.trim().toLowerCase(),
+                      );
+                      localStorage.setItem(`kb_portal_pending_profile_reqs_${cancelCompKey}`, JSON.stringify(updated));
+                      setStep("credentials");
+                      setError("");
+                    }}
+                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
+                  >
+                    Cancel Reset Request
                   </button>
                 </div>
               </div>

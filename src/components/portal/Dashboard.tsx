@@ -190,6 +190,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
               const updatedRecord = {
                 ...oldRecord,
                 name: req.requestedName || oldRecord.name,
+                email: req.requestedEmail,
                 domain: req.requestedEmail.includes("@")
                   ? req.requestedEmail.split("@")[1]
                   : oldRecord.domain,
