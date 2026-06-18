@@ -208,7 +208,11 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
               });
               await fetchUsers();
             } else {
-              setNotice({ type: "error", text: "Failed to kick user from backend storage." });
+              const errData = await res.json().catch(() => ({}));
+              setNotice({
+                type: "error",
+                text: errData.error || "Failed to kick user from backend storage.",
+              });
             }
           } catch (err) {
             console.error(err);

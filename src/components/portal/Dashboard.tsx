@@ -274,11 +274,16 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
           req.status = "approved";
 
           // 1. Kick on backend
-          await fetch("/api/users/kick", {
+          const res = await fetch("/api/users/kick", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userId: req.targetUserId, company: compKey }),
           });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || "Failed to kick user from backend storage");
+          }
 
           // 2. Clear credentials in localStorage
           const dbStr = localStorage.getItem(`kb_portal_users_db_${compKey}`);
@@ -308,6 +313,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
       }
     } catch (err) {
       console.error("Error approving kick authorization:", err);
+      alert(err instanceof Error ? err.message : "Error approving kick authorization");
     }
   };
 
