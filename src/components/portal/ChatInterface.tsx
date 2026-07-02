@@ -17,13 +17,42 @@ import {
   RefreshCw,
   X,
   ChevronRight,
+  Globe,
 } from "lucide-react";
+
+const LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "hi", label: "हिन्दी (Hindi)" },
+  { code: "bn", label: "বাংলা (Bengali)" },
+  { code: "te", label: "తెలుగు (Telugu)" },
+  { code: "mr", label: "मराठी (Marathi)" },
+  { code: "ta", label: "தமிழ் (Tamil)" },
+  { code: "ur", label: "اردو (Urdu)" },
+  { code: "gu", label: "ગુજરાતી (Gujarati)" },
+  { code: "kn", label: "ಕನ್ನಡ (Kannada)" },
+  { code: "ml", label: "മലയാളം (Malayalam)" },
+  { code: "or", label: "ଓଡ଼ିଆ (Odia)" },
+  { code: "pa", label: "ਪੰਜਾਬੀ (Punjabi)" },
+  { code: "as", label: "অসমীয়া (Assamese)" },
+  { code: "mai", label: "मैथिली (Maithili)" },
+  { code: "sa", label: "संस्कृतम् (Sanskrit)" },
+  { code: "kok", label: "कोंकणी (Konkani)" },
+  { code: "ne", label: "नेपाली (Nepali)" },
+  { code: "doi", label: "डोगरी (Dogri)" },
+  { code: "ks", label: "कॉशुर (Kashmiri)" },
+  { code: "mni", label: "মৈতৈলোন্ (Manipuri)" },
+  { code: "sat", label: "ᱥᱟᱱᱛᱟᱲᱤ (Santali)" },
+  { code: "sd", label: "سنڌي (Sindhi)" },
+  { code: "brx", label: "बड़ो (Bodo)" },
+];
 import { Citation, QueryLog, User } from "../../types";
+import { logUserActivity } from "../../lib/activity-client";
 
 interface ChatInterfaceProps {
   currentUser: User;
   initialQuery?: string;
   onClearInitialQuery?: () => void;
+  companyName?: string;
 }
 
 interface Message {
@@ -40,6 +69,7 @@ export default function ChatInterface({
   currentUser,
   initialQuery,
   onClearInitialQuery,
+  companyName,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -51,6 +81,7 @@ export default function ChatInterface({
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
 
   // Feedback States
   const [feedbackPromptOpen, setFeedbackPromptOpen] = useState(false);
@@ -103,6 +134,7 @@ export default function ChatInterface({
 
     setMessages((prev) => [...prev, userMsg]);
     setIsGenerating(true);
+    logUserActivity(currentUser.id, currentUser.name, `Submitted RAG query: "${rawText}"`);
 
     try {
       const res = await fetch("/api/chat", {
@@ -115,6 +147,8 @@ export default function ChatInterface({
           userId: currentUser.id,
           userRole: currentUser.role,
           userName: currentUser.name,
+          language: selectedLanguage,
+          company: companyName || "ekaba",
         }),
       });
 
@@ -160,6 +194,7 @@ export default function ChatInterface({
     setFeedbackQueryId(queryId);
     setFeedbackComment("");
     setFeedbackPromptOpen(true);
+    logUserActivity(currentUser.id, currentUser.name, `Submitted query feedback rating: ${rating.toUpperCase()}`);
 
     // Optimistic state update in UI
     setMessages((prev) =>
@@ -236,7 +271,7 @@ export default function ChatInterface({
             </div>
             <div>
               <h2 className="font-display font-bold text-slate-800 text-sm">
-                EKABA Conversational RAG
+                माँ (Conversational Agent)
               </h2>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -246,8 +281,27 @@ export default function ChatInterface({
               </div>
             </div>
           </div>
-          <div className="text-[11px] font-mono text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 hidden sm:block">
-            AUTHENTICATED: {currentUser.role}
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <div className="flex items-center gap-1.5 bg-slate-100 border border-slate-200 rounded-lg px-2.5 py-1.5">
+                <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                <select
+                  value={selectedLanguage}
+                  onChange={(e) => setSelectedLanguage(e.target.value)}
+                  className="bg-transparent text-[11px] font-semibold text-slate-700 focus:outline-none cursor-pointer appearance-none pr-4"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center' }}
+                >
+                  {LANGUAGES.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="text-[11px] font-mono text-slate-400 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 hidden sm:block">
+              AUTHENTICATED: {currentUser.role}
+            </div>
           </div>
         </div>
 

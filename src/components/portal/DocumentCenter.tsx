@@ -17,14 +17,19 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
+  Download,
+  Shield,
 } from "lucide-react";
 import { Document, User } from "../../types";
+import { logUserActivity } from "../../lib/activity-client";
 
 interface DocumentCenterProps {
   currentUser: User;
+  triggerUndo: (message: string, onUndo: () => void, onConfirm?: () => void) => void;
+  companyName?: string;
 }
 
-export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
+export default function DocumentCenter({ currentUser, triggerUndo, companyName }: DocumentCenterProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -40,10 +45,160 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
   // Preview Drawer/Modal
   const [activePreviewDoc, setActivePreviewDoc] = useState<Document | null>(null);
 
+  const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
+
+  const [companyUsersList, setCompanyUsersList] = useState<User[]>([]);
+  const [downloadRequestDoc, setDownloadRequestDoc] = useState<Document | null>(null);
+  const [selectedSponsor, setSelectedSponsor] = useState("");
+  const [downloadRequestsList, setDownloadRequestsList] = useState<any[]>([]);
+
+  const fetchDownloadRequestsLocal = () => {
+    const compKey = (companyName || "ekaba").trim().toLowerCase();
+    const str = localStorage.getItem(`kb_portal_download_requests_${compKey}`);
+    if (str) {
+      try {
+        setDownloadRequestsList(JSON.parse(str));
+      } catch (e) {}
+    }
+  };
+
+  useEffect(() => {
+    fetchDownloadRequestsLocal();
+    const interval = setInterval(fetchDownloadRequestsLocal, 1500);
+    return () => clearInterval(interval);
+  }, [companyName]);
+
+  useEffect(() => {
+    fetch(`/api/users?company=${encodeURIComponent(companyName || "ekaba")}`)
+      .then((res) => {
+        if (res.ok) return res.json();
+        return [];
+      })
+      .then((data) => {
+        setCompanyUsersList(data.filter((u: User) => u.role === "Owner" || u.role === "Manager"));
+      })
+      .catch((err) => console.error("Error loading users for download sponsor:", err));
+  }, [companyName]);
+
+  const handleDownloadPDF = async (doc: Document) => {
+    // Owner is bypass / can do what he wants
+    if (currentUser.role === "Owner") {
+      performDownload(doc);
+      return;
+    }
+
+    // Check if there is an approved request
+    const myRequest = downloadRequestsList.find(
+      (r) => r.documentId === doc.id && r.requestedBy === currentUser.name
+    );
+
+    if (myRequest && myRequest.status === "approved") {
+      performDownload(doc);
+      return;
+    }
+
+    if (myRequest && myRequest.status === "pending") {
+      alert(`Download permission is currently PENDING review by ${myRequest.sponsorName || 'upper authorities'}.`);
+      return;
+    }
+
+    if (myRequest && myRequest.status === "rejected") {
+      alert("Download permission was REJECTED by upper authorities. You can submit another request.");
+    }
+
+    // Open request modal
+    setDownloadRequestDoc(doc);
+    if (companyUsersList.length > 0) {
+      setSelectedSponsor(companyUsersList[0].name);
+    }
+  };
+
+  const performDownload = async (doc: Document) => {
+    setDownloadingDocId(doc.id);
+    
+    // Simulate compilation/loading phase
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      setDownloadingDocId(null);
+      return;
+    }
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${doc.name}</title>
+          <style>
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+              padding: 40px;
+              color: #1e293b;
+              line-height: 1.6;
+            }
+            .header {
+              border-bottom: 2px solid #e2e8f0;
+              padding-bottom: 20px;
+              margin-bottom: 20px;
+            }
+            .title {
+              font-size: 24px;
+              font-weight: bold;
+              margin: 0;
+              color: #0f172a;
+            }
+            .meta {
+              font-size: 11px;
+              color: #64748b;
+              margin-top: 8px;
+              font-family: monospace;
+            }
+            .content {
+              font-size: 13px;
+              white-space: pre-wrap;
+              background: #f8fafc;
+              padding: 20px;
+              border: 1px solid #e2e8f0;
+              border-radius: 8px;
+              margin-top: 20px;
+            }
+            .footer {
+              margin-top: 40px;
+              font-size: 9px;
+              color: #94a3b8;
+              border-top: 1px solid #e2e8f0;
+              padding-top: 10px;
+              text-align: center;
+              font-family: monospace;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">${doc.name}</div>
+            <div class="meta">Category: ${doc.category} | File Type: ${doc.fileType.toUpperCase()} | Size: ${doc.size} | Upload Date: ${doc.dateUploaded}</div>
+          </div>
+          <div class="content">${doc.content}</div>
+          <div class="footer">
+            Generated from EKABA Knowledge Base Portal on ${new Date().toLocaleDateString()}
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    setDownloadingDocId(null);
+  };
+
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/documents");
+      const res = await fetch(`/api/documents?company=${encodeURIComponent(companyName || "ekaba")}`);
       if (res.ok) {
         const data = await res.json();
         setDocuments(data);
@@ -53,6 +208,29 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteDoc = (docToDelete: Document) => {
+    if (currentUser.role !== "Owner") return;
+    // 1. Optimistically remove from frontend UI list
+    setDocuments((prev) => prev.filter((d) => d.id !== docToDelete.id));
+
+    // 2. Log activity
+    logUserActivity(currentUser.id, currentUser.name, `Deleted document "${docToDelete.name}"`);
+
+    // 3. Trigger 3-second undo
+    triggerUndo(
+      `Deleted document "${docToDelete.name}"`,
+      () => {
+        // Revert UI removal and log
+        setDocuments((prev) => [...prev, docToDelete].sort((a, b) => a.name.localeCompare(b.name)));
+        logUserActivity(currentUser.id, currentUser.name, `Undid deletion of "${docToDelete.name}"`);
+      },
+      async () => {
+        // Confirmed: perform actual delete
+        await fetch(`/api/documents?id=${docToDelete.id}`, { method: "DELETE" });
+      }
+    );
   };
 
   useEffect(() => {
@@ -143,15 +321,28 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
             content: contentString,
             fileType: extension,
             uploadedBy: currentUser.name,
+            company: companyName || "ekaba",
           }),
         });
 
         if (res.ok) {
+          const newDoc = await res.json();
           setUploadProgress(100);
           setTimeout(() => {
             setUploadSuccess(true);
             setUploadProgress(null);
             fetchDocuments();
+
+            // Log activity and register undo action
+            logUserActivity(currentUser.id, currentUser.name, `Uploaded document "${file.name}"`);
+            triggerUndo(
+              `Uploaded document "${file.name}"`,
+              async () => {
+                await fetch(`/api/documents?id=${newDoc.id}`, { method: "DELETE" });
+                fetchDocuments();
+                logUserActivity(currentUser.id, currentUser.name, `Undid upload of "${file.name}"`);
+              }
+            );
           }, 300);
         } else {
           throw new Error("Unable to parse document in the repository database.");
@@ -229,11 +420,11 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
               >
                 <div className="space-y-3">
                   <div className="flex justify-between items-start gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
                         <FileText className="w-5 h-5" />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h4
                           className="font-display font-medium text-slate-800 text-sm truncate"
                           title={doc.name}
@@ -245,7 +436,7 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1 rounded-full font-semibold max-w-[130px] truncate">
+                    <span className="text-[10px] bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1 rounded-full font-semibold shrink-0 max-w-[130px] truncate">
                       {doc.category}
                     </span>
                   </div>
@@ -271,6 +462,29 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
                       <Eye className="w-3.5 h-3.5" />
                       <span>Preview</span>
                     </button>
+                    {downloadingDocId === doc.id ? (
+                      <span className="text-emerald-600 flex items-center gap-0.5 font-bold font-mono">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Compiling...</span>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleDownloadPDF(doc)}
+                        className="text-emerald-600 hover:text-emerald-800 hover:underline flex items-center gap-0.5 font-bold cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Download</span>
+                      </button>
+                    )}
+                    {currentUser.role === "Owner" && (
+                      <button
+                        onClick={() => handleDeleteDoc(doc)}
+                        className="text-rose-600 hover:text-rose-800 hover:underline flex items-center gap-0.5 font-bold cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -397,13 +611,33 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                className="text-xs text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-202 font-semibold px-3 py-1.5 rounded-lg transition"
-                onClick={() => setActivePreviewDoc(null)}
-              >
-                Close Preview
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={downloadingDocId === activePreviewDoc.id}
+                  className="text-xs text-white bg-emerald-605 hover:bg-emerald-700 disabled:bg-emerald-500/55 disabled:cursor-not-allowed font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-[0.98]"
+                  onClick={() => handleDownloadPDF(activePreviewDoc)}
+                >
+                  {downloadingDocId === activePreviewDoc.id ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download PDF</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-202 font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer"
+                  onClick={() => setActivePreviewDoc(null)}
+                >
+                  Close Preview
+                </button>
+              </div>
             </div>
 
             {/* Modal Content Scroll Container */}
@@ -423,6 +657,95 @@ export default function DocumentCenter({ currentUser }: DocumentCenterProps) {
                 <span>Uploaded by: {activePreviewDoc.uploadedBy}</span>
               </div>
               <span>INGESTION STATUS: LIVE_VECTORS_CACHED</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Download Sponsoring Modal */}
+      {downloadRequestDoc && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 text-left">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center gap-2 text-amber-700 font-bold border-b pb-3">
+              <Shield className="w-5 h-5 animate-pulse" />
+              <h3 className="text-sm font-display uppercase tracking-wider">
+                Clearance Required
+              </h3>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs text-slate-500 leading-relaxed">
+                To download <strong>{downloadRequestDoc.name}</strong> under RBAC restrictions, an upper authority must grant a sponsoring clearance in their dashboard.
+              </p>
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-[11px] text-slate-600 font-mono">
+                <div>File: {downloadRequestDoc.name}</div>
+                <div>Size: {downloadRequestDoc.size}</div>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                Select Sponsoring Authority
+              </label>
+              {companyUsersList.length === 0 ? (
+                <div className="bg-slate-100 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-500 font-mono uppercase">
+                  No upper posts available. System admin override applies.
+                </div>
+              ) : (
+                <select
+                  value={selectedSponsor}
+                  onChange={(e) => setSelectedSponsor(e.target.value)}
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none"
+                >
+                  {companyUsersList.map((user) => (
+                    <option key={user.name} value={user.name}>
+                      {user.name} ({user.role})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setDownloadRequestDoc(null)}
+                className="bg-white border border-slate-200 hover:bg-slate-50 rounded-xl py-2 px-4 text-xs font-semibold text-slate-550 transition cursor-pointer text-center"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const compKey = (companyName || "ekaba").trim().toLowerCase();
+                  let existing: any[] = [];
+                  try {
+                    const existingStr = localStorage.getItem(`kb_portal_download_requests_${compKey}`) || "[]";
+                    existing = JSON.parse(existingStr);
+                  } catch (e) {}
+
+                  // Remove previous matching requests to avoid duplicates
+                  existing = existing.filter(r => !(r.documentId === downloadRequestDoc.id && r.requestedBy === currentUser.name));
+
+                  const newReq = {
+                    id: `dl-req-${Date.now()}`,
+                    documentId: downloadRequestDoc.id,
+                    documentName: downloadRequestDoc.name,
+                    requestedBy: currentUser.name,
+                    requestedByRole: currentUser.role,
+                    sponsorName: selectedSponsor || "System Admin",
+                    status: "pending",
+                    createdAt: new Date().toISOString(),
+                  };
+
+                  existing.push(newReq);
+                  localStorage.setItem(`kb_portal_download_requests_${compKey}`, JSON.stringify(existing));
+                  
+                  logUserActivity(currentUser.id, currentUser.name, `Requested download clearance for "${downloadRequestDoc.name}"`);
+                  setDownloadRequestDoc(null);
+                }}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2 px-4 text-xs font-semibold transition cursor-pointer text-center"
+              >
+                Send Request
+              </button>
             </div>
           </div>
         </div>

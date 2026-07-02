@@ -1,63 +1,12 @@
-import { Document, QueryLog, User, UserRole, Citation } from "../types";
+import { Document, QueryLog, User, UserRole, Citation, DemoRequest } from "../types";
 import fs from "fs";
 import path from "path";
+import { fetchDocumentsFromSupabase } from "../lib/supabase-server";
 
 // In-memory Database State (Global to the server session)
 
-export const documents: Document[] = [
-  {
-    id: "doc-1",
-    name: "Employee Handbook 2026",
-    category: "HR Policies",
-    uploadedBy: "Admin System",
-    dateUploaded: "2026-01-10",
-    fileType: "txt",
-    size: "12 KB",
-    content: `Employee Handbook Section 4.2 - Leave Approval Process:
-The leave approval process requires:
-1. Submit request through HRMS.
-2. Manager approval.
-3. HR verification.
-Ensure requests are submitted at least 10 business days before the planned leave date.
-
-Employee Handbook Section 5.1 - Travel Reimbursement Policy:
-Travel reimbursements must be submitted within 30 days of travel completion. Economy class flights are covered by default; business class tickets are only permitted for flights exceeding 8 hours and require VP approval. Meal allowances are capped at a maximum of $75 per day ($20 breakfast, $25 lunch, $30 dinner). Itemized receipts are required for all expenses exceeding $25.
-
-Employee Handbook Section 3.3 - Hybrid & Remote Work Guidelines:
-Employees are eligible for hybrid work after the standard 3-month probation period. Remote schedules require coordination and formal agreement with the respective department head. Core hours when all employees must be reachable are 10:00 AM to 4:00 PM. High-speed home internet is required, and the company provides a remote-work equipment stipend of $500.`,
-  },
-  {
-    id: "doc-2",
-    name: "IT Security & Access Control Guidelines",
-    category: "IT & Compliance",
-    uploadedBy: "IT Sec Team",
-    dateUploaded: "2026-02-15",
-    fileType: "txt",
-    size: "8 KB",
-    content: `IT Security Section 2.1 - Single Sign-On (SSO) & Passwords:
-All employee accounts must utilize corporate Single Sign-On (SSO) integrated exclusively via Google Workspace or Active Directory. Passwords for individual applications must contain at least 14 characters and combine uppercase letters, lowercase letters, numbers, and special symbols. Clear text passwords are strictly forbidden.
-
-IT Security Section 2.5 - Multi-Factor Authentication (MFA):
-Multi-Factor Authentication (MFA) must be active for all remote corporate network logins. Authenticator apps (e.g. Google Authenticator) or security keys are the preferred MFA targets. Text message (SMS) OTPs are discouraged and must only be used as a fallback mechanism.
-
-IT Security Section 3.1 - Data Encryption Standards:
-All enterprise and client data must be encrypted at rest using AES-256 and in transit using TLS 1.3 to adhere to security benchmarks and fully conform to GDPR, ISO 27001, and SOC 2 requirements. Any database backups must be encrypted separately.`,
-  },
-  {
-    id: "doc-3",
-    name: "Operations Manual",
-    category: "Operations",
-    uploadedBy: "Ops Department",
-    dateUploaded: "2026-03-01",
-    fileType: "txt",
-    size: "15 KB",
-    content: `Operations Section 1.4 - Workflow Documentation:
-All departmental workflows must be documented directly in the central Wiki. Annually, workflows are audited and reviewed by the Operations team to reduce duplicate work and identify bottlenecks.
-
-Operations Section 2.2 - Expense & Purchase Approvals:
-Purchases under $1,000 can be approved by the Team Manager. Purchases between $1,000 and $10,000 require Department Head sign-off. Purchases exceeding $10,000 require CFO authorization. All standard purchase requests must accompany three competitive supplier quotes.`,
-  },
-];
+export const documents: Document[] = [];
+export const demoRequests: DemoRequest[] = [];
 
 export const queryLogs: QueryLog[] = [
   {
@@ -276,6 +225,26 @@ export function getCompanyUsersDb(company: string): Record<string, StoredUserCre
 }
 
 
+// Simple helper to read document content from disk (when file_path is set)
+export function getDocumentContent(doc: Document): string {
+  if (doc.filePath) {
+    try {
+      const resolved = path.isAbsolute(doc.filePath)
+        ? doc.filePath
+        : path.resolve(process.cwd(), doc.filePath);
+      if (fs.existsSync(resolved)) {
+        return fs.readFileSync(resolved, "utf-8");
+      } else {
+        console.warn(`[db] file_path set but file not found on disk: ${resolved}. Falling back to in-memory content.`);
+      }
+    } catch (e) {
+      console.error(`[db] Error reading file at ${doc.filePath}:`, e);
+    }
+  }
+  // Fallback: use in-memory content (seed documents or if file missing)
+  return doc.content;
+}
+
 // Simple helper to segment/chunk documents by Section
 export interface TextChunk {
   docId: string;
@@ -284,11 +253,20 @@ export interface TextChunk {
   content: string;
 }
 
-export function getDocumentChunks(): TextChunk[] {
+export function getDocumentChunks(company?: string): TextChunk[] {
   const chunks: TextChunk[] = [];
-  for (const doc of documents) {
+  const normalizedCompany = company ? company.toLowerCase().trim() : undefined;
+  
+  const filteredDocs = normalizedCompany
+    ? documents.filter((d) => (d.company || "ekaba").toLowerCase().trim() === normalizedCompany)
+    : documents;
+
+  for (const doc of filteredDocs) {
+    // Read content from disk if filePath is present; else use in-memory content
+    const rawContent = getDocumentContent(doc);
+
     // Attempt to segment by Section headers or standard paragraphs
-    const sectionSplits = doc.content.split(
+    const sectionSplits = rawContent.split(
       /(?=Section \d+\.\d+|Operations Section|Employee Handbook Section|IT Security Section)/i,
     );
     for (const split of sectionSplits) {
@@ -308,8 +286,8 @@ export function getDocumentChunks(): TextChunk[] {
 }
 
 // Full text TF-IDF equivalent relevance scorer for RAG
-export function findRelevantChunks(query: string, maxResults = 3): TextChunk[] {
-  const chunks = getDocumentChunks();
+export function findRelevantChunks(query: string, company?: string, maxResults = 3): TextChunk[] {
+  const chunks = getDocumentChunks(company);
   const queryTerms = query
     .toLowerCase()
     .split(/[\s,?.!-]+/)
@@ -345,4 +323,37 @@ export function findRelevantChunks(query: string, maxResults = 3): TextChunk[] {
 
   // Return top matching chunks. Fallback to first few if no keyword matched
   return filtered.length > 0 ? filtered.slice(0, maxResults) : chunks.slice(0, maxResults);
+}
+
+// ─── Load documents from Supabase into memory ─────────────────────────────
+// Called once on server startup. Fetches all documents (with file_path) from
+// Supabase and merges them into the in-memory `documents` array.
+// Seed docs (doc-1, doc-2, doc-3) are kept; Supabase rows overwrite by id.
+export async function loadDocumentsFromSupabase(): Promise<void> {
+  try {
+    const rows = await fetchDocumentsFromSupabase();
+    for (const row of rows) {
+      const existing = documents.findIndex((d) => d.id === row.id);
+      const mapped: Document = {
+        id: row.id,
+        name: row.name,
+        category: row.category,
+        content: row.content || "",
+        filePath: row.file_path || undefined,
+        uploadedBy: row.uploaded_by,
+        dateUploaded: row.date_uploaded,
+        fileType: row.file_type as Document["fileType"],
+        size: row.size,
+        company: row.company || "ekaba",
+      };
+      if (existing >= 0) {
+        documents[existing] = mapped;
+      } else {
+        documents.push(mapped);
+      }
+    }
+    console.log(`[db] Loaded ${rows.length} document(s) from Supabase.`);
+  } catch (e) {
+    console.error("[db] Could not load documents from Supabase, using in-memory only:", e);
+  }
 }

@@ -108,7 +108,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap",
       },
     ],
   }),
@@ -137,15 +137,15 @@ function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header className="site-header sticky top-0 z-40">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 relative">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="grid h-7 w-7 place-items-center rounded-sm bg-primary text-primary-foreground">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
             <span className="font-display text-lg leading-none">E</span>
           </div>
-          <span className="font-display text-xl tracking-tight">EKABA</span>
+          <span className="font-display text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all">EKABA</span>
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground md:inline">
-            v1.1
+            v2.0
           </span>
         </Link>
 
@@ -303,10 +303,10 @@ function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="grid h-7 w-7 place-items-center rounded-sm bg-primary text-primary-foreground">
+              <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-md shadow-primary/20">
                 <span className="font-display text-lg leading-none">E</span>
               </div>
-              <span className="font-display text-xl">EKABA</span>
+              <span className="font-display text-xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">EKABA</span>
             </div>
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
               Enterprise Knowledge Base Assistant — retrieval-augmented intelligence for the

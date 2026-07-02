@@ -23,16 +23,17 @@ import {
   Moon,
   ArrowLeft,
   Info,
+  Clock,
 } from "lucide-react";
-import { User, UserRole, ROLE_HIERARCHY, PendingApprovalRequest } from "../types";
+import { User, UserRole, ROLE_HIERARCHY, PendingApprovalRequest, PendingProfileRequest } from "../types";
 import { useTheme } from "../components/ThemeProvider";
 import Dashboard from "../components/portal/Dashboard";
 import ChatInterface from "../components/portal/ChatInterface";
 import DocumentCenter from "../components/portal/DocumentCenter";
 import AdminPanel from "../components/portal/AdminPanel";
 import ProfileSettings from "../components/portal/ProfileSettings";
-import { isSupabaseConfigured } from "../lib/supabase";
-
+import ActivityLogs from "../components/portal/ActivityLogs";
+import { logUserActivity } from "../lib/activity-client";
 
 // ==========================================
 // 1. Full Page SSO Login Screen component
@@ -118,6 +119,82 @@ const getDefaultUsersForCompany = (companyKey: string) => {
   ];
 };
 
+
+function SecurityVault3D() {
+  const [logs, setLogs] = useState<string[]>([
+    "Initial handshake requested...",
+    "Loading FIPS 140-2 encryption modules...",
+    "SSO token validation pending...",
+  ]);
+
+  useEffect(() => {
+    const logPool = [
+      "SSO signature gateway: authorized.",
+      "AES-256 session key generated.",
+      "Auditable ledger node synced.",
+      "Row-level policy filters loaded.",
+      "Workspace session initialized successfully.",
+      "Access scope: IT & HR schemas loaded.",
+      "Compliance check: SOC 2 active.",
+    ];
+
+    const interval = setInterval(() => {
+      setLogs(prev => {
+        const next = [...prev.slice(1), logPool[Math.floor(Math.random() * logPool.length)]];
+        return next;
+      });
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative w-full aspect-[16/11] screen-3d-wrap my-6">
+      <div className="screen-3d screen-glow rounded-xl border border-slate-800 bg-[#0b0e14] p-4 flex flex-col justify-between font-mono text-[10px] text-slate-300 relative overflow-hidden h-full shadow-2xl">
+        {/* Gloss overlay */}
+        <div className="screen-gloss" />
+        <div className="scan-line" />
+        
+        {/* Terminal Header */}
+        <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
+          <div className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-rose-500/80" />
+            <span className="h-2 w-2 rounded-full bg-amber-500/70" />
+            <span className="h-2 w-2 rounded-full bg-emerald-500/80" />
+            <span className="ml-1 text-[8px] text-slate-500">vault-sso-gateway:~/bin</span>
+          </div>
+          <span className="text-[8px] font-bold text-primary animate-pulse uppercase">SECURE TUNNEL</span>
+        </div>
+
+        {/* Live log stream */}
+        <div className="flex-1 space-y-2 overflow-hidden text-emerald-400/90 leading-relaxed text-left">
+          <div className="text-[9px] text-slate-500 font-bold mb-1">=== SYSTEM INTEGRITY DEPLOYMENT LOGS ===</div>
+          {logs.map((log, index) => (
+            <div key={index} className="flex gap-2 items-start animate-fade-in">
+              <span className="text-slate-600 select-none">&gt;</span>
+              <span className="truncate">{log}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Access controls visualization */}
+        <div className="mt-4 border-t border-slate-800/80 pt-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-left">
+            <div className="h-5 w-5 rounded bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <Lock className="h-3 w-3 text-primary animate-pulse" />
+            </div>
+            <div>
+              <div className="text-[9px] font-bold text-slate-200">FIPS Cryptography</div>
+              <div className="text-[8px] text-slate-500">AES-256 tunnel enabled</div>
+            </div>
+          </div>
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface LoginScreenProps {
   onLoginSuccess: (user: User, company: string) => void;
 }
@@ -189,6 +266,22 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
   // Sponsoring Authority Approval States for new users
   const [sponsorInfo, setSponsorInfo] = useState("");
+
+  const [authorizedCompanies, setAuthorizedCompanies] = useState<Record<string, any>>(AUTHORIZED_COMPANIES);
+
+  useEffect(() => {
+    fetch("/api/authorized-companies")
+      .then((res) => {
+        if (res.ok) return res.json();
+        return null;
+      })
+      .then((data) => {
+        if (data) {
+          setAuthorizedCompanies(data);
+        }
+      })
+      .catch((err) => console.error("Error loading authorized companies from DB:", err));
+  }, []);
 
   // Local storage check for dynamic request approvals
   useEffect(() => {
@@ -281,8 +374,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       })
       .then((backendDb) => {
         const localDb = getStoredUsers(verifiedCompany);
-        // Overwrite local credentials db if Supabase is active to support deletes properly
-        const merged = isSupabaseConfigured ? backendDb : { ...localDb, ...backendDb };
+        const merged = { ...localDb, ...backendDb };
         saveStoredUsers(merged, verifiedCompany);
       })
       .catch((err) => console.error("Database sync inactive or pending sync:", err));
@@ -421,7 +513,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     });
   };
 
-  const handleSendCredentials = (e: React.FormEvent) => {
+  const handleSendCredentials = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customEmail || !customEmail.includes("@") || !customEmail.includes(".")) {
       setError("Please provide a valid corporate email (e.g. employee@company.com).");
@@ -433,8 +525,39 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     }
     setLoading(true);
 
-    const processWithDb = (db: Record<string, StoredUser>) => {
+    try {
+      // Check if it is a demo request matching name and email
+      const verifyRes = await fetch("/api/demo-request/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          company: verifiedCompany,
+          name: customName,
+          email: customEmail,
+        }),
+      });
+
+      if (verifyRes.ok) {
+        const verifyData = await verifyRes.json();
+        if (verifyData.verified) {
+          setLoading(false);
+          setIsEmailMismatch(false);
+          setPasswordMode("create");
+          setSelectedRole("Owner");
+          setCustomDomain(customEmail.split("@")[1] || "enterprise.com");
+          setPassword("");
+          setStep("password");
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("[portal] Demo request verification failed:", err);
+    }
+
+    setTimeout(() => {
       setLoading(false);
+
+      const db = getStoredUsers();
       const lowerName = customName.trim().toLowerCase();
 
       if (db[lowerName]) {
@@ -454,7 +577,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           // Email matches! Require password verification
           setIsEmailMismatch(false);
           setPasswordMode("enter");
-          setSelectedRole(registered.role as UserRole);
+          setSelectedRole(registered.role);
           setCustomDomain(registered.domain);
           setPassword("");
           setStep("password");
@@ -464,7 +587,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           setError(`Email address does not match the registered record for "${registered.name}". Please check the spelling or request an email reset.`);
         }
       } else {
-        // First-time user registration
+        // First-time user registration - require sponsoring clearance from upper staff
         setIsEmailMismatch(false);
         setCustomDomain(customEmail.split("@")[1] || "enterprise.com");
         setStep("permission");
@@ -475,32 +598,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           setSelectedApproverKey("");
         }
       }
-    };
-
-    // Always fetch latest user DB from the server API at login time.
-    // Server-side always has access to env vars at runtime.
-    const compKey = verifiedCompany.trim().toLowerCase() || "ekaba";
-    fetch(`/api/users/db?company=${encodeURIComponent(compKey)}`)
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error("DB fetch failed");
-      })
-      .then((backendDb: Record<string, StoredUser>) => {
-        // Get defaults/localStorage as the seed base
-        const localDb = getStoredUsers();
-        // Supabase data takes priority over defaults for existing keys,
-        // but only if backendDb has entries (non-empty = Supabase working).
-        // If backendDb is empty (RLS blocking), localDb (defaults) are used.
-        const merged = Object.keys(backendDb).length > 0
-          ? { ...localDb, ...backendDb }
-          : localDb;
-        saveStoredUsers(merged, verifiedCompany);
-        processWithDb(merged);
-      })
-      .catch(() => {
-        // Fallback to defaults/localStorage if server API call fails
-        processWithDb(getStoredUsers());
-      });
+    }, 700);
   };
 
   const handleSendEmailResetRequest = (e: React.FormEvent) => {
@@ -603,7 +701,8 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     const cName = companyName.trim().toLowerCase();
     const authId = authorizedId.trim();
 
-    const expectedId = AUTHORIZED_COMPANIES[cName];
+    const details = authorizedCompanies[cName];
+    const expectedId = typeof details === "string" ? details : details?.authorizedClientId;
     if (expectedId && expectedId === authId) {
       setVerifiedCompany(companyName.trim());
       setStep("credentials");
@@ -701,16 +800,16 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   return (
     <div
       id="login_container"
-      className="min-h-screen w-full relative bg-[#FCFAF6] text-slate-800 overflow-hidden flex flex-col"
+      className="min-h-screen w-full relative bg-background text-foreground overflow-hidden flex flex-col"
     >
       {/* Absolute Decorative ambient lights for premium warm theme */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-amber-200/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-amber-100/5 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] rounded-full hero-orb-1 blur-3xl opacity-30 pointer-events-none" />
+      <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] rounded-full hero-orb-2 blur-3xl opacity-20 pointer-events-none" />
 
       {/* Absolute Header with compliance metadata */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between items-center text-xs text-stone-500 font-mono z-20">
-        <div className="flex items-center gap-2 text-stone-400">
-          <Shield className="w-4 h-4 text-emerald-600 animate-pulse" />
+      <div className="absolute top-4 left-4 right-4 flex justify-between items-center text-xs text-muted-foreground font-mono z-20">
+        <div className="flex items-center gap-2">
+          <Shield className="w-4 h-4 text-primary animate-pulse" />
           <span className="font-semibold tracking-wide">
             FIPS 140-2 ENCRYPTED SECURE INFRASTRUCTURE
           </span>
@@ -719,19 +818,23 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           <button
             type="button"
             onClick={toggleTheme}
-            className="rounded-full p-1.5 hover:bg-stone-200 dark:hover:bg-stone-850 text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-100 transition cursor-pointer"
+            className="rounded-full p-1.5 hover:bg-secondary text-muted-foreground hover:text-foreground transition cursor-pointer"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
-          <div className="hidden sm:block font-medium text-stone-400">STATUS: ONLINE / SECURED</div>
+          <div className="hidden sm:block font-medium">STATUS: ONLINE / SECURED</div>
         </div>
       </div>
 
-      <div className="w-full min-h-screen grid md:grid-cols-12 bg-white overflow-hidden relative z-10">
+      <div className="w-full min-h-screen grid md:grid-cols-12 bg-background overflow-hidden relative z-10">
         {/* Left Hand: Corporate Context (Dark Ink & Grid Theme with beautifully visible office image) */}
         <div className="md:col-span-5 relative bg-[#0e1117] grid-bg noise p-6 md:p-12 flex flex-col justify-between overflow-hidden text-slate-100 min-h-[450px] border-r border-slate-900">
-          <div className="space-y-8 mt-12 md:mt-8">
+          {/* Neon accent orbs inside dark panel */}
+          <div className="absolute -right-40 -top-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+          <div className="absolute -left-20 bottom-10 w-80 h-80 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
+          
+          <div className="space-y-8 mt-12 md:mt-8 relative z-10">
             <div className="flex items-center gap-3">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground font-mono font-bold text-lg shadow-md shadow-primary/20">
                 <span className="leading-none">E</span>
@@ -748,7 +851,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl font-display font-bold text-slate-100 leading-tight">
-                Knowledge Base Assistant
+                Knowledge Base <span className="shimmer-text">Assistant</span>
               </h1>
               <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
                 Unlock segmented document intelligence across policies, spreadsheets, procedures,
@@ -756,23 +859,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               </p>
             </div>
 
-            {/* High-fidelity corporate building/office illustration card - SHARP & CLEARLY VISIBLE */}
-            <div className="relative rounded-2xl overflow-hidden border border-slate-900 bg-slate-950/60 aspect-[16/10] shadow-lg group">
-              <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
-                alt="EKABA Corporate Headquarters"
-                className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-700 ease-out brightness-95 saturate-110"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-end p-4">
-                <span className="text-[9px] font-mono font-bold text-primary tracking-widest uppercase">
-                  Federated Office Server Node
-                </span>
-                <p className="text-xs text-slate-200 font-bold">
-                  Secure Headquarters & RAG Gateway
-                </p>
-              </div>
-            </div>
+            <SecurityVault3D />
           </div>
 
           {verifiedCompany && (
@@ -829,8 +916,11 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         </div>
 
         {/* Right Hand: Action Form (Warm clean layout, styled with rich bronze and charcoal) */}
-        <div className="md:col-span-7 bg-[#FCFAF6] p-6 sm:p-12 md:p-16 flex flex-col justify-between space-y-8 min-h-screen">
-          <div className="space-y-8 my-auto max-w-xl w-full mx-auto">
+        <div className="md:col-span-7 bg-background p-6 sm:p-12 md:p-16 flex flex-col justify-between space-y-8 min-h-screen">
+          <div className="space-y-8 my-auto max-w-xl w-full mx-auto glass-card p-8 rounded-2xl border border-border/60 shadow-xl relative overflow-hidden">
+            {/* Ambient card accent */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none" />
+            <div className="relative">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="text-[9px] font-mono text-stone-500 font-bold tracking-widest uppercase">
@@ -1331,9 +1421,10 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                 </div>
               </form>
             )}
+            </div>
           </div>
 
-          <div className="text-center text-[10px] text-stone-400 border-t border-stone-100 pt-4 font-mono tracking-wider">
+          <div className="text-center text-[10px] text-muted-foreground border-t border-border/60 pt-4 font-mono tracking-wider">
             COMPLIANCE SECURE: GDPR & SOC-2 CERTIFIED INTERCONNECTED INSTANCE
           </div>
         </div>
@@ -1349,7 +1440,7 @@ export const Route = createFileRoute("/portal")({
   component: PortalPage,
 });
 
-type ActiveTab = "dashboard" | "chat" | "documents" | "admin" | "profile";
+type ActiveTab = "dashboard" | "chat" | "documents" | "admin" | "profile" | "activity";
 
 function PortalPage() {
   const { theme, toggleTheme } = useTheme();
@@ -1358,13 +1449,75 @@ function PortalPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
   const [initialChatQuery, setInitialChatQuery] = useState<string | undefined>(undefined);
 
+  // Global list of authorized companies and subscription details
+  const [authorizedCompanies, setAuthorizedCompanies] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    const fetchCompanies = () => {
+      fetch("/api/authorized-companies")
+        .then((res) => {
+          if (res.ok) return res.json();
+          return null;
+        })
+        .then((data) => {
+          if (data) setAuthorizedCompanies(data);
+        })
+        .catch((err) => console.error("Error loading authorized companies:", err));
+    };
+
+    fetchCompanies();
+    const interval = setInterval(fetchCompanies, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Global Undo state
+  const [undoToast, setUndoToast] = useState<{
+    id: string;
+    message: string;
+    onUndo: () => void;
+    onConfirm?: () => void;
+  } | null>(null);
+
+  const triggerUndo = (
+    message: string,
+    onUndo: () => void,
+    onConfirm?: () => void
+  ) => {
+    const id = Math.random().toString();
+    setUndoToast({ id, message, onUndo, onConfirm });
+
+    // Set a timer for 3 seconds
+    setTimeout(() => {
+      setUndoToast((current) => {
+        if (current && current.id === id) {
+          if (current.onConfirm) {
+            current.onConfirm();
+          }
+          return null;
+        }
+        return current;
+      });
+    }, 3000);
+  };
+
+  const handleUndoClick = () => {
+    if (undoToast) {
+      undoToast.onUndo();
+      setUndoToast(null);
+    }
+  };
+
   const handleLoginSuccess = (user: User, company: string) => {
     setCurrentUser(user);
     setCurrentCompany(company || "EKABA");
     setActiveTab("dashboard");
+    logUserActivity(user.id, user.name, "Logged in successfully via SSO");
   };
 
   const handleLogout = () => {
+    if (currentUser) {
+      logUserActivity(currentUser.id, currentUser.name, "Logged out of workspace session");
+    }
     setCurrentUser(null);
     setActiveTab("dashboard");
     setInitialChatQuery(undefined);
@@ -1404,6 +1557,37 @@ function PortalPage() {
   // Check if current user role has permission to access Admin parameters
   const isITAdmin = currentUser.role !== "Employee";
 
+  // Check subscription details for lockout
+  const isEkabaUser =
+    currentCompany.toLowerCase().trim().includes("ekaba") ||
+    (currentUser?.email || "").endsWith("@ekaba.com");
+
+  const companyDetails = authorizedCompanies[currentCompany.toLowerCase().trim()];
+  let subscriptionStatus: "plan_active" | "demo_active" | "expired" = "demo_active";
+
+  if (companyDetails) {
+    const now = new Date();
+    if (companyDetails.planExpiresAt) {
+      const planExpires = new Date(companyDetails.planExpiresAt);
+      if (now <= planExpires) {
+        subscriptionStatus = "plan_active";
+      } else {
+        subscriptionStatus = "expired";
+      }
+    } else if (companyDetails.demoExpiresAt) {
+      const demoExpires = new Date(companyDetails.demoExpiresAt);
+      if (now <= demoExpires) {
+        subscriptionStatus = "demo_active";
+      } else {
+        subscriptionStatus = "expired";
+      }
+    } else {
+      subscriptionStatus = "expired";
+    }
+  }
+
+  const isLocked = subscriptionStatus === "expired" && !isEkabaUser;
+
   return (
     <div
       id="workspace_parent"
@@ -1430,9 +1614,12 @@ function PortalPage() {
           {/* Nav Links */}
           <nav className="px-3 space-y-1.5">
             <button
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => !isLocked && setActiveTab("dashboard")}
+              disabled={isLocked}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                activeTab === "dashboard"
+                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
+              } ${
+                activeTab === "dashboard" && !isLocked
                   ? "bg-primary text-primary-foreground font-bold shadow-md"
                   : "hover:bg-slate-800 hover:text-slate-100"
               }`}
@@ -1442,21 +1629,27 @@ function PortalPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("chat")}
+              onClick={() => !isLocked && setActiveTab("chat")}
+              disabled={isLocked}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                activeTab === "chat"
+                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
+              } ${
+                activeTab === "chat" && !isLocked
                   ? "bg-primary text-primary-foreground font-bold shadow-md"
                   : "hover:bg-slate-800 hover:text-slate-100"
               }`}
             >
               <MessageSquare className="w-4 h-4" />
-              <span>Conversational Agent</span>
+              <span>माँ</span>
             </button>
 
             <button
-              onClick={() => setActiveTab("documents")}
+              onClick={() => !isLocked && setActiveTab("documents")}
+              disabled={isLocked}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                activeTab === "documents"
+                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
+              } ${
+                activeTab === "documents" && !isLocked
                   ? "bg-primary text-primary-foreground font-bold shadow-md"
                   : "hover:bg-slate-800 hover:text-slate-100"
               }`}
@@ -1479,18 +1672,35 @@ function PortalPage() {
               </div>
             </button>
 
+            <button
+              onClick={() => !isLocked && setActiveTab("activity")}
+              disabled={isLocked}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
+              } ${
+                activeTab === "activity" && !isLocked
+                  ? "bg-primary text-primary-foreground font-bold shadow-md"
+                  : "hover:bg-slate-800 hover:text-slate-100"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Clock className={`w-4 h-4 ${activeTab === "activity" && !isLocked ? "text-primary-foreground" : "text-primary"}`} />
+                <span>Activity Logs</span>
+              </div>
+            </button>
+
             {/* Restricted Compliance panel */}
             <button
               onClick={() => {
-                if (isITAdmin) {
+                if (isITAdmin && !isLocked) {
                   setActiveTab("admin");
                 }
               }}
-              disabled={!isITAdmin}
+              disabled={!isITAdmin || isLocked}
               className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                !isITAdmin
+                !isITAdmin || isLocked
                   ? "opacity-40 cursor-not-allowed text-slate-500"
-                  : activeTab === "admin"
+                  : activeTab === "admin" && !isLocked
                     ? "bg-primary text-primary-foreground font-bold shadow-md"
                     : "hover:bg-slate-800 hover:text-slate-100"
               }`}
@@ -1499,7 +1709,7 @@ function PortalPage() {
                 <Settings className="w-4 h-4" />
                 <span>Admin Auditer</span>
               </div>
-              {!isITAdmin && <Lock className="w-3 h-3 text-slate-600" />}
+              {(!isITAdmin || isLocked) && <Lock className="w-3 h-3 text-slate-600" />}
             </button>
           </nav>
         </div>
@@ -1560,22 +1770,32 @@ function PortalPage() {
           {/* Mobile responsive Quick Tabs selector bar */}
           <div className="flex md:hidden items-center gap-1.5">
             <button
-              onClick={() => setActiveTab("dashboard")}
-              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "dashboard" ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"}`}
+              onClick={() => !isLocked && setActiveTab("dashboard")}
+              disabled={isLocked}
+              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "dashboard" && !isLocked ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"} ${isLocked ? "opacity-30 cursor-not-allowed" : ""}`}
             >
               Dashboard
             </button>
             <button
-              onClick={() => setActiveTab("chat")}
-              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "chat" ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"}`}
+              onClick={() => !isLocked && setActiveTab("chat")}
+              disabled={isLocked}
+              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "chat" && !isLocked ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"} ${isLocked ? "opacity-30 cursor-not-allowed" : ""}`}
             >
               Chat
             </button>
             <button
-              onClick={() => setActiveTab("documents")}
-              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "documents" ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"}`}
+              onClick={() => !isLocked && setActiveTab("documents")}
+              disabled={isLocked}
+              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "documents" && !isLocked ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"} ${isLocked ? "opacity-30 cursor-not-allowed" : ""}`}
             >
               Files
+            </button>
+            <button
+              onClick={() => !isLocked && setActiveTab("activity")}
+              disabled={isLocked}
+              className={`p-2 rounded-lg text-xs font-bold ${activeTab === "activity" && !isLocked ? "bg-[#1c1917] text-white" : "text-stone-500 hover:bg-stone-100"} ${isLocked ? "opacity-30 cursor-not-allowed" : ""}`}
+            >
+              Logs
             </button>
 
             {isITAdmin && (
@@ -1600,63 +1820,145 @@ function PortalPage() {
 
         {/* Scrollable page section contents */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
-          {activeTab === "dashboard" && (
-            <Dashboard
-              currentUser={currentUser}
-              onNavigateToChat={handleNavigateToChat}
-              companyName={currentCompany}
-            />
-          )}
-
-          {activeTab === "chat" && (
-            <ChatInterface
-              currentUser={currentUser}
-              initialQuery={initialChatQuery}
-              onClearInitialQuery={() => setInitialChatQuery(undefined)}
-            />
-          )}
-
-          {activeTab === "documents" && <DocumentCenter currentUser={currentUser} />}
-
-          {activeTab === "profile" && (
-            <ProfileSettings
-              currentUser={currentUser}
-              onUpdateCurrentUser={handleUpdateCurrentUser}
-              companyName={currentCompany}
-            />
-          )}
-
-          {/* RBAC Security Block guard screen */}
-          {activeTab === "admin" &&
-            (isITAdmin ? (
-              <AdminPanel
-                currentUser={currentUser}
-                onUpdateCurrentUserRole={handleUpdateCurrentUserRole}
-                companyName={currentCompany}
-              />
-            ) : (
-              <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-xl mx-auto space-y-4 shadow-sm">
-                <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100">
-                  <Lock className="w-6 h-6" />
-                </div>
-                <h3 className="text-lg font-display font-bold text-slate-850">
-                  Access Denied: Restricted Parameters
-                </h3>
-                <p className="text-slate-500 text-sm leading-relaxed">
-                  Your current profile credentials level is restricted. Contact network
-                  administrator or shift your role selector on the system dashboard to explore IT
-                  Admin telemetry controls.
-                </p>
-                <button
-                  onClick={() => setActiveTab("dashboard")}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 px-4 text-xs font-semibold transition"
-                >
-                  Return to Dashboard
-                </button>
+          {isLocked ? (
+            <div className="flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto space-y-6 min-h-[70vh]">
+              <div className="w-20 h-20 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100 shadow-lg animate-bounce">
+                <Lock className="w-10 h-10" />
               </div>
-            ))}
+              <div className="space-y-2">
+                <h2 className="text-3xl font-display font-bold text-slate-800">
+                  Subscription / Demo Expired
+                </h2>
+                <p className="text-rose-600 font-semibold text-lg font-mono">
+                  your demo period is over now renew it
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-md w-full text-left space-y-4">
+                <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wider border-b pb-2">
+                  Account Representative
+                </h4>
+                {companyDetails?.employeeName ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-600">
+                      Please contact your assigned representative to renew your subscription plan:
+                    </p>
+                    <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                        {companyDetails.employeeName[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-slate-800">{companyDetails.employeeName}</div>
+                        <div className="text-xs text-slate-550 font-mono">{companyDetails.employeeEmail}</div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-600">
+                      Please contact EKABA Support to renew your subscription plan:
+                    </p>
+                    <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                        E
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-slate-800">EKABA Corporate Support</div>
+                        <div className="text-xs text-slate-550 font-mono">support@ekaba.com</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <>
+              {activeTab === "dashboard" && (
+                <Dashboard
+                  currentUser={currentUser}
+                  onNavigateToChat={handleNavigateToChat}
+                  companyName={currentCompany}
+                />
+              )}
+
+              {activeTab === "chat" && (
+                <ChatInterface
+                  currentUser={currentUser}
+                  initialQuery={initialChatQuery}
+                  onClearInitialQuery={() => setInitialChatQuery(undefined)}
+                  companyName={currentCompany}
+                />
+              )}
+
+              {activeTab === "documents" && (
+                <DocumentCenter 
+                  currentUser={currentUser} 
+                  triggerUndo={triggerUndo} 
+                  companyName={currentCompany}
+                />
+              )}
+
+              {activeTab === "profile" && (
+                <ProfileSettings
+                  currentUser={currentUser}
+                  onUpdateCurrentUser={handleUpdateCurrentUser}
+                  companyName={currentCompany}
+                />
+              )}
+
+              {activeTab === "activity" && (
+                <ActivityLogs 
+                  currentUser={currentUser} 
+                  companyName={currentCompany} 
+                />
+              )}
+
+              {/* RBAC Security Block guard screen */}
+              {activeTab === "admin" &&
+                (isITAdmin ? (
+                  <AdminPanel
+                    currentUser={currentUser}
+                    onUpdateCurrentUserRole={handleUpdateCurrentUserRole}
+                    companyName={currentCompany}
+                    triggerUndo={triggerUndo}
+                  />
+                ) : (
+                  <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center max-w-xl mx-auto space-y-4 shadow-sm">
+                    <div className="w-12 h-12 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mx-auto border border-rose-100">
+                      <Lock className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-display font-bold text-slate-850">
+                      Access Denied: Restricted Parameters
+                    </h3>
+                    <p className="text-slate-550 text-sm leading-relaxed">
+                      Your current profile credentials level is restricted. Contact network
+                      administrator or shift your role selector on the system dashboard to explore IT
+                      Admin telemetry controls.
+                    </p>
+                    <button
+                      onClick={() => setActiveTab("dashboard")}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl py-2.5 px-4 text-xs font-semibold transition"
+                    >
+                      Return to Dashboard
+                    </button>
+                  </div>
+                ))}
+            </>
+          )}
         </main>
       </div>
+
+      {/* Floating Global Undo Toast */}
+      {undoToast && (
+        <div className="fixed bottom-6 right-6 bg-slate-900 text-slate-100 border border-slate-700/80 px-4 py-3.5 rounded-xl shadow-2xl flex items-center gap-4 z-50 animate-bounce-in min-w-[280px] max-w-sm">
+          <div className="flex-1 text-xs font-semibold text-slate-200">{undoToast.message}</div>
+          <button
+            onClick={handleUndoClick}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg border border-indigo-500 transition-all cursor-pointer shrink-0"
+          >
+            Undo (3s)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

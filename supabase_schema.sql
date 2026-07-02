@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS query_logs CASCADE;
 DROP TABLE IF EXISTS documents CASCADE;
 DROP TABLE IF EXISTS pending_approvals CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS authorized_companies CASCADE;
 
 -- =========================================================================
 -- 2. CREATE TABLES
@@ -35,10 +36,12 @@ CREATE TABLE documents (
     name TEXT NOT NULL,
     category TEXT NOT NULL,
     content TEXT NOT NULL,
+    file_path TEXT,                                  -- NEW: relative path to on-disk file
     uploaded_by TEXT NOT NULL DEFAULT 'System Admin',
     date_uploaded DATE NOT NULL DEFAULT CURRENT_DATE,
     file_type TEXT NOT NULL CHECK (file_type IN ('pdf', 'docx', 'pptx', 'txt')),
     size TEXT NOT NULL,
+    company TEXT NOT NULL DEFAULT 'ekaba',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -85,6 +88,38 @@ CREATE TABLE pending_approvals (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- DEMO REQUESTS TABLE (Stores demo requests submitted via contact page)
+CREATE TABLE demo_requests (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    company TEXT NOT NULL,
+    role TEXT NOT NULL,
+    size TEXT NOT NULL,
+    message TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'employee_accepted', 'manager_assigned', 'ended')),
+    accepted_by TEXT,
+    accepted_by_name TEXT,
+    assigned_to TEXT,
+    assigned_to_name TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    ended_at TIMESTAMP WITH TIME ZONE
+);
+
+-- AUTHORIZED COMPANIES TABLE (Stores authorized company names and client IDs)
+CREATE TABLE authorized_companies (
+    company_name TEXT PRIMARY KEY,
+    authorized_client_id TEXT NOT NULL,
+    plan_months INTEGER,
+    plan_starts_at TIMESTAMP WITH TIME ZONE,
+    plan_expires_at TIMESTAMP WITH TIME ZONE,
+    demo_expires_at TIMESTAMP WITH TIME ZONE,
+    employee_id TEXT,
+    employee_name TEXT,
+    employee_email TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 -- =========================================================================
 -- 3. INDEXES FOR QUERY OPTIMIZATION
 -- =========================================================================
@@ -93,64 +128,7 @@ CREATE INDEX idx_documents_category ON documents(category);
 CREATE INDEX idx_query_logs_timestamp ON query_logs(timestamp DESC);
 CREATE INDEX idx_citations_query_id ON citations(query_id);
 CREATE INDEX idx_pending_approvals_status ON pending_approvals(status);
-
--- =========================================================================
--- 3b. ROW LEVEL SECURITY (RLS) POLICIES
--- =========================================================================
--- IMPORTANT: By default Supabase enables RLS which blocks all reads/writes.
--- Run these policies in your Supabase SQL editor to allow the app to work.
--- The app uses the anon key for all operations, so all operations must be
--- permitted via policies.
-
--- Option A: Enable RLS with permissive policies (recommended for production)
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE query_logs ENABLE ROW LEVEL SECURITY;
-ALTER TABLE citations ENABLE ROW LEVEL SECURITY;
-ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
-ALTER TABLE pending_approvals ENABLE ROW LEVEL SECURITY;
-
--- Users table: allow full access via anon key
-CREATE POLICY "Allow public select on users" ON users FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on users" ON users FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update on users" ON users FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete on users" ON users FOR DELETE USING (true);
-
--- Documents table: allow full access
-CREATE POLICY "Allow public select on documents" ON documents FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on documents" ON documents FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update on documents" ON documents FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete on documents" ON documents FOR DELETE USING (true);
-
--- Query logs: allow full access
-CREATE POLICY "Allow public select on query_logs" ON query_logs FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on query_logs" ON query_logs FOR INSERT WITH CHECK (true);
-
--- Citations: allow full access
-CREATE POLICY "Allow public select on citations" ON citations FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on citations" ON citations FOR INSERT WITH CHECK (true);
-
--- Feedback: allow full access
-CREATE POLICY "Allow public select on feedback" ON feedback FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on feedback" ON feedback FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update on feedback" ON feedback FOR UPDATE USING (true);
-
--- Pending approvals: allow full access
-CREATE POLICY "Allow public select on pending_approvals" ON pending_approvals FOR SELECT USING (true);
-CREATE POLICY "Allow public insert on pending_approvals" ON pending_approvals FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update on pending_approvals" ON pending_approvals FOR UPDATE USING (true);
-CREATE POLICY "Allow public delete on pending_approvals" ON pending_approvals FOR DELETE USING (true);
-
--- Option B (simpler, less secure): Disable RLS entirely for all tables
--- Run this INSTEAD of Option A if you just want things to work quickly:
--- ALTER TABLE users DISABLE ROW LEVEL SECURITY;
--- ALTER TABLE documents DISABLE ROW LEVEL SECURITY;
--- ALTER TABLE query_logs DISABLE ROW LEVEL SECURITY;
--- ALTER TABLE citations DISABLE ROW LEVEL SECURITY;
--- ALTER TABLE feedback DISABLE ROW LEVEL SECURITY;
--- ALTER TABLE pending_approvals DISABLE ROW LEVEL SECURITY;
-
-
+CREATE INDEX idx_demo_requests_status ON demo_requests(status);
 
 -- =========================================================================
 -- 4. SEED DATA GENERATION
@@ -245,3 +223,22 @@ INSERT INTO citations (query_id, source_doc, section, snippet) VALUES
 INSERT INTO feedback (query_id, rating, comments, timestamp) VALUES
 ('q-1', 'like', NULL, '2026-06-14 10:31:00+00'),
 ('q-2', 'like', 'Precise answer. Thanks!', '2026-06-14 14:16:00+00');
+
+-- INSERT SEED AUTHORIZED COMPANIES
+INSERT INTO authorized_companies (company_name, authorized_client_id) VALUES
+('ekaba', 'EKABA-TEAM-2026'),
+('ekaba internal', 'EKABA-TEAM-2026'),
+('google', 'GOOG-EKABA-99'),
+('acme corp', 'ACME-EKABA-12'),
+('microsoft', 'MSFT-EKABA-88'),
+('apple', 'AAPL-EKABA-77')
+ON CONFLICT (company_name) DO NOTHING;
+
+-- =========================================================================
+-- 5. MIGRATION: Add file_path column (run this if documents table already exists)
+-- =========================================================================
+-- If you have an existing database and do NOT want to drop and recreate,
+-- run ONLY the following ALTER TABLE statement in your Supabase SQL Editor:
+--
+--   ALTER TABLE documents ADD COLUMN IF NOT EXISTS file_path TEXT;
+--

@@ -61,11 +61,13 @@ export interface Document {
   id: string;
   name: string;
   category: string;
-  content: string;
+  content: string;       // In-memory content (used for seed docs or fallback)
+  filePath?: string;     // On-disk path; if set, content is read from disk at query time
   dateUploaded: string;
   uploadedBy: string;
   fileType: "pdf" | "docx" | "pptx" | "txt";
   size: string;
+  company?: string;
 }
 
 export interface Citation {
@@ -109,4 +111,21 @@ export interface AnalyticsSummary {
   dailyUsage: { date: string; count: number }[];
   responseAccuracy: { range: string; value: number }[];
   topSearchedTopics: { topic: string; count: number }[];
+}
+
+export interface DemoRequest {
+  id: string;
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  size: string;
+  message: string;
+  status: "pending" | "employee_accepted" | "manager_assigned" | "ended";
+  acceptedBy?: string;
+  acceptedByName?: string;
+  assignedTo?: string;
+  assignedToName?: string;
+  createdAt: string;
+  endedAt?: string;
 }

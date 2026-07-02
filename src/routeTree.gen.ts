@@ -21,13 +21,17 @@ import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiFeedbackRouteImport } from './routes/api/feedback'
 import { Route as ApiDocumentsRouteImport } from './routes/api/documents'
+import { Route as ApiDemoRequestRouteImport } from './routes/api/demo-request'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiAuthorizedCompaniesRouteImport } from './routes/api/authorized-companies'
 import { Route as ApiAnalyticsRouteImport } from './routes/api/analytics'
+import { Route as ApiActivitiesRouteImport } from './routes/api/activities'
 import { Route as ApiUsersIndexRouteImport } from './routes/api/users/index'
 import { Route as ApiUsersUpdateRoleRouteImport } from './routes/api/users/update-role'
 import { Route as ApiUsersRegisterRouteImport } from './routes/api/users/register'
 import { Route as ApiUsersKickRouteImport } from './routes/api/users/kick'
 import { Route as ApiUsersDbRouteImport } from './routes/api/users/db'
+import { Route as ApiDemoRequestVerifyRouteImport } from './routes/api/demo-request/verify'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -89,14 +93,29 @@ const ApiDocumentsRoute = ApiDocumentsRouteImport.update({
   path: '/api/documents',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDemoRequestRoute = ApiDemoRequestRouteImport.update({
+  id: '/api/demo-request',
+  path: '/api/demo-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChatRoute = ApiChatRouteImport.update({
   id: '/api/chat',
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthorizedCompaniesRoute = ApiAuthorizedCompaniesRouteImport.update({
+  id: '/api/authorized-companies',
+  path: '/api/authorized-companies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAnalyticsRoute = ApiAnalyticsRouteImport.update({
   id: '/api/analytics',
   path: '/api/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiActivitiesRoute = ApiActivitiesRouteImport.update({
+  id: '/api/activities',
+  path: '/api/activities',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiUsersIndexRoute = ApiUsersIndexRouteImport.update({
@@ -124,6 +143,11 @@ const ApiUsersDbRoute = ApiUsersDbRouteImport.update({
   path: '/api/users/db',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDemoRequestVerifyRoute = ApiDemoRequestVerifyRouteImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => ApiDemoRequestRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -133,13 +157,17 @@ export interface FileRoutesByFullPath {
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/activities': typeof ApiActivitiesRoute
   '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/authorized-companies': typeof ApiAuthorizedCompaniesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/demo-request': typeof ApiDemoRequestRouteWithChildren
   '/api/documents': typeof ApiDocumentsRoute
   '/api/feedback': typeof ApiFeedbackRoute
   '/api/health': typeof ApiHealthRoute
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -154,13 +182,17 @@ export interface FileRoutesByTo {
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/activities': typeof ApiActivitiesRoute
   '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/authorized-companies': typeof ApiAuthorizedCompaniesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/demo-request': typeof ApiDemoRequestRouteWithChildren
   '/api/documents': typeof ApiDocumentsRoute
   '/api/feedback': typeof ApiFeedbackRoute
   '/api/health': typeof ApiHealthRoute
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -176,13 +208,17 @@ export interface FileRoutesById {
   '/roadmap': typeof RoadmapRoute
   '/security': typeof SecurityRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/activities': typeof ApiActivitiesRoute
   '/api/analytics': typeof ApiAnalyticsRoute
+  '/api/authorized-companies': typeof ApiAuthorizedCompaniesRoute
   '/api/chat': typeof ApiChatRoute
+  '/api/demo-request': typeof ApiDemoRequestRouteWithChildren
   '/api/documents': typeof ApiDocumentsRoute
   '/api/feedback': typeof ApiFeedbackRoute
   '/api/health': typeof ApiHealthRoute
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -199,13 +235,17 @@ export interface FileRouteTypes {
     | '/roadmap'
     | '/security'
     | '/sitemap.xml'
+    | '/api/activities'
     | '/api/analytics'
+    | '/api/authorized-companies'
     | '/api/chat'
+    | '/api/demo-request'
     | '/api/documents'
     | '/api/feedback'
     | '/api/health'
     | '/api/search'
     | '/api/upload'
+    | '/api/demo-request/verify'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -220,13 +260,17 @@ export interface FileRouteTypes {
     | '/roadmap'
     | '/security'
     | '/sitemap.xml'
+    | '/api/activities'
     | '/api/analytics'
+    | '/api/authorized-companies'
     | '/api/chat'
+    | '/api/demo-request'
     | '/api/documents'
     | '/api/feedback'
     | '/api/health'
     | '/api/search'
     | '/api/upload'
+    | '/api/demo-request/verify'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -241,13 +285,17 @@ export interface FileRouteTypes {
     | '/roadmap'
     | '/security'
     | '/sitemap.xml'
+    | '/api/activities'
     | '/api/analytics'
+    | '/api/authorized-companies'
     | '/api/chat'
+    | '/api/demo-request'
     | '/api/documents'
     | '/api/feedback'
     | '/api/health'
     | '/api/search'
     | '/api/upload'
+    | '/api/demo-request/verify'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -263,8 +311,11 @@ export interface RootRouteChildren {
   RoadmapRoute: typeof RoadmapRoute
   SecurityRoute: typeof SecurityRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiActivitiesRoute: typeof ApiActivitiesRoute
   ApiAnalyticsRoute: typeof ApiAnalyticsRoute
+  ApiAuthorizedCompaniesRoute: typeof ApiAuthorizedCompaniesRoute
   ApiChatRoute: typeof ApiChatRoute
+  ApiDemoRequestRoute: typeof ApiDemoRequestRouteWithChildren
   ApiDocumentsRoute: typeof ApiDocumentsRoute
   ApiFeedbackRoute: typeof ApiFeedbackRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -363,6 +414,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiDocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/demo-request': {
+      id: '/api/demo-request'
+      path: '/api/demo-request'
+      fullPath: '/api/demo-request'
+      preLoaderRoute: typeof ApiDemoRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/chat': {
       id: '/api/chat'
       path: '/api/chat'
@@ -370,11 +428,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/authorized-companies': {
+      id: '/api/authorized-companies'
+      path: '/api/authorized-companies'
+      fullPath: '/api/authorized-companies'
+      preLoaderRoute: typeof ApiAuthorizedCompaniesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/analytics': {
       id: '/api/analytics'
       path: '/api/analytics'
       fullPath: '/api/analytics'
       preLoaderRoute: typeof ApiAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/activities': {
+      id: '/api/activities'
+      path: '/api/activities'
+      fullPath: '/api/activities'
+      preLoaderRoute: typeof ApiActivitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/users/': {
@@ -412,8 +484,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUsersDbRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/demo-request/verify': {
+      id: '/api/demo-request/verify'
+      path: '/verify'
+      fullPath: '/api/demo-request/verify'
+      preLoaderRoute: typeof ApiDemoRequestVerifyRouteImport
+      parentRoute: typeof ApiDemoRequestRoute
+    }
   }
 }
+
+interface ApiDemoRequestRouteChildren {
+  ApiDemoRequestVerifyRoute: typeof ApiDemoRequestVerifyRoute
+}
+
+const ApiDemoRequestRouteChildren: ApiDemoRequestRouteChildren = {
+  ApiDemoRequestVerifyRoute: ApiDemoRequestVerifyRoute,
+}
+
+const ApiDemoRequestRouteWithChildren = ApiDemoRequestRoute._addFileChildren(
+  ApiDemoRequestRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -423,8 +514,11 @@ const rootRouteChildren: RootRouteChildren = {
   RoadmapRoute: RoadmapRoute,
   SecurityRoute: SecurityRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiActivitiesRoute: ApiActivitiesRoute,
   ApiAnalyticsRoute: ApiAnalyticsRoute,
+  ApiAuthorizedCompaniesRoute: ApiAuthorizedCompaniesRoute,
   ApiChatRoute: ApiChatRoute,
+  ApiDemoRequestRoute: ApiDemoRequestRouteWithChildren,
   ApiDocumentsRoute: ApiDocumentsRoute,
   ApiFeedbackRoute: ApiFeedbackRoute,
   ApiHealthRoute: ApiHealthRoute,

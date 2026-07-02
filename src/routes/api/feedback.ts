@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { queryLogs } from "../../server/db";
+import { saveFeedbackToSupabase } from "../../lib/supabase-server";
 
 export const Route = createFileRoute("/api/feedback")({
   server: {
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/api/feedback")({
           if (log) {
             log.feedback = { rating, comments };
           }
+
+          await saveFeedbackToSupabase({ queryId, rating, comments });
 
           return new Response(
             JSON.stringify({ success: true, message: "Feedback submitted successfully." }),

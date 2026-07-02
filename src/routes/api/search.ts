@@ -7,7 +7,7 @@ export const Route = createFileRoute("/api/search")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const { query } = body;
+          const { query, company } = body;
 
           if (!query) {
             return new Response(JSON.stringify({ error: "Missing query parameter." }), {
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/search")({
             });
           }
 
-          const relevant = findRelevantChunks(query, 5);
+          const relevant = findRelevantChunks(query, company, 5);
           const results = relevant.map((r) => ({
             documentId: r.docId,
             documentName: r.docName,

@@ -1,7 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { GoogleGenAI, Type } from "@google/genai";
-import { findRelevantChunks, queryLogs, users } from "../../server/db";
+import { findRelevantChunks, queryLogs, users, loadDocumentsFromSupabase } from "../../server/db";
 import { Citation, QueryLog, UserRole } from "../../types";
+import { saveQueryLogToSupabase } from "../../lib/supabase-server";
+
+// Language code to name mapping for Gemini instruction
+const LANGUAGE_NAMES: Record<string, string> = {
+  en: "English",
+  hi: "Hindi",
+  bn: "Bengali",
+  te: "Telugu",
+  mr: "Marathi",
+  ta: "Tamil",
+  ur: "Urdu",
+  gu: "Gujarati",
+  kn: "Kannada",
+  ml: "Malayalam",
+  or: "Odia",
+  pa: "Punjabi",
+  as: "Assamese",
+  mai: "Maithili",
+  sa: "Sanskrit",
+  kok: "Konkani",
+  ne: "Nepali",
+  doi: "Dogri",
+  ks: "Kashmiri",
+  mni: "Manipuri",
+  sat: "Santali",
+  sd: "Sindhi",
+  brx: "Bodo",
+};
+
+// Load documents from Supabase once per server process (lazy singleton).
+// This ensures that any previously uploaded docs (with file_path) are
+// available for RAG before the first chat request is processed.
+let docsLoaded = false;
+async function ensureDocsLoaded() {
+  if (!docsLoaded) {
+    docsLoaded = true; // set early to prevent concurrent duplicate loads
+    await loadDocumentsFromSupabase();
+  }
+}
+
 
 let aiClient: GoogleGenAI | null = null;
 function getGeminiClient(): GoogleGenAI {
@@ -27,8 +67,15 @@ export const Route = createFileRoute("/api/chat")({
     handlers: {
       POST: async ({ request }) => {
         try {
+          // Ensure docs from Supabase (with file_path) are loaded into memory
+          await ensureDocsLoaded();
+
           const body = await request.json();
-          const { message, userId, userRole, userName } = body;
+          const { message, userId, userRole, userName, language, company } = body;
+
+          // Resolve language name for prompt
+          const langCode = language || "en";
+          const langName = LANGUAGE_NAMES[langCode] || "English";
 
           if (!message) {
             return new Response(JSON.stringify({ error: "Missing message text." }), {
@@ -44,7 +91,7 @@ export const Route = createFileRoute("/api/chat")({
           };
 
           // 1. Retrieve the top relevant local material chunks
-          const matchedChunks = findRelevantChunks(message, 3);
+          const matchedChunks = findRelevantChunks(message, company, 3);
 
           const contextBlocks = matchedChunks
             .map(
@@ -77,6 +124,7 @@ export const Route = createFileRoute("/api/chat")({
               status: "success",
             };
             queryLogs.push(newLog);
+            await saveQueryLogToSupabase(newLog);
 
             return new Response(
               JSON.stringify({
@@ -100,7 +148,9 @@ export const Route = createFileRoute("/api/chat")({
               systemInstruction: `You are the Enterprise Knowledge Base Assistant (EKBA).
 Answer the user's question accurately using ONLY the provided Enterprise Document Context.
 If the answer cannot be found in the context, do not make assumptions or default to general knowledge. Instead, politely state that the information was not found.
-You must construct the response to match the exact JSON schema provided: provide the 'answer' in markdown format, and structure high-accuracy 'citations' pointing directly to the utilized source documents, sections, and snippets.`,
+You must construct the response to match the exact JSON schema provided: provide the 'answer' in markdown format, and structure high-accuracy 'citations' pointing directly to the utilized source documents, sections, and snippets.
+
+IMPORTANT LANGUAGE INSTRUCTION: You MUST respond in ${langName} language. The 'answer' field must be written entirely in ${langName}. The citations (sourceDoc, section, snippet) should remain in their original language as they reference document names and sections. Only the 'answer' text should be in ${langName}.`,
               responseMimeType: "application/json",
               responseSchema: {
                 type: Type.OBJECT,
@@ -149,6 +199,7 @@ You must construct the response to match the exact JSON schema provided: provide
             status: "success",
           };
           queryLogs.push(newLog);
+          await saveQueryLogToSupabase(newLog);
 
           return new Response(
             JSON.stringify({
