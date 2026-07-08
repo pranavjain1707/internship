@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, X, Send, LogOut, Bot, Sparkles, Loader2 } from "lucide-react";
+import { MessageSquare, X, Send, LogOut, Bot, Sparkles, Loader2, Maximize2, Minimize2 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -9,6 +9,7 @@ interface Message {
 
 export default function SiteChatBot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -246,10 +247,22 @@ Ask me anything!`,
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
+    <div
+      className={
+        isOpen && isFullscreen
+          ? "fixed inset-0 z-50 flex flex-col font-sans"
+          : "fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans"
+      }
+    >
       {/* ─── Chat Window ─── */}
       {isOpen && (
-        <div className="mb-4 w-[360px] sm:w-[400px] h-[520px] max-h-[calc(100vh-120px)] rounded-2xl border border-border/80 bg-background/95 backdrop-blur-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div
+          className={
+            isFullscreen
+              ? "w-full h-full border-0 bg-background flex flex-col overflow-hidden animate-in fade-in duration-300"
+              : "mb-4 w-[360px] sm:w-[400px] h-[520px] max-h-[calc(100vh-120px)] rounded-2xl border border-border/80 bg-background/95 backdrop-blur-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300"
+          }
+        >
           
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border/60 bg-secondary/35 px-4 py-3.5">
@@ -279,7 +292,17 @@ Ask me anything!`,
                 </button>
               )}
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground transition cursor-pointer"
+                title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              >
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </button>
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsFullscreen(false);
+                }}
                 className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground transition cursor-pointer"
               >
                 <X className="h-4 w-4" />
