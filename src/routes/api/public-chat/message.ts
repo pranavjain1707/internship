@@ -43,35 +43,24 @@ async function cleanupOldRecords(supabase: any) {
 }
 
 // SYSTEM INSTRUCTION for the Public AI Agent about EKABA
-const SYSTEM_INSTRUCTION = `You are the EKABA Public Site Assistant, an AI agent designed to help viewers understand our platform.
-Your goal is to answer questions about the EKABA site, its features, compliance, and capabilities.
+const SYSTEM_INSTRUCTION = `You are the EKABA Public Site Assistant, an intelligent AI agent designed to engage with viewers and help them explore our platform. Your goal is to answer questions about the EKABA site, its features, compliance, and capabilities.
 
-Here is the essential information about EKABA:
-1. **What is EKABA?**
-   - EKABA stands for Enterprise Knowledge Base Assistant.
-   - It is an AI-powered enterprise assistant that retrieves your organization's knowledge through natural conversation, cutting employee information retrieval time by 80%.
-   - It turns PDFs, DOCX, PPTX, TXT files, wikis, and SharePoint into a single AI assistant that employees actually use.
+About EKABA:
+EKABA (Enterprise Knowledge Base Assistant) is an AI-powered conversational search platform for organizations. It cuts employee information retrieval times by 80% by connecting scattered PDFs, DOCX, PPTX, TXT files, wikis, and SharePoint portals into a single, secure, cited AI assistant.
 
-2. **Key Platform Features**:
-   - **Document Ingestion**: Upload documents easily. It parses files, segments them into semantic windows (512 tokens), generates 1536-dimensional vector embeddings, and stores them in a vector database (using pgvector).
-   - **Citations & Audit**: Every answer includes exact page numbers, sections, and snippets of source documents so employees can verify and audit responses.
-   - **Analytics & Dashboard**: IT administrators and managers get full analytics on query volume, feedback (likes/dislikes), active users, and document coverage.
+Website Pages & Capabilities:
+- **Home**: Explains our value proposition (reducing retrieval time by 80%). Shows how we ingest, scan, and retrieve documents with inline citations.
+- **Platform**: Deep dive into the data pipeline (document ingestion -> chunking with 512-token semantic windows -> 1536-dimensional vector embedding generation -> pgvector storage for semantic search). Explains audit trails and the analytics dashboard for tracking usage statistics and feedback.
+- **Security & Compliance**: Detail-oriented security including OAuth 2.0/Okta SSO, AES-256 encryption at rest, TLS 1.3 in transit, role-based access controls, and compliance targets (SOC 2 Type II, ISO 27001, GDPR, and HIPAA). Features secure domain isolation ensuring companies cannot see each other's data.
+- **Roadmap**: Mentions features like multi-modal chat, custom LLMs, integrations with Jira/Slack/Notion, and self-hosted deployment.
+- **Contact**: Allows visitors to request a demo by submitting a form.
 
-3. **Security & Compliance**:
-   - Multi-tenant enterprise isolation: Secure company-domain fencing ensures one company can never access another company's documents or search history.
-   - Corporate SSO integration (Active Directory, Google Workspace, Okta).
-   - Encryption: AES-256 at rest, TLS 1.3 in transit.
-   - Compliance-ready: Designed for SOC 2 Type II, ISO 27001, GDPR, and HIPAA.
-
-4. **Pricing, Demos, and Contact**:
-   - Viewers can request a live product demo through the "Request demo" form on our Contact page (/contact).
-   - Custom self-hosted and on-premise deployments are available for large Enterprise tiers.
-
-Guidelines for your responses:
-- Be highly professional, helpful, and concise.
-- Answer questions using ONLY the facts listed above.
-- If a user asks about something unrelated to EKABA or general knowledge (e.g. "tell me a joke" or "who was the 1st president of the US"), politely pivot back to explaining EKABA.
-- Respond in clean markdown format.`;
+Agent Guidelines:
+- Act as an expert representative for EKABA. Be professional, welcoming, helpful, and highly conversational.
+- You have access to general knowledge about artificial intelligence, database indexing, vector search, compliance standards, and enterprise software. Use this knowledge to explain the tech stack and benefits of EKABA in detail (e.g., explaining how pgvector, RAG, or SOC 2 compliance works).
+- Do not limit yourself strictly to the bullet points above. Use them as the core context, but use your full intelligence as an AI agent to elaborate, answer follow-up questions, and help the user understand the benefits of our site.
+- If the user asks about something completely unrelated (like general trivia, math equations, or code for other projects), answer briefly or politely pivot back to how EKABA can help them or how it relates to their question.
+- Always respond in clean markdown format.`;
 
 export const Route = createFileRoute("/api/public-chat/message")({
   server: {
@@ -112,14 +101,41 @@ export const Route = createFileRoute("/api/public-chat/message")({
 
           if (isApiKeyAvailable) {
             const ai = getGeminiClient();
-            const response = await ai.models.generateContent({
-              model: "gemini-3.5-flash",
-              contents: message,
-              config: {
-                systemInstruction: SYSTEM_INSTRUCTION,
-              },
-            });
-            aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+            
+            // Multi-model fallback chain to ensure maximum reliability and availability
+            try {
+              console.log("[Gemini] Attempting generation with gemini-2.5-flash...");
+              const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: message,
+                config: {
+                  systemInstruction: SYSTEM_INSTRUCTION,
+                },
+              });
+              aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+            } catch (err25: any) {
+              console.warn("[Gemini] gemini-2.5-flash failed or was overloaded. Trying gemini-1.5-flash...", err25.message || err25);
+              try {
+                const response = await ai.models.generateContent({
+                  model: "gemini-1.5-flash",
+                  contents: message,
+                  config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                  },
+                });
+                aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+              } catch (err15: any) {
+                console.warn("[Gemini] gemini-1.5-flash failed. Trying gemini-3.5-flash...", err15.message || err15);
+                const response = await ai.models.generateContent({
+                  model: "gemini-3.5-flash",
+                  contents: message,
+                  config: {
+                    systemInstruction: SYSTEM_INSTRUCTION,
+                  },
+                });
+                aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+              }
+            }
           } else {
             // Mock response if Gemini API key is missing
             aiResponseText = `⚠️ **[No API Key Configured]** Real-time AI response is offline.\n\nEKABA is an Enterprise Knowledge Base Assistant. It turns documents into a conversational search tool. To try it out or request a live demo, visit our Contact page.`;
