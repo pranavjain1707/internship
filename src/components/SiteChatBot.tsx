@@ -10,12 +10,14 @@ interface Message {
 export default function SiteChatBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState("");
   
   // Session state
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   
   // Chat input state
@@ -40,11 +42,13 @@ export default function SiteChatBot() {
   useEffect(() => {
     const savedUserId = localStorage.getItem("public_chat_userId");
     const savedEmail = localStorage.getItem("public_chat_email");
+    const savedName = localStorage.getItem("public_chat_name");
     const savedMessages = localStorage.getItem("public_chat_messages");
 
     if (savedUserId && savedEmail) {
       setUserId(savedUserId);
       setUserEmail(savedEmail);
+      setUserName(savedName || "Visitor");
       if (savedMessages) {
         try {
           setMessages(JSON.parse(savedMessages));
@@ -65,6 +69,10 @@ export default function SiteChatBot() {
   // Handle Login submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !name.trim()) {
+      setLoginError("Please enter your name.");
+      return;
+    }
     if (!email || !email.includes("@")) {
       setLoginError("Please enter a valid email address.");
       return;
@@ -77,7 +85,7 @@ export default function SiteChatBot() {
       const response = await fetch("/api/public-chat/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, name: name.trim() }),
       });
 
       const data = await response.json();
@@ -88,6 +96,7 @@ export default function SiteChatBot() {
 
       setUserId(data.userId);
       setUserEmail(data.email);
+      setUserName(data.name || name.trim());
       
       // If user has previous logs returned, load them. Else show welcoming message.
       if (data.messages && data.messages.length > 0) {
@@ -96,7 +105,7 @@ export default function SiteChatBot() {
         setMessages([
           {
             role: "assistant",
-            text: `Hi there! 👋 I am the EKABA Assistant.
+            text: `Hi ${data.name || name.trim()}! 👋 I am the EKABA Assistant.
             
 I can answer your questions about our site and platform, including:
 * **What is EKABA?** (Enterprise Knowledge Base Assistant)
@@ -112,6 +121,7 @@ Ask me anything!`,
       // Persist session
       localStorage.setItem("public_chat_userId", data.userId);
       localStorage.setItem("public_chat_email", data.email);
+      localStorage.setItem("public_chat_name", data.name || name.trim());
     } catch (err: any) {
       setLoginError(err.message || "An unexpected error occurred during login.");
     } finally {
@@ -143,6 +153,7 @@ Ask me anything!`,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId,
+          userName,
           message: userText,
         }),
       });
@@ -179,10 +190,13 @@ Ask me anything!`,
   const handleLogout = () => {
     setUserId(null);
     setUserEmail(null);
+    setUserName(null);
     setMessages([]);
     setEmail("");
+    setName("");
     localStorage.removeItem("public_chat_userId");
     localStorage.removeItem("public_chat_email");
+    localStorage.removeItem("public_chat_name");
     localStorage.removeItem("public_chat_messages");
   };
 
@@ -288,6 +302,21 @@ Ask me anything!`,
                 </p>
                 
                 <form onSubmit={handleLogin} className="w-full flex flex-col gap-3">
+                  <div className="text-left">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      disabled={isLoggingIn}
+                      className="w-full rounded-md border border-border bg-background/50 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                    />
+                  </div>
+                  
                   <div className="text-left">
                     <label className="text-xs font-medium text-muted-foreground mb-1 block">
                       Email Address

@@ -68,7 +68,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const { userId, message } = body;
+          const { userId, userName, message } = body;
 
           if (!userId || !userId.startsWith("v-")) {
             return new Response(
@@ -146,7 +146,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
           const newLog = {
             id: queryId,
             user_id: userId,
-            user_name: "Visitor",
+            user_name: userName || "Visitor",
             user_role: "Employee",
             query_text: message,
             response_text: aiResponseText,

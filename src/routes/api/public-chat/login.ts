@@ -38,7 +38,17 @@ export const Route = createFileRoute("/api/public-chat/login")({
       POST: async ({ request }) => {
         try {
           const body = await request.json();
-          const { email } = body;
+          const { email, name } = body;
+
+          if (!name || !name.trim()) {
+            return new Response(
+              JSON.stringify({ error: "Your name is required." }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+          }
 
           if (!email || !email.includes("@")) {
             return new Response(
@@ -56,12 +66,22 @@ export const Route = createFileRoute("/api/public-chat/login")({
           await cleanupOldRecords(supabase);
 
           const userId = `v-${email.toLowerCase().trim()}`;
+          const formattedName = name.trim();
+          
+          // Generate 2-letter avatar initials (e.g. John Doe -> JD)
+          const initials = formattedName
+            .split(/\s+/)
+            .map((word) => word[0])
+            .join("")
+            .substring(0, 2)
+            .toUpperCase() || "VI";
+
           const visitorUser = {
             id: userId,
-            name: "Visitor",
+            name: formattedName,
             email: email.toLowerCase().trim(),
             role: "Employee", // fits check constraint (Employee, Manager, HR Officer, IT Administrator, Owner)
-            avatar: "VI",
+            avatar: initials,
             password: "Visitor@123",
             domain: "public",
             company: "visitor",
@@ -98,6 +118,7 @@ export const Route = createFileRoute("/api/public-chat/login")({
             JSON.stringify({
               userId,
               email: email.toLowerCase().trim(),
+              name: formattedName,
               messages,
             }),
             {
