@@ -31,6 +31,8 @@ import { Route as ApiUsersUpdateRoleRouteImport } from './routes/api/users/updat
 import { Route as ApiUsersRegisterRouteImport } from './routes/api/users/register'
 import { Route as ApiUsersKickRouteImport } from './routes/api/users/kick'
 import { Route as ApiUsersDbRouteImport } from './routes/api/users/db'
+import { Route as ApiPublicChatMessageRouteImport } from './routes/api/public-chat/message'
+import { Route as ApiPublicChatLoginRouteImport } from './routes/api/public-chat/login'
 import { Route as ApiDemoRequestVerifyRouteImport } from './routes/api/demo-request/verify'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -143,6 +145,16 @@ const ApiUsersDbRoute = ApiUsersDbRouteImport.update({
   path: '/api/users/db',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicChatMessageRoute = ApiPublicChatMessageRouteImport.update({
+  id: '/api/public-chat/message',
+  path: '/api/public-chat/message',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicChatLoginRoute = ApiPublicChatLoginRouteImport.update({
+  id: '/api/public-chat/login',
+  path: '/api/public-chat/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDemoRequestVerifyRoute = ApiDemoRequestVerifyRouteImport.update({
   id: '/verify',
   path: '/verify',
@@ -168,6 +180,8 @@ export interface FileRoutesByFullPath {
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
   '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
+  '/api/public-chat/login': typeof ApiPublicChatLoginRoute
+  '/api/public-chat/message': typeof ApiPublicChatMessageRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -193,6 +207,8 @@ export interface FileRoutesByTo {
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
   '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
+  '/api/public-chat/login': typeof ApiPublicChatLoginRoute
+  '/api/public-chat/message': typeof ApiPublicChatMessageRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -219,6 +235,8 @@ export interface FileRoutesById {
   '/api/search': typeof ApiSearchRoute
   '/api/upload': typeof ApiUploadRoute
   '/api/demo-request/verify': typeof ApiDemoRequestVerifyRoute
+  '/api/public-chat/login': typeof ApiPublicChatLoginRoute
+  '/api/public-chat/message': typeof ApiPublicChatMessageRoute
   '/api/users/db': typeof ApiUsersDbRoute
   '/api/users/kick': typeof ApiUsersKickRoute
   '/api/users/register': typeof ApiUsersRegisterRoute
@@ -246,6 +264,8 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/api/upload'
     | '/api/demo-request/verify'
+    | '/api/public-chat/login'
+    | '/api/public-chat/message'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -271,6 +291,8 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/api/upload'
     | '/api/demo-request/verify'
+    | '/api/public-chat/login'
+    | '/api/public-chat/message'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -296,6 +318,8 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/api/upload'
     | '/api/demo-request/verify'
+    | '/api/public-chat/login'
+    | '/api/public-chat/message'
     | '/api/users/db'
     | '/api/users/kick'
     | '/api/users/register'
@@ -321,6 +345,8 @@ export interface RootRouteChildren {
   ApiHealthRoute: typeof ApiHealthRoute
   ApiSearchRoute: typeof ApiSearchRoute
   ApiUploadRoute: typeof ApiUploadRoute
+  ApiPublicChatLoginRoute: typeof ApiPublicChatLoginRoute
+  ApiPublicChatMessageRoute: typeof ApiPublicChatMessageRoute
   ApiUsersDbRoute: typeof ApiUsersDbRoute
   ApiUsersKickRoute: typeof ApiUsersKickRoute
   ApiUsersRegisterRoute: typeof ApiUsersRegisterRoute
@@ -484,6 +510,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUsersDbRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public-chat/message': {
+      id: '/api/public-chat/message'
+      path: '/api/public-chat/message'
+      fullPath: '/api/public-chat/message'
+      preLoaderRoute: typeof ApiPublicChatMessageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public-chat/login': {
+      id: '/api/public-chat/login'
+      path: '/api/public-chat/login'
+      fullPath: '/api/public-chat/login'
+      preLoaderRoute: typeof ApiPublicChatLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/demo-request/verify': {
       id: '/api/demo-request/verify'
       path: '/verify'
@@ -524,6 +564,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiHealthRoute: ApiHealthRoute,
   ApiSearchRoute: ApiSearchRoute,
   ApiUploadRoute: ApiUploadRoute,
+  ApiPublicChatLoginRoute: ApiPublicChatLoginRoute,
+  ApiPublicChatMessageRoute: ApiPublicChatMessageRoute,
   ApiUsersDbRoute: ApiUsersDbRoute,
   ApiUsersKickRoute: ApiUsersKickRoute,
   ApiUsersRegisterRoute: ApiUsersRegisterRoute,

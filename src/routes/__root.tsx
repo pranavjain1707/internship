@@ -11,6 +11,7 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
+import SiteChatBot from "../components/SiteChatBot";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -381,6 +382,7 @@ function RootComponent() {
             <Outlet />
           </main>
           {!isPortal && <SiteFooter />}
+          {!isPortal && <SiteChatBot />}
         </div>
       </ThemeProvider>
     </QueryClientProvider>
