@@ -146,7 +146,7 @@ function SiteHeader() {
           </div>
           <span className="font-display text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all">EKABA</span>
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground md:inline">
-            v2.0
+            v2.1
           </span>
         </Link>
 
