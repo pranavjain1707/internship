@@ -150,7 +150,7 @@ Ask me anything!`,
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to get AI response");
+        throw new Error(data.message || data.error || "Failed to get AI response");
       }
 
       // Append assistant message local state
