@@ -25,7 +25,13 @@ import {
   Info,
   Clock,
 } from "lucide-react";
-import { User, UserRole, ROLE_HIERARCHY, PendingApprovalRequest, PendingProfileRequest } from "../types";
+import {
+  User,
+  UserRole,
+  ROLE_HIERARCHY,
+  PendingApprovalRequest,
+  PendingProfileRequest,
+} from "../types";
 import { useTheme } from "../components/ThemeProvider";
 import Dashboard from "../components/portal/Dashboard";
 import ChatInterface from "../components/portal/ChatInterface";
@@ -39,12 +45,12 @@ import { logUserActivity } from "../lib/activity-client";
 // 1. Full Page SSO Login Screen component
 // ==========================================
 const AUTHORIZED_COMPANIES: Record<string, string> = {
-  "ekaba": "EKABA-TEAM-2026",
+  ekaba: "EKABA-TEAM-2026",
   "ekaba internal": "EKABA-TEAM-2026",
-  "google": "GOOG-EKABA-99",
+  google: "GOOG-EKABA-99",
   "acme corp": "ACME-EKABA-12",
-  "microsoft": "MSFT-EKABA-88",
-  "apple": "AAPL-EKABA-77",
+  microsoft: "MSFT-EKABA-88",
+  apple: "AAPL-EKABA-77",
 };
 
 const formatCompanyName = (name: string) => {
@@ -81,44 +87,143 @@ const getDefaultUsersForCompany = (companyKey: string) => {
   const c = companyKey.toLowerCase().trim();
   if (c === "google") {
     return [
-      { name: "Larry Page", domain: "google.com", password: "GoogleEmp@2026", role: "Employee" as UserRole },
-      { name: "Sergey Brin", domain: "google.com", password: "GoogleMgr@2026", role: "Manager" as UserRole },
-      { name: "Ruth Porat", domain: "google.com", password: "GoogleHR@2026", role: "HR Officer" as UserRole },
-      { name: "Jeff Dean", domain: "google.com", password: "GoogleIT@2026", role: "IT Administrator" as UserRole },
+      {
+        name: "Larry Page",
+        domain: "google.com",
+        password: "GoogleEmp@2026",
+        role: "Employee" as UserRole,
+      },
+      {
+        name: "Sergey Brin",
+        domain: "google.com",
+        password: "GoogleMgr@2026",
+        role: "Manager" as UserRole,
+      },
+      {
+        name: "Ruth Porat",
+        domain: "google.com",
+        password: "GoogleHR@2026",
+        role: "HR Officer" as UserRole,
+      },
+      {
+        name: "Jeff Dean",
+        domain: "google.com",
+        password: "GoogleIT@2026",
+        role: "IT Administrator" as UserRole,
+      },
     ];
   }
   if (c === "acme corp" || c === "acme") {
     return [
-      { name: "Road Runner", domain: "acme.com", password: "AcmeEmp@2026", role: "Employee" as UserRole },
-      { name: "Bugs Bunny", domain: "acme.com", password: "AcmeMgr@2026", role: "Manager" as UserRole },
-      { name: "Daffy Duck", domain: "acme.com", password: "AcmeHR@2026", role: "HR Officer" as UserRole },
-      { name: "Elmer Fudd", domain: "acme.com", password: "AcmeIT@2026", role: "IT Administrator" as UserRole },
+      {
+        name: "Road Runner",
+        domain: "acme.com",
+        password: "AcmeEmp@2026",
+        role: "Employee" as UserRole,
+      },
+      {
+        name: "Bugs Bunny",
+        domain: "acme.com",
+        password: "AcmeMgr@2026",
+        role: "Manager" as UserRole,
+      },
+      {
+        name: "Daffy Duck",
+        domain: "acme.com",
+        password: "AcmeHR@2026",
+        role: "HR Officer" as UserRole,
+      },
+      {
+        name: "Elmer Fudd",
+        domain: "acme.com",
+        password: "AcmeIT@2026",
+        role: "IT Administrator" as UserRole,
+      },
     ];
   }
   if (c === "microsoft") {
     return [
-      { name: "Bill Gates", domain: "microsoft.com", password: "MsftEmp@2026", role: "Employee" as UserRole },
-      { name: "Paul Allen", domain: "microsoft.com", password: "MsftMgr@2026", role: "Manager" as UserRole },
-      { name: "Steve Ballmer", domain: "microsoft.com", password: "MsftHR@2026", role: "HR Officer" as UserRole },
-      { name: "Kevin Scott", domain: "microsoft.com", password: "MsftIT@2026", role: "IT Administrator" as UserRole },
+      {
+        name: "Bill Gates",
+        domain: "microsoft.com",
+        password: "MsftEmp@2026",
+        role: "Employee" as UserRole,
+      },
+      {
+        name: "Paul Allen",
+        domain: "microsoft.com",
+        password: "MsftMgr@2026",
+        role: "Manager" as UserRole,
+      },
+      {
+        name: "Steve Ballmer",
+        domain: "microsoft.com",
+        password: "MsftHR@2026",
+        role: "HR Officer" as UserRole,
+      },
+      {
+        name: "Kevin Scott",
+        domain: "microsoft.com",
+        password: "MsftIT@2026",
+        role: "IT Administrator" as UserRole,
+      },
     ];
   }
   if (c === "apple") {
     return [
-      { name: "Steve Jobs", domain: "apple.com", password: "AppleEmp@2026", role: "Employee" as UserRole },
-      { name: "Steve Wozniak", domain: "apple.com", password: "AppleMgr@2026", role: "Manager" as UserRole },
-      { name: "Craig Federighi", domain: "apple.com", password: "AppleHR@2026", role: "HR Officer" as UserRole },
-      { name: "Phil Schiller", domain: "apple.com", password: "AppleIT@2026", role: "IT Administrator" as UserRole },
+      {
+        name: "Steve Jobs",
+        domain: "apple.com",
+        password: "AppleEmp@2026",
+        role: "Employee" as UserRole,
+      },
+      {
+        name: "Steve Wozniak",
+        domain: "apple.com",
+        password: "AppleMgr@2026",
+        role: "Manager" as UserRole,
+      },
+      {
+        name: "Craig Federighi",
+        domain: "apple.com",
+        password: "AppleHR@2026",
+        role: "HR Officer" as UserRole,
+      },
+      {
+        name: "Phil Schiller",
+        domain: "apple.com",
+        password: "AppleIT@2026",
+        role: "IT Administrator" as UserRole,
+      },
     ];
   }
   return [
-    { name: "Alice Smith", domain: "ekaba.com", password: "Password@123", role: "Employee" as UserRole },
-    { name: "John Doe", domain: "ekaba.com", password: "Password@123", role: "Manager" as UserRole },
-    { name: "Sarah Connor", domain: "ekaba.com", password: "Password@123", role: "HR Officer" as UserRole },
-    { name: "Dave Miller", domain: "ekaba.com", password: "Password@123", role: "IT Administrator" as UserRole },
+    {
+      name: "Alice Smith",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "Employee" as UserRole,
+    },
+    {
+      name: "John Doe",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "Manager" as UserRole,
+    },
+    {
+      name: "Sarah Connor",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "HR Officer" as UserRole,
+    },
+    {
+      name: "Dave Miller",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "IT Administrator" as UserRole,
+    },
   ];
 };
-
 
 function SecurityVault3D() {
   const [logs, setLogs] = useState<string[]>([
@@ -139,7 +244,7 @@ function SecurityVault3D() {
     ];
 
     const interval = setInterval(() => {
-      setLogs(prev => {
+      setLogs((prev) => {
         const next = [...prev.slice(1), logPool[Math.floor(Math.random() * logPool.length)]];
         return next;
       });
@@ -154,7 +259,7 @@ function SecurityVault3D() {
         {/* Gloss overlay */}
         <div className="screen-gloss" />
         <div className="scan-line" />
-        
+
         {/* Terminal Header */}
         <div className="flex items-center justify-between border-b border-slate-800/80 pb-2 mb-3">
           <div className="flex items-center gap-1.5">
@@ -163,12 +268,16 @@ function SecurityVault3D() {
             <span className="h-2 w-2 rounded-full bg-emerald-500/80" />
             <span className="ml-1 text-[8px] text-slate-500">vault-sso-gateway:~/bin</span>
           </div>
-          <span className="text-[8px] font-bold text-primary animate-pulse uppercase">SECURE TUNNEL</span>
+          <span className="text-[8px] font-bold text-primary animate-pulse uppercase">
+            SECURE TUNNEL
+          </span>
         </div>
 
         {/* Live log stream */}
         <div className="flex-1 space-y-2 overflow-hidden text-emerald-400/90 leading-relaxed text-left">
-          <div className="text-[9px] text-slate-500 font-bold mb-1">=== SYSTEM INTEGRITY DEPLOYMENT LOGS ===</div>
+          <div className="text-[9px] text-slate-500 font-bold mb-1">
+            === SYSTEM INTEGRITY DEPLOYMENT LOGS ===
+          </div>
           {logs.map((log, index) => (
             <div key={index} className="flex gap-2 items-start animate-fade-in">
               <span className="text-slate-600 select-none">&gt;</span>
@@ -204,9 +313,15 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole>("Employee");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [step, setStep] = useState<"company_verification" | "credentials" | "permission" | "pending_approval" | "password" | "email_reset" | "pending_email_reset">(
-    "company_verification",
-  );
+  const [step, setStep] = useState<
+    | "company_verification"
+    | "credentials"
+    | "permission"
+    | "pending_approval"
+    | "password"
+    | "email_reset"
+    | "pending_email_reset"
+  >("company_verification");
   const [companyName, setCompanyName] = useState("");
   const [authorizedId, setAuthorizedId] = useState("");
   const [verifiedCompany, setVerifiedCompany] = useState("");
@@ -267,7 +382,8 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   // Sponsoring Authority Approval States for new users
   const [sponsorInfo, setSponsorInfo] = useState("");
 
-  const [authorizedCompanies, setAuthorizedCompanies] = useState<Record<string, any>>(AUTHORIZED_COMPANIES);
+  const [authorizedCompanies, setAuthorizedCompanies] =
+    useState<Record<string, any>>(AUTHORIZED_COMPANIES);
 
   useEffect(() => {
     fetch("/api/authorized-companies")
@@ -308,7 +424,10 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               const updated = approvals.filter(
                 (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
               );
-              localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
+              localStorage.setItem(
+                `kb_portal_pending_approvals_${pollCompKey}`,
+                JSON.stringify(updated),
+              );
             } else if (myReq && myReq.status === "rejected") {
               setError(
                 `Your clearance request has been rejected by ${myReq.approvedBy || myReq.sponsorName}.`,
@@ -319,7 +438,10 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
               const updated = approvals.filter(
                 (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
               );
-              localStorage.setItem(`kb_portal_pending_approvals_${pollCompKey}`, JSON.stringify(updated));
+              localStorage.setItem(
+                `kb_portal_pending_approvals_${pollCompKey}`,
+                JSON.stringify(updated),
+              );
             }
           } catch (err) {
             console.error("Error reading approvals during poll:", err);
@@ -331,27 +453,34 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           try {
             const profileReqs: PendingProfileRequest[] = JSON.parse(profileStr);
             const myReq = profileReqs.find(
-              (req) => req.userName.toLowerCase() === customName.trim().toLowerCase() && req.status !== "pending",
+              (req) =>
+                req.userName.toLowerCase() === customName.trim().toLowerCase() &&
+                req.status !== "pending",
             );
             if (myReq) {
               if (myReq.status === "approved") {
                 // Success: the email was updated in the DB
                 setCustomEmail(myReq.requestedEmail);
                 setError("");
-                
+
                 // Show notification and transition directly to entering password
                 setSponsorInfo(`Email reset approved by ${myReq.approvedBy || myReq.sponsorName}`);
                 setPasswordMode("enter");
                 setPassword("");
                 setStep("password");
               } else if (myReq.status === "rejected") {
-                setError(`Your email reset request was rejected by ${myReq.approvedBy || myReq.sponsorName}.`);
+                setError(
+                  `Your email reset request was rejected by ${myReq.approvedBy || myReq.sponsorName}.`,
+                );
                 setStep("credentials");
               }
 
               // Remove request from pending queue
               const updated = profileReqs.filter((r) => r.id !== myReq.id);
-              localStorage.setItem(`kb_portal_pending_profile_reqs_${pollCompKey}`, JSON.stringify(updated));
+              localStorage.setItem(
+                `kb_portal_pending_profile_reqs_${pollCompKey}`,
+                JSON.stringify(updated),
+              );
             }
           } catch (err) {
             console.error("Error reading profile requests during poll:", err);
@@ -362,7 +491,6 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
     return () => clearInterval(interval);
   }, [step, customName, verifiedCompany]);
-
 
   // Load and merge Master backend credentials into client local database
   useEffect(() => {
@@ -392,9 +520,10 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const getStoredUsers = (compName = verifiedCompany): Record<string, StoredUser> => {
     const storedUsersCompKey = compName.trim().toLowerCase() || "ekaba";
     const data = localStorage.getItem(`kb_portal_users_db_${storedUsersCompKey}`);
-    
+
     // Load list of kicked default users to prevent re-adding them
-    const kickedUsersStr = localStorage.getItem(`kb_portal_kicked_users_${storedUsersCompKey}`) || "[]";
+    const kickedUsersStr =
+      localStorage.getItem(`kb_portal_kicked_users_${storedUsersCompKey}`) || "[]";
     let kickedUsers: string[] = [];
     try {
       kickedUsers = JSON.parse(kickedUsersStr);
@@ -404,7 +533,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       try {
         const parsed = JSON.parse(data);
         let changed = false;
-        
+
         // Ensure default Owner for this company exists
         const defaultOwner = getDefaultOwnerForCompany(storedUsersCompKey);
         const ownerKey = defaultOwner.name.toLowerCase();
@@ -462,7 +591,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     // Initialize with default Owner and Users
     const defaultOwner = getDefaultOwnerForCompany(storedUsersCompKey);
     const initialDb: Record<string, StoredUser> = {};
-    
+
     const ownerKey = defaultOwner.name.toLowerCase();
     if (!kickedUsers.includes(ownerKey)) {
       initialDb[ownerKey] = {
@@ -490,7 +619,6 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     localStorage.setItem(`kb_portal_users_db_${storedUsersCompKey}`, JSON.stringify(initialDb));
     return initialDb;
   };
-
 
   const saveStoredUsers = (db: Record<string, StoredUser>, compName = verifiedCompany) => {
     const saveUsersCompKey = compName.trim().toLowerCase() || "ekaba";
@@ -563,15 +691,17 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       if (db[lowerName]) {
         // Existing registered user
         const registered = db[lowerName];
-        
+
         // Calculate the expected email for this user
-        const expectedEmail = registered.email || (
-          registered.name.toLowerCase() === "pranav jain"
+        const expectedEmail =
+          registered.email ||
+          (registered.name.toLowerCase() === "pranav jain"
             ? "jainpranav1707@gmail.com"
             : registered.domain.includes("@")
               ? registered.domain
-              : registered.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + registered.domain
-        );
+              : registered.name.trim().toLowerCase().replace(/\s+/g, ".") +
+                "@" +
+                registered.domain);
 
         if (customEmail.trim().toLowerCase() === expectedEmail.toLowerCase()) {
           // Email matches! Require password verification
@@ -584,7 +714,9 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
         } else {
           // Email mismatch! Show warning and button to reset email
           setIsEmailMismatch(true);
-          setError(`Email address does not match the registered record for "${registered.name}". Please check the spelling or request an email reset.`);
+          setError(
+            `Email address does not match the registered record for "${registered.name}". Please check the spelling or request an email reset.`,
+          );
         }
       } else {
         // First-time user registration - require sponsoring clearance from upper staff
@@ -695,7 +827,6 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     }, 700);
   };
 
-
   const handleVerifyCompany = (e: React.FormEvent) => {
     e.preventDefault();
     const cName = companyName.trim().toLowerCase();
@@ -708,7 +839,9 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       setStep("credentials");
       setError("");
     } else {
-      setError("Invalid Company Name or Authorized ID. Please use one of the pre-authorized codes shown below.");
+      setError(
+        "Invalid Company Name or Authorized ID. Please use one of the pre-authorized codes shown below.",
+      );
     }
   };
 
@@ -760,13 +893,12 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           .toUpperCase() || "EE";
 
       const constructedEmail =
-        customEmail.trim() || (
-        lowerName === "pranav jain"
+        customEmail.trim() ||
+        (lowerName === "pranav jain"
           ? "jainpranav1707@gmail.com"
           : customDomain.includes("@")
             ? customDomain.trim()
-            : customName.trim().toLowerCase().replace(/\s+/g, ".") + "@" + customDomain.trim()
-        );
+            : customName.trim().toLowerCase().replace(/\s+/g, ".") + "@" + customDomain.trim());
 
       const userId = `u-${lowerName.replace(/\s+/g, "-") || Date.now()}`;
 
@@ -833,7 +965,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
           {/* Neon accent orbs inside dark panel */}
           <div className="absolute -right-40 -top-40 w-96 h-96 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
           <div className="absolute -left-20 bottom-10 w-80 h-80 rounded-full bg-accent/15 blur-3xl pointer-events-none" />
-          
+
           <div className="space-y-8 mt-12 md:mt-8 relative z-10">
             <div className="flex items-center gap-3">
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground font-mono font-bold text-lg shadow-md shadow-primary/20">
@@ -882,13 +1014,15 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                         if (matchedUser && role === "Owner") {
                           setCustomName(matchedUser.name);
                           setCustomDomain(matchedUser.domain);
-                          const initialEmail = matchedUser.email || (
-                            matchedUser.name.toLowerCase() === "pranav jain"
+                          const initialEmail =
+                            matchedUser.email ||
+                            (matchedUser.name.toLowerCase() === "pranav jain"
                               ? "jainpranav1707@gmail.com"
                               : matchedUser.domain.includes("@")
                                 ? matchedUser.domain
-                                : matchedUser.name.trim().toLowerCase().replace(/\s+/g, ".") + "@" + matchedUser.domain
-                          );
+                                : matchedUser.name.trim().toLowerCase().replace(/\s+/g, ".") +
+                                  "@" +
+                                  matchedUser.domain);
                           setCustomEmail(initialEmail);
                         } else {
                           setCustomName("");
@@ -921,506 +1055,527 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             {/* Ambient card accent */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-transparent pointer-events-none" />
             <div className="relative">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <span className="text-[9px] font-mono text-stone-500 font-bold tracking-widest uppercase">
-                  {step === "company_verification"
-                    ? "EKABA Client Activation"
-                    : verifiedCompany
-                      ? `${verifiedCompany} Access Channel`
-                      : "SSO SECURE INTERCONNECTED CHANNEL"}
-                </span>
-                <h2 className="text-2xl md:text-3xl font-display font-bold text-stone-800 mt-1">
-                  {step === "company_verification"
-                    ? "Client Identity Verification"
-                    : step === "credentials"
-                      ? "Single Sign-On Activation"
-                      : step === "permission"
-                        ? "Authority Sponsoring Clearance"
-                        : passwordMode === "create"
-                          ? "Create Secure Password"
-                          : "Verify Password"}
-                </h2>
-              </div>
-              {step !== "company_verification" && (
-                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 border border-amber-100 text-amber-850">
-                    <UserCheck className="w-3.5 h-3.5 text-amber-700" />
-                    {selectedRole}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <span className="text-[9px] font-mono text-stone-500 font-bold tracking-widest uppercase">
+                    {step === "company_verification"
+                      ? "EKABA Client Activation"
+                      : verifiedCompany
+                        ? `${verifiedCompany} Access Channel`
+                        : "SSO SECURE INTERCONNECTED CHANNEL"}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("company_verification");
-                      setError("");
-                    }}
-                    className="text-[10px] text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer bg-slate-100 hover:bg-slate-200/80 border border-slate-200 px-2 py-1 rounded-lg transition"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    <span>Change Client</span>
-                  </button>
+                  <h2 className="text-2xl md:text-3xl font-display font-bold text-stone-800 mt-1">
+                    {step === "company_verification"
+                      ? "Client Identity Verification"
+                      : step === "credentials"
+                        ? "Single Sign-On Activation"
+                        : step === "permission"
+                          ? "Authority Sponsoring Clearance"
+                          : passwordMode === "create"
+                            ? "Create Secure Password"
+                            : "Verify Password"}
+                  </h2>
                 </div>
-              )}
-            </div>
-
-            {error && (
-              <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-3.5 text-xs flex gap-2 items-center">
-                <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
-                <span className="font-medium">{error}</span>
-              </div>
-            )}
-
-            {step === "company_verification" ? (
-              <form onSubmit={handleVerifyCompany} className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 font-sans">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={companyName}
-                    onChange={(e) => {
-                      setCompanyName(e.target.value);
-                      setError("");
-                    }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
-                    placeholder="e.g. Google"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 font-sans">
-                    Authorized Client ID
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={authorizedId}
-                    onChange={(e) => {
-                      setAuthorizedId(e.target.value);
-                      setError("");
-                    }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner font-mono"
-                    placeholder="e.g. GOOG-EKABA-99"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-3.5 px-4 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-[0.98] mt-4"
-                >
-                  <span>Verify Client Identity</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            ) : step === "credentials" ? (
-              <form onSubmit={handleSendCredentials} className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold text-stone-600">Enter Name</label>
-                    <span className="text-[9px] text-amber-700 font-mono font-bold tracking-wider">
-                      CUSTOM PROFILE
+                {step !== "company_verification" && (
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 border border-amber-100 text-amber-850">
+                      <UserCheck className="w-3.5 h-3.5 text-amber-700" />
+                      {selectedRole}
                     </span>
-                  </div>
-                  <input
-                    type="text"
-                    required
-                    value={customName}
-                    onChange={(e) => {
-                      setCustomName(e.target.value);
-                      setError("");
-                    }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
-                    placeholder={`Enter ${selectedRole.toLowerCase()} name`}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold text-stone-600 font-sans">Enter Email Address</label>
-                    <span className="text-[9px] text-amber-700 font-mono font-bold uppercase tracking-wider">
-                      Required
-                    </span>
-                  </div>
-                  <input
-                    type="email"
-                    required
-                    value={customEmail}
-                    onChange={(e) => {
-                      setCustomEmail(e.target.value.trim());
-                      setError("");
-                    }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
-                    placeholder="e.g. employee@company.com"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 font-sans">
-                    EKABA Identity Provider (IDP)
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={getIdpForRole(selectedRole)}
-                    className="w-full bg-stone-100 border border-stone-200 rounded-xl py-3 px-4 text-sm text-stone-500 focus:outline-none cursor-not-allowed font-medium select-none"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3.5 px-4 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md hover:shadow-lg active:scale-[0.98] mt-4"
-                >
-                  {loading ? "Decrypting SSO Token..." : "Authorize via SSO IDP"}
-                  <ArrowRight className="w-4 h-4 text-white" />
-                </button>
-
-                {isEmailMismatch && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setError("");
-                      setStep("email_reset");
-                    }}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-xl py-3 px-4 font-semibold text-xs transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-[0.98] mt-2"
-                  >
-                    <KeyRound className="w-4.5 h-4.5 text-white animate-pulse" />
-                    <span>Request Email Reset Clearance</span>
-                  </button>
-                )}
-              </form>
-            ) : step === "permission" ? (
-              <form onSubmit={handleVerifyApproval} className="space-y-6">
-                <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2 text-stone-700">
-                  <div className="flex items-center gap-1.5 font-bold text-amber-900 uppercase tracking-wide">
-                    <Shield className="w-4 h-4 text-amber-600 animate-pulse" />
-                    Sponsoring Clearance Required
-                  </div>
-                  <p className="leading-relaxed">
-                    To register <strong>{customName}</strong> as a new{" "}
-                    <strong>{selectedRole}</strong>, an authorized office holder with a higher
-                    position must grant SSO activation inside their system dashboard.
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 block">
-                    Sponsoring Authority
-                  </label>
-                  {getEligibleApprovers(selectedRole).length === 0 ? (
-                    <div className="bg-stone-100 border border-stone-200 rounded-xl p-3 text-xs text-stone-500 font-medium font-mono uppercase">
-                      Pranav Jain (Owner) override applies.
-                    </div>
-                  ) : (
-                    <select
-                      value={selectedApproverKey}
-                      onChange={(e) => {
-                        setSelectedApproverKey(e.target.value);
-                        setError("");
-                      }}
-                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-3 text-xs text-stone-800 font-semibold focus:outline-none transition-all shadow-inner"
-                    >
-                      {getEligibleApprovers(selectedRole).map((user) => (
-                        <option key={user.name.toLowerCase()} value={user.name.toLowerCase()}>
-                          {user.name} ({user.role})
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-3.5 text-xs text-stone-600 space-y-1.5 font-sans leading-relaxed">
-                  <p>
-                    📌 <strong>How it works:</strong> Your registration request will be dispatched
-                    directly to your sponsoring authority. They will see a real-time pending
-                    notification in their <strong>Dashboard Console</strong> where they can
-                    instantly approve your clearance.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("credentials");
-                      setError("");
-                    }}
-                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-550 transition-colors cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
-                  >
-                    {loading ? "Routing Request..." : "Dispatch Approval Request"}
-                  </button>
-                </div>
-              </form>
-            ) : step === "pending_approval" ? (
-              <div className="space-y-6">
-                <div className="bg-amber-50/55 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 animate-subtle-pulse">
-                  <div className="relative">
-                    <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
-                    <Shield className="w-5 h-5 text-amber-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-stone-800 font-display tracking-wide">
-                      Security Clearance Dispatcher
-                    </h3>
-                    <p className="inline-block text-[9px] font-mono text-amber-700 font-bold uppercase tracking-widest bg-amber-100/50 border border-amber-200 px-2 py-0.5 rounded">
-                      Awaiting Sign-Off
-                    </p>
-                  </div>
-
-                  <p className="text-stone-600 text-xs leading-relaxed max-w-sm">
-                    SSO clearance request for{" "}
-                    <strong className="text-stone-800">{customName}</strong> has been transmitted to
-                    your chosen authority's live dashboard console.
-                  </p>
-
-                  <div className="border-t border-amber-200/50 pt-3 w-full font-mono text-[9px] text-amber-700 space-y-1">
-                    <div>CHANNEL STATUS: ACTIVE SECURE POLLING (1.5s)</div>
-                    <div>IDENTITY PROVIDER: {getIdpForRole(selectedRole).toUpperCase()}</div>
-                  </div>
-                </div>
-
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const cancelCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
-                      const approvals: PendingApprovalRequest[] = JSON.parse(
-                        localStorage.getItem(`kb_portal_pending_approvals_${cancelCompKey}`) || "[]",
-                      );
-                      const updated = approvals.filter(
-                        (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
-                      );
-                      localStorage.setItem(`kb_portal_pending_approvals_${cancelCompKey}`, JSON.stringify(updated));
-                      setStep("credentials");
-                      setError("");
-                    }}
-                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
-                  >
-                    Cancel Registration Request
-                  </button>
-                </div>
-              </div>
-            ) : step === "email_reset" ? (
-              <form onSubmit={handleSendEmailResetRequest} className="space-y-6">
-                <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2 text-stone-700">
-                  <div className="flex items-center gap-1.5 font-bold text-amber-900 uppercase tracking-wide">
-                    <Shield className="w-4 h-4 text-amber-600 animate-pulse" />
-                    Email Reset Sponsoring Required
-                  </div>
-                  <p className="leading-relaxed">
-                    To change the registered email for <strong>{customName}</strong>, an authorized office holder with a higher position must grant SSO verification inside their system dashboard.
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 block">New Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={customEmail}
-                    onChange={(e) => {
-                      setCustomEmail(e.target.value.trim());
-                      setError("");
-                    }}
-                    className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
-                    placeholder="Enter new email address"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-stone-600 block">
-                    Sponsoring Authority (Upper Post)
-                  </label>
-                  {getEligibleApprovers(selectedRole).length === 0 ? (
-                    <div className="bg-stone-100 border border-stone-200 rounded-xl p-3 text-xs text-stone-500 font-medium font-mono uppercase">
-                      Pranav Jain (Owner) override applies.
-                    </div>
-                  ) : (
-                    <select
-                      value={selectedApproverKey}
-                      onChange={(e) => {
-                        setSelectedApproverKey(e.target.value);
-                        setError("");
-                      }}
-                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-3 text-xs text-stone-850 font-semibold focus:outline-none transition-all shadow-inner"
-                    >
-                      {getEligibleApprovers(selectedRole).map((user) => (
-                        <option key={user.name.toLowerCase()} value={user.name.toLowerCase()}>
-                          {user.name} ({user.role})
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("credentials");
-                      setError("");
-                    }}
-                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-550 transition-colors cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
-                  >
-                    {loading ? "Routing Request..." : "Request Reset"}
-                  </button>
-                </div>
-              </form>
-            ) : step === "pending_email_reset" ? (
-              <div className="space-y-6">
-                <div className="bg-amber-50/55 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 animate-subtle-pulse">
-                  <div className="relative">
-                    <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
-                    <Shield className="w-5 h-5 text-amber-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-stone-800 font-display tracking-wide">
-                      Email Reset Clearance Dispatcher
-                    </h3>
-                    <p className="inline-block text-[9px] font-mono text-amber-700 font-bold uppercase tracking-widest bg-amber-100/50 border border-amber-200 px-2 py-0.5 rounded">
-                      Awaiting Upper Post Sign-Off
-                    </p>
-                  </div>
-
-                  <p className="text-stone-600 text-xs leading-relaxed max-w-sm">
-                    An authorization request to update the email address of <strong className="text-stone-850">{customName}</strong> to <strong className="text-stone-850">{customEmail}</strong> is being processed. Sponsoring clearance is required.
-                  </p>
-
-                  <div className="border-t border-amber-200/50 pt-3 w-full font-mono text-[9px] text-amber-700 space-y-1">
-                    <div>CHANNEL STATUS: ACTIVE SECURE POLLING (1.5s)</div>
-                    <div>SPONSORING AUTHORITY: {selectedApproverKey.toUpperCase()}</div>
-                  </div>
-                </div>
-
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const cancelCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
-                      const profileReqs: PendingProfileRequest[] = JSON.parse(
-                        localStorage.getItem(`kb_portal_pending_profile_reqs_${cancelCompKey}`) || "[]",
-                      );
-                      const updated = profileReqs.filter(
-                        (req) => req.userName.toLowerCase() !== customName.trim().toLowerCase(),
-                      );
-                      localStorage.setItem(`kb_portal_pending_profile_reqs_${cancelCompKey}`, JSON.stringify(updated));
-                      setStep("credentials");
-                      setError("");
-                    }}
-                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
-                  >
-                    Cancel Reset Request
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleVerifyPassword} className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-semibold text-stone-600">
-                      {passwordMode === "create" ? "Create New Password" : "Enter Password"}
-                    </label>
-                    <span className="text-[10px] text-amber-700 font-mono font-bold uppercase">
-                      {passwordMode === "create"
-                        ? "FIRST-TIME REGISTRATION"
-                        : "SECURE VERIFICATION"}
-                    </span>
-                  </div>
-
-                  {passwordMode === "create" ? (
-                    <div className="space-y-2">
-                      <p className="text-xs text-stone-500 leading-relaxed">
-                        First-time login detected for <strong>{customName}</strong>. Please
-                        establish a secure password to register your profile as a{" "}
-                        <strong>{selectedRole}</strong>.
-                      </p>
-                      {sponsorInfo && (
-                        <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-2 font-mono text-[9px] text-emerald-800 font-bold flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
-                          {sponsorInfo.toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-stone-500 leading-relaxed">
-                      Welcome back! Please enter the password associated with{" "}
-                      {selectedRole.toLowerCase()} name <strong>{customName}</strong> to authorize
-                      your session.
-                    </p>
-                  )}
-
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-450 font-bold" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder={
-                        passwordMode === "create"
-                          ? "Create your new secure password"
-                          : "Enter registered password"
-                      }
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError("");
-                      }}
-                      className="w-full bg-white border border-stone-200 focus:border-amber-600 rounded-xl py-3 pl-11 pr-12 text-sm text-stone-800 focus:outline-none placeholder:text-stone-300 shadow-inner transition-all focus:ring-1 focus:ring-amber-600"
-                      autoFocus
-                    />
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 cursor-pointer focus:outline-none p-1 flex items-center justify-center"
+                      onClick={() => {
+                        setStep("company_verification");
+                        setError("");
+                      }}
+                      className="text-[10px] text-primary hover:underline font-bold flex items-center gap-0.5 cursor-pointer bg-slate-100 hover:bg-slate-200/80 border border-slate-200 px-2 py-1 rounded-lg transition"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      <ArrowLeft className="w-3 h-3" />
+                      <span>Change Client</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {error && (
+                <div className="bg-rose-50 border border-rose-200 text-rose-700 rounded-xl p-3.5 text-xs flex gap-2 items-center">
+                  <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
+                  <span className="font-medium">{error}</span>
+                </div>
+              )}
+
+              {step === "company_verification" ? (
+                <form onSubmit={handleVerifyCompany} className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 font-sans">
+                      Company Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={companyName}
+                      onChange={(e) => {
+                        setCompanyName(e.target.value);
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                      placeholder="e.g. Google"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 font-sans">
+                      Authorized Client ID
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={authorizedId}
+                      onChange={(e) => {
+                        setAuthorizedId(e.target.value);
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner font-mono"
+                      placeholder="e.g. GOOG-EKABA-99"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl py-3.5 px-4 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-[0.98] mt-4"
+                  >
+                    <span>Verify Client Identity</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : step === "credentials" ? (
+                <form onSubmit={handleSendCredentials} className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-stone-600">Enter Name</label>
+                      <span className="text-[9px] text-amber-700 font-mono font-bold tracking-wider">
+                        CUSTOM PROFILE
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={customName}
+                      onChange={(e) => {
+                        setCustomName(e.target.value);
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-850 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                      placeholder={`Enter ${selectedRole.toLowerCase()} name`}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-stone-600 font-sans">
+                        Enter Email Address
+                      </label>
+                      <span className="text-[9px] text-amber-700 font-mono font-bold uppercase tracking-wider">
+                        Required
+                      </span>
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={customEmail}
+                      onChange={(e) => {
+                        setCustomEmail(e.target.value.trim());
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                      placeholder="e.g. employee@company.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 font-sans">
+                      EKABA Identity Provider (IDP)
+                    </label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={getIdpForRole(selectedRole)}
+                      className="w-full bg-stone-100 border border-stone-200 rounded-xl py-3 px-4 text-sm text-stone-500 focus:outline-none cursor-not-allowed font-medium select-none"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3.5 px-4 font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md hover:shadow-lg active:scale-[0.98] mt-4"
+                  >
+                    {loading ? "Decrypting SSO Token..." : "Authorize via SSO IDP"}
+                    <ArrowRight className="w-4 h-4 text-white" />
+                  </button>
+
+                  {isEmailMismatch && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setError("");
+                        setStep("email_reset");
+                      }}
+                      className="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-xl py-3 px-4 font-semibold text-xs transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg active:scale-[0.98] mt-2"
+                    >
+                      <KeyRound className="w-4.5 h-4.5 text-white animate-pulse" />
+                      <span>Request Email Reset Clearance</span>
+                    </button>
+                  )}
+                </form>
+              ) : step === "permission" ? (
+                <form onSubmit={handleVerifyApproval} className="space-y-6">
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2 text-stone-700">
+                    <div className="flex items-center gap-1.5 font-bold text-amber-900 uppercase tracking-wide">
+                      <Shield className="w-4 h-4 text-amber-600 animate-pulse" />
+                      Sponsoring Clearance Required
+                    </div>
+                    <p className="leading-relaxed">
+                      To register <strong>{customName}</strong> as a new{" "}
+                      <strong>{selectedRole}</strong>, an authorized office holder with a higher
+                      position must grant SSO activation inside their system dashboard.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 block">
+                      Sponsoring Authority
+                    </label>
+                    {getEligibleApprovers(selectedRole).length === 0 ? (
+                      <div className="bg-stone-100 border border-stone-200 rounded-xl p-3 text-xs text-stone-500 font-medium font-mono uppercase">
+                        Pranav Jain (Owner) override applies.
+                      </div>
+                    ) : (
+                      <select
+                        value={selectedApproverKey}
+                        onChange={(e) => {
+                          setSelectedApproverKey(e.target.value);
+                          setError("");
+                        }}
+                        className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-3 text-xs text-stone-800 font-semibold focus:outline-none transition-all shadow-inner"
+                      >
+                        {getEligibleApprovers(selectedRole).map((user) => (
+                          <option key={user.name.toLowerCase()} value={user.name.toLowerCase()}>
+                            {user.name} ({user.role})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  <div className="bg-stone-50 border border-stone-200 rounded-xl p-3.5 text-xs text-stone-600 space-y-1.5 font-sans leading-relaxed">
+                    <p>
+                      📌 <strong>How it works:</strong> Your registration request will be dispatched
+                      directly to your sponsoring authority. They will see a real-time pending
+                      notification in their <strong>Dashboard Console</strong> where they can
+                      instantly approve your clearance.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep("credentials");
+                        setError("");
+                      }}
+                      className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-550 transition-colors cursor-pointer"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
+                    >
+                      {loading ? "Routing Request..." : "Dispatch Approval Request"}
+                    </button>
+                  </div>
+                </form>
+              ) : step === "pending_approval" ? (
+                <div className="space-y-6">
+                  <div className="bg-amber-50/55 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 animate-subtle-pulse">
+                    <div className="relative">
+                      <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+                      <Shield className="w-5 h-5 text-amber-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    </div>
+
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-bold text-stone-800 font-display tracking-wide">
+                        Security Clearance Dispatcher
+                      </h3>
+                      <p className="inline-block text-[9px] font-mono text-amber-700 font-bold uppercase tracking-widest bg-amber-100/50 border border-amber-200 px-2 py-0.5 rounded">
+                        Awaiting Sign-Off
+                      </p>
+                    </div>
+
+                    <p className="text-stone-600 text-xs leading-relaxed max-w-sm">
+                      SSO clearance request for{" "}
+                      <strong className="text-stone-800">{customName}</strong> has been transmitted
+                      to your chosen authority's live dashboard console.
+                    </p>
+
+                    <div className="border-t border-amber-200/50 pt-3 w-full font-mono text-[9px] text-amber-700 space-y-1">
+                      <div>CHANNEL STATUS: ACTIVE SECURE POLLING (1.5s)</div>
+                      <div>IDENTITY PROVIDER: {getIdpForRole(selectedRole).toUpperCase()}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cancelCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+                        const approvals: PendingApprovalRequest[] = JSON.parse(
+                          localStorage.getItem(`kb_portal_pending_approvals_${cancelCompKey}`) ||
+                            "[]",
+                        );
+                        const updated = approvals.filter(
+                          (req) => req.name.toLowerCase() !== customName.trim().toLowerCase(),
+                        );
+                        localStorage.setItem(
+                          `kb_portal_pending_approvals_${cancelCompKey}`,
+                          JSON.stringify(updated),
+                        );
+                        setStep("credentials");
+                        setError("");
+                      }}
+                      className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
+                    >
+                      Cancel Registration Request
                     </button>
                   </div>
                 </div>
+              ) : step === "email_reset" ? (
+                <form onSubmit={handleSendEmailResetRequest} className="space-y-6">
+                  <div className="bg-amber-50/70 border border-amber-200/80 rounded-xl p-4 text-xs space-y-2 text-stone-700">
+                    <div className="flex items-center gap-1.5 font-bold text-amber-900 uppercase tracking-wide">
+                      <Shield className="w-4 h-4 text-amber-600 animate-pulse" />
+                      Email Reset Sponsoring Required
+                    </div>
+                    <p className="leading-relaxed">
+                      To change the registered email for <strong>{customName}</strong>, an
+                      authorized office holder with a higher position must grant SSO verification
+                      inside their system dashboard.
+                    </p>
+                  </div>
 
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("credentials");
-                      setError("");
-                    }}
-                    className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-500 transition-colors cursor-pointer"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
-                  >
-                    {loading
-                      ? passwordMode === "create"
-                        ? "Registering..."
-                        : "Verifying..."
-                      : passwordMode === "create"
-                        ? "Create & Sign In"
-                        : "Complete Sign In"}
-                  </button>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 block">
+                      New Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={customEmail}
+                      onChange={(e) => {
+                        setCustomEmail(e.target.value.trim());
+                        setError("");
+                      }}
+                      className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-4 text-sm text-stone-800 focus:outline-none placeholder:text-stone-400 transition-all shadow-inner"
+                      placeholder="Enter new email address"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-stone-600 block">
+                      Sponsoring Authority (Upper Post)
+                    </label>
+                    {getEligibleApprovers(selectedRole).length === 0 ? (
+                      <div className="bg-stone-100 border border-stone-200 rounded-xl p-3 text-xs text-stone-500 font-medium font-mono uppercase">
+                        Pranav Jain (Owner) override applies.
+                      </div>
+                    ) : (
+                      <select
+                        value={selectedApproverKey}
+                        onChange={(e) => {
+                          setSelectedApproverKey(e.target.value);
+                          setError("");
+                        }}
+                        className="w-full bg-white border border-stone-200 focus:border-amber-600 focus:ring-1 focus:ring-amber-600 rounded-xl py-3 px-3 text-xs text-stone-850 font-semibold focus:outline-none transition-all shadow-inner"
+                      >
+                        {getEligibleApprovers(selectedRole).map((user) => (
+                          <option key={user.name.toLowerCase()} value={user.name.toLowerCase()}>
+                            {user.name} ({user.role})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep("credentials");
+                        setError("");
+                      }}
+                      className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-550 transition-colors cursor-pointer"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
+                    >
+                      {loading ? "Routing Request..." : "Request Reset"}
+                    </button>
+                  </div>
+                </form>
+              ) : step === "pending_email_reset" ? (
+                <div className="space-y-6">
+                  <div className="bg-amber-50/55 border border-amber-200 p-6 rounded-2xl flex flex-col items-center justify-center text-center space-y-4 animate-subtle-pulse">
+                    <div className="relative">
+                      <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+                      <Shield className="w-5 h-5 text-amber-900 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    </div>
+
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-bold text-stone-800 font-display tracking-wide">
+                        Email Reset Clearance Dispatcher
+                      </h3>
+                      <p className="inline-block text-[9px] font-mono text-amber-700 font-bold uppercase tracking-widest bg-amber-100/50 border border-amber-200 px-2 py-0.5 rounded">
+                        Awaiting Upper Post Sign-Off
+                      </p>
+                    </div>
+
+                    <p className="text-stone-600 text-xs leading-relaxed max-w-sm">
+                      An authorization request to update the email address of{" "}
+                      <strong className="text-stone-850">{customName}</strong> to{" "}
+                      <strong className="text-stone-850">{customEmail}</strong> is being processed.
+                      Sponsoring clearance is required.
+                    </p>
+
+                    <div className="border-t border-amber-200/50 pt-3 w-full font-mono text-[9px] text-amber-700 space-y-1">
+                      <div>CHANNEL STATUS: ACTIVE SECURE POLLING (1.5s)</div>
+                      <div>SPONSORING AUTHORITY: {selectedApproverKey.toUpperCase()}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const cancelCompKey = verifiedCompany.trim().toLowerCase() || "ekaba";
+                        const profileReqs: PendingProfileRequest[] = JSON.parse(
+                          localStorage.getItem(`kb_portal_pending_profile_reqs_${cancelCompKey}`) ||
+                            "[]",
+                        );
+                        const updated = profileReqs.filter(
+                          (req) => req.userName.toLowerCase() !== customName.trim().toLowerCase(),
+                        );
+                        localStorage.setItem(
+                          `kb_portal_pending_profile_reqs_${cancelCompKey}`,
+                          JSON.stringify(updated),
+                        );
+                        setStep("credentials");
+                        setError("");
+                      }}
+                      className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-2 px-6 font-semibold text-xs text-stone-500 transition-colors cursor-pointer shadow-sm"
+                    >
+                      Cancel Reset Request
+                    </button>
+                  </div>
                 </div>
-              </form>
-            )}
+              ) : (
+                <form onSubmit={handleVerifyPassword} className="space-y-6">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-semibold text-stone-600">
+                        {passwordMode === "create" ? "Create New Password" : "Enter Password"}
+                      </label>
+                      <span className="text-[10px] text-amber-700 font-mono font-bold uppercase">
+                        {passwordMode === "create"
+                          ? "FIRST-TIME REGISTRATION"
+                          : "SECURE VERIFICATION"}
+                      </span>
+                    </div>
+
+                    {passwordMode === "create" ? (
+                      <div className="space-y-2">
+                        <p className="text-xs text-stone-500 leading-relaxed">
+                          First-time login detected for <strong>{customName}</strong>. Please
+                          establish a secure password to register your profile as a{" "}
+                          <strong>{selectedRole}</strong>.
+                        </p>
+                        {sponsorInfo && (
+                          <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-2 font-mono text-[9px] text-emerald-800 font-bold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                            {sponsorInfo.toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-stone-500 leading-relaxed">
+                        Welcome back! Please enter the password associated with{" "}
+                        {selectedRole.toLowerCase()} name <strong>{customName}</strong> to authorize
+                        your session.
+                      </p>
+                    )}
+
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-450 font-bold" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder={
+                          passwordMode === "create"
+                            ? "Create your new secure password"
+                            : "Enter registered password"
+                        }
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setError("");
+                        }}
+                        className="w-full bg-white border border-stone-200 focus:border-amber-600 rounded-xl py-3 pl-11 pr-12 text-sm text-stone-800 focus:outline-none placeholder:text-stone-300 shadow-inner transition-all focus:ring-1 focus:ring-amber-600"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 cursor-pointer focus:outline-none p-1 flex items-center justify-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep("credentials");
+                        setError("");
+                      }}
+                      className="bg-white border border-stone-200 hover:border-stone-300 hover:bg-stone-50 rounded-xl py-3 font-semibold text-xs text-stone-500 transition-colors cursor-pointer"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#1c1917] hover:bg-[#2b2721] text-white rounded-xl py-3 font-semibold text-xs transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 shadow-md"
+                    >
+                      {loading
+                        ? passwordMode === "create"
+                          ? "Registering..."
+                          : "Verifying..."
+                        : passwordMode === "create"
+                          ? "Create & Sign In"
+                          : "Complete Sign In"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
 
@@ -1478,11 +1633,7 @@ function PortalPage() {
     onConfirm?: () => void;
   } | null>(null);
 
-  const triggerUndo = (
-    message: string,
-    onUndo: () => void,
-    onConfirm?: () => void
-  ) => {
+  const triggerUndo = (message: string, onUndo: () => void, onConfirm?: () => void) => {
     const id = Math.random().toString();
     setUndoToast({ id, message, onUndo, onConfirm });
 
@@ -1667,7 +1818,9 @@ function PortalPage() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <Shield className={`w-4 h-4 ${activeTab === "profile" ? "text-primary-foreground" : "text-primary"}`} />
+                <Shield
+                  className={`w-4 h-4 ${activeTab === "profile" ? "text-primary-foreground" : "text-primary"}`}
+                />
                 <span>Profile Security</span>
               </div>
             </button>
@@ -1684,7 +1837,9 @@ function PortalPage() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <Clock className={`w-4 h-4 ${activeTab === "activity" && !isLocked ? "text-primary-foreground" : "text-primary"}`} />
+                <Clock
+                  className={`w-4 h-4 ${activeTab === "activity" && !isLocked ? "text-primary-foreground" : "text-primary"}`}
+                />
                 <span>Activity Logs</span>
               </div>
             </button>
@@ -1756,7 +1911,11 @@ function PortalPage() {
               className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-[#1c1917] text-slate-500 hover:text-slate-800 dark:text-stone-400 dark:hover:text-stone-100 transition cursor-pointer"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+              {theme === "dark" ? (
+                <Sun className="h-4.5 w-4.5" />
+              ) : (
+                <Moon className="h-4.5 w-4.5" />
+              )}
             </button>
 
             {/* Desktop welcome status */}
@@ -1847,8 +2006,12 @@ function PortalPage() {
                         {companyDetails.employeeName[0]}
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-800">{companyDetails.employeeName}</div>
-                        <div className="text-xs text-slate-550 font-mono">{companyDetails.employeeEmail}</div>
+                        <div className="text-sm font-bold text-slate-800">
+                          {companyDetails.employeeName}
+                        </div>
+                        <div className="text-xs text-slate-550 font-mono">
+                          {companyDetails.employeeEmail}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1862,7 +2025,9 @@ function PortalPage() {
                         E
                       </div>
                       <div>
-                        <div className="text-sm font-bold text-slate-800">EKABA Corporate Support</div>
+                        <div className="text-sm font-bold text-slate-800">
+                          EKABA Corporate Support
+                        </div>
                         <div className="text-xs text-slate-550 font-mono">support@ekaba.com</div>
                       </div>
                     </div>
@@ -1890,9 +2055,9 @@ function PortalPage() {
               )}
 
               {activeTab === "documents" && (
-                <DocumentCenter 
-                  currentUser={currentUser} 
-                  triggerUndo={triggerUndo} 
+                <DocumentCenter
+                  currentUser={currentUser}
+                  triggerUndo={triggerUndo}
                   companyName={currentCompany}
                 />
               )}
@@ -1906,10 +2071,7 @@ function PortalPage() {
               )}
 
               {activeTab === "activity" && (
-                <ActivityLogs 
-                  currentUser={currentUser} 
-                  companyName={currentCompany} 
-                />
+                <ActivityLogs currentUser={currentUser} companyName={currentCompany} />
               )}
 
               {/* RBAC Security Block guard screen */}
@@ -1931,8 +2093,8 @@ function PortalPage() {
                     </h3>
                     <p className="text-slate-550 text-sm leading-relaxed">
                       Your current profile credentials level is restricted. Contact network
-                      administrator or shift your role selector on the system dashboard to explore IT
-                      Admin telemetry controls.
+                      administrator or shift your role selector on the system dashboard to explore
+                      IT Admin telemetry controls.
                     </p>
                     <button
                       onClick={() => setActiveTab("dashboard")}

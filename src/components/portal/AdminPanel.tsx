@@ -29,7 +29,12 @@ interface AdminPanelProps {
   triggerUndo: (message: string, onUndo: () => void, onConfirm?: () => void) => void;
 }
 
-export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, companyName, triggerUndo }: AdminPanelProps) {
+export default function AdminPanel({
+  currentUser,
+  onUpdateCurrentUserRole,
+  companyName,
+  triggerUndo,
+}: AdminPanelProps) {
   const [userList, setUserList] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -114,13 +119,18 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
       if (res.ok) {
         const previousRole = targetUser.role;
         // Also synchronize local storage db for sso register
-        const dbStr = localStorage.getItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`);
+        const dbStr = localStorage.getItem(
+          `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+        );
         if (dbStr) {
           const db = JSON.parse(dbStr);
           const userKey = targetUser.name.toLowerCase();
           if (db[userKey]) {
             db[userKey].role = newRole;
-            localStorage.setItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`, JSON.stringify(db));
+            localStorage.setItem(
+              `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+              JSON.stringify(db),
+            );
           }
         }
 
@@ -136,34 +146,48 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
         }
 
         // Log and register undo action
-        logUserActivity(currentUser.id, currentUser.name, `Changed role of user ${targetUser.name} to ${newRole}`);
-        triggerUndo(
-          `Changed ${targetUser.name} to ${newRole}`,
-          async () => {
-            // Revert role change
-            const revertRes = await fetch("/api/users/update-role", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ userId: targetUser.id, role: previousRole, company: companyName }),
-            });
-            if (revertRes.ok) {
-              const dbStr = localStorage.getItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`);
-              if (dbStr) {
-                const db = JSON.parse(dbStr);
-                const userKey = targetUser.name.toLowerCase();
-                if (db[userKey]) {
-                  db[userKey].role = previousRole;
-                  localStorage.setItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`, JSON.stringify(db));
-                }
-              }
-              await fetchUsers();
-              if (targetUser.id === currentUser.id) {
-                onUpdateCurrentUserRole(previousRole);
-              }
-              logUserActivity(currentUser.id, currentUser.name, `Undid role change for user ${targetUser.name}`);
-            }
-          }
+        logUserActivity(
+          currentUser.id,
+          currentUser.name,
+          `Changed role of user ${targetUser.name} to ${newRole}`,
         );
+        triggerUndo(`Changed ${targetUser.name} to ${newRole}`, async () => {
+          // Revert role change
+          const revertRes = await fetch("/api/users/update-role", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: targetUser.id,
+              role: previousRole,
+              company: companyName,
+            }),
+          });
+          if (revertRes.ok) {
+            const dbStr = localStorage.getItem(
+              `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+            );
+            if (dbStr) {
+              const db = JSON.parse(dbStr);
+              const userKey = targetUser.name.toLowerCase();
+              if (db[userKey]) {
+                db[userKey].role = previousRole;
+                localStorage.setItem(
+                  `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+                  JSON.stringify(db),
+                );
+              }
+            }
+            await fetchUsers();
+            if (targetUser.id === currentUser.id) {
+              onUpdateCurrentUserRole(previousRole);
+            }
+            logUserActivity(
+              currentUser.id,
+              currentUser.name,
+              `Undid role change for user ${targetUser.name}`,
+            );
+          }
+        });
       } else {
         setNotice({ type: "error", text: "Server rejected role update synchronization." });
       }
@@ -204,17 +228,27 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
         message: `Are you absolutely sure you want to terminate user record for ${targetUser.name}? This action is irreversible.`,
         onConfirm: async () => {
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
-          
+
           // Optimistically remove user from userList in state
           setUserList((prev) => prev.filter((u) => u.id !== targetUser.id));
-          logUserActivity(currentUser.id, currentUser.name, `Initiated termination of user ${targetUser.name}`);
+          logUserActivity(
+            currentUser.id,
+            currentUser.name,
+            `Initiated termination of user ${targetUser.name}`,
+          );
 
           triggerUndo(
             `Kicked user ${targetUser.name}`,
             () => {
               // Undo: put user back and log revert
-              setUserList((prev) => [...prev, targetUser].sort((a, b) => a.name.localeCompare(b.name)));
-              logUserActivity(currentUser.id, currentUser.name, `Undid termination of user ${targetUser.name}`);
+              setUserList((prev) =>
+                [...prev, targetUser].sort((a, b) => a.name.localeCompare(b.name)),
+              );
+              logUserActivity(
+                currentUser.id,
+                currentUser.name,
+                `Undid termination of user ${targetUser.name}`,
+              );
             },
             async () => {
               // Confirmed: perform actual kick
@@ -239,13 +273,17 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
                   }
 
                   // Record as kicked to prevent auto-recreation
-                  const kickedStr = localStorage.getItem(`kb_portal_kicked_users_${companyKey}`) || "[]";
+                  const kickedStr =
+                    localStorage.getItem(`kb_portal_kicked_users_${companyKey}`) || "[]";
                   try {
                     const kicked: string[] = JSON.parse(kickedStr);
                     const targetKey = targetUser.name.toLowerCase();
                     if (!kicked.includes(targetKey)) {
                       kicked.push(targetKey);
-                      localStorage.setItem(`kb_portal_kicked_users_${companyKey}`, JSON.stringify(kicked));
+                      localStorage.setItem(
+                        `kb_portal_kicked_users_${companyKey}`,
+                        JSON.stringify(kicked),
+                      );
                     }
                   } catch (e) {}
 
@@ -264,27 +302,32 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
                 }
               } catch (err) {
                 console.error(err);
-                setNotice({ type: "error", text: "Network connection failure routing kick request." });
+                setNotice({
+                  type: "error",
+                  text: "Network connection failure routing kick request.",
+                });
                 await fetchUsers(); // restore user list on error
               } finally {
                 setUpdatingId(null);
               }
-            }
+            },
           );
-        }
+        },
       });
     } else {
       // Manager & HR must request Owner sign-off permission!
       // Get the owner name dynamically for the company
-      const ownerName = companyName.toLowerCase().trim() === "google"
-        ? "Sundar Pichai"
-        : companyName.toLowerCase().trim() === "acme corp" || companyName.toLowerCase().trim() === "acme"
-          ? "Wile E. Coyote"
-          : companyName.toLowerCase().trim() === "microsoft"
-            ? "Satya Nadella"
-            : companyName.toLowerCase().trim() === "apple"
-              ? "Tim Cook"
-              : "Pranav Jain";
+      const ownerName =
+        companyName.toLowerCase().trim() === "google"
+          ? "Sundar Pichai"
+          : companyName.toLowerCase().trim() === "acme corp" ||
+              companyName.toLowerCase().trim() === "acme"
+            ? "Wile E. Coyote"
+            : companyName.toLowerCase().trim() === "microsoft"
+              ? "Satya Nadella"
+              : companyName.toLowerCase().trim() === "apple"
+                ? "Tim Cook"
+                : "Pranav Jain";
 
       setConfirmModal({
         isOpen: true,
@@ -294,7 +337,10 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
           setConfirmModal((prev) => ({ ...prev, isOpen: false }));
           setUpdatingId(targetUser.id);
           try {
-            const reqsStr = localStorage.getItem(`kb_portal_pending_kick_reqs_${companyName.toLowerCase().trim()}`) || "[]";
+            const reqsStr =
+              localStorage.getItem(
+                `kb_portal_pending_kick_reqs_${companyName.toLowerCase().trim()}`,
+              ) || "[]";
             const reqs: PendingKickRequest[] = JSON.parse(reqsStr);
 
             // Deduplicate
@@ -314,18 +360,24 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
             };
 
             updated.push(newReq);
-            localStorage.setItem(`kb_portal_pending_kick_reqs_${companyName.toLowerCase().trim()}`, JSON.stringify(updated));
+            localStorage.setItem(
+              `kb_portal_pending_kick_reqs_${companyName.toLowerCase().trim()}`,
+              JSON.stringify(updated),
+            );
             setNotice({
               type: "success",
               text: `Clearance request for terminating ${targetUser.name} successfully dispatched to Owner (${ownerName}) dashboard!`,
             });
           } catch (err) {
             console.error(err);
-            setNotice({ type: "error", text: "Failed to record pending kick authorization request." });
+            setNotice({
+              type: "error",
+              text: "Failed to record pending kick authorization request.",
+            });
           } finally {
             setUpdatingId(null);
           }
-        }
+        },
       });
     }
   };
@@ -577,10 +629,10 @@ export default function AdminPanel({ currentUser, onUpdateCurrentUserRole, compa
                   matching.
                 </p>
               </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
       {confirmModal.isOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/users/")({
               .from("users")
               .select("id, name, email, role, avatar")
               .eq("company", company.toLowerCase().trim());
-            
+
             if (error) throw error;
             return new Response(JSON.stringify(data || []), {
               headers: { "Content-Type": "application/json" },

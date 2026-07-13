@@ -73,8 +73,10 @@ export default function ActivityLogs({ currentUser, companyName }: ActivityLogsP
             Automated 48-Hour Purge System Active
           </h4>
           <p className="text-xs text-indigo-750 leading-relaxed">
-            To maintain SOC-2 privacy standards and clean audit cycles, activity history is retained for 
-            <strong> exactly 2 days (48 hours)</strong>. Logs older than 2 days are permanently and automatically deleted from the database.
+            To maintain SOC-2 privacy standards and clean audit cycles, activity history is retained
+            for
+            <strong> exactly 2 days (48 hours)</strong>. Logs older than 2 days are permanently and
+            automatically deleted from the database.
           </p>
         </div>
       </div>
@@ -100,7 +102,8 @@ export default function ActivityLogs({ currentUser, companyName }: ActivityLogsP
           <ShieldCheck className="w-10 h-10 text-slate-350 mb-2" />
           <p className="text-sm font-semibold text-slate-650">No recent activities found.</p>
           <p className="text-xs text-slate-450 mt-1">
-            Perform actions like uploading documents, updating security keys, or querying the chat to populate this ledger.
+            Perform actions like uploading documents, updating security keys, or querying the chat
+            to populate this ledger.
           </p>
         </div>
       ) : (
@@ -118,10 +121,7 @@ export default function ActivityLogs({ currentUser, companyName }: ActivityLogsP
                 {logs.map((log) => {
                   const dateStr = new Date(log.created_at).toLocaleString();
                   return (
-                    <tr
-                      key={log.id}
-                      className="hover:bg-slate-50/40 transition-colors"
-                    >
+                    <tr key={log.id} className="hover:bg-slate-50/40 transition-colors">
                       <td className="p-3.5 pl-4 font-mono text-slate-400 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-3.5 h-3.5 text-slate-350" />

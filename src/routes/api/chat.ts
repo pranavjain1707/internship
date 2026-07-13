@@ -42,7 +42,6 @@ async function ensureDocsLoaded() {
   }
 }
 
-
 let aiClient: GoogleGenAI | null = null;
 function getGeminiClient(): GoogleGenAI {
   if (!aiClient) {
@@ -137,50 +136,69 @@ export const Route = createFileRoute("/api/chat")({
             );
           }
 
-          // 2. Call Gemini-3.5-flash RAG pipeline from Server-side
+          // 2. Call Gemini RAG pipeline from Server-side with multi-model fallback
           const ai = getGeminiClient();
           const prompt = `Enterprise Document Context:\n${contextBlocks}\n\nUser Question:\n"${message}"`;
 
-          const response = await ai.models.generateContent({
-            model: "gemini-3.5-flash",
-            contents: prompt,
-            config: {
-              systemInstruction: `You are the Enterprise Knowledge Base Assistant (EKBA).
+          const modelsToTry = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-3.5-flash"];
+          let responseText = "";
+          let successModel = "";
+
+          for (const modelName of modelsToTry) {
+            try {
+              console.log(`[Gemini RAG] Attempting generation with ${modelName}...`);
+              const response = await ai.models.generateContent({
+                model: modelName,
+                contents: prompt,
+                config: {
+                  systemInstruction: `You are the Enterprise Knowledge Base Assistant (EKBA).
 Answer the user's question accurately using ONLY the provided Enterprise Document Context.
 If the answer cannot be found in the context, do not make assumptions or default to general knowledge. Instead, politely state that the information was not found.
 You must construct the response to match the exact JSON schema provided: provide the 'answer' in markdown format, and structure high-accuracy 'citations' pointing directly to the utilized source documents, sections, and snippets.
 
 IMPORTANT LANGUAGE INSTRUCTION: You MUST respond in ${langName} language. The 'answer' field must be written entirely in ${langName}. The citations (sourceDoc, section, snippet) should remain in their original language as they reference document names and sections. Only the 'answer' text should be in ${langName}.`,
-              responseMimeType: "application/json",
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  answer: {
-                    type: Type.STRING,
-                    description: "The complete markdown formatted answer response.",
-                  },
-                  citations: {
-                    type: Type.ARRAY,
-                    items: {
-                      type: Type.OBJECT,
-                      properties: {
-                        sourceDoc: { type: Type.STRING },
-                        section: { type: Type.STRING },
-                        snippet: { type: Type.STRING },
+                  responseMimeType: "application/json",
+                  responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                      answer: {
+                        type: Type.STRING,
+                        description: "The complete markdown formatted answer response.",
                       },
-                      required: ["sourceDoc"],
+                      citations: {
+                        type: Type.ARRAY,
+                        items: {
+                          type: Type.OBJECT,
+                          properties: {
+                            sourceDoc: { type: Type.STRING },
+                            section: { type: Type.STRING },
+                            snippet: { type: Type.STRING },
+                          },
+                          required: ["sourceDoc"],
+                        },
+                      },
                     },
+                    required: ["answer", "citations"],
                   },
                 },
-                required: ["answer", "citations"],
-              },
-            },
-          });
+              });
 
-          const responseText = response.text;
-          if (!responseText) {
-            throw new Error("Empty response returned from Gemini.");
+              if (response.text) {
+                responseText = response.text;
+                successModel = modelName;
+                break;
+              }
+            } catch (err: unknown) {
+              const errMsg = err instanceof Error ? err.message : String(err);
+              console.warn(`[Gemini RAG] ${modelName} failed or was overloaded:`, errMsg);
+            }
           }
+
+          if (!responseText) {
+            throw new Error("All Gemini models in fallback chain failed to generate a response.");
+          }
+
+          console.log(`[Gemini RAG] Generation successful using model: ${successModel}`);
 
           const parsedResult = JSON.parse(responseText.trim());
           const markdownAnswer = parsedResult.answer || "No response text found.";

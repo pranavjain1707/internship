@@ -5,14 +5,14 @@ import { getSupabaseServerClient } from "../../../lib/supabase-server";
 async function cleanupOldRecords(supabase: any) {
   try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    
+
     // Delete expired query logs
     const { error: logError } = await supabase
       .from("query_logs")
       .delete()
       .lt("timestamp", sevenDaysAgo)
       .like("user_id", "v-%");
-      
+
     if (logError) {
       console.error("[cleanup] Error deleting old query logs:", logError.message);
     }
@@ -41,23 +41,17 @@ export const Route = createFileRoute("/api/public-chat/login")({
           const { email, name } = body;
 
           if (!name || !name.trim()) {
-            return new Response(
-              JSON.stringify({ error: "Your name is required." }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              }
-            );
+            return new Response(JSON.stringify({ error: "Your name is required." }), {
+              status: 400,
+              headers: { "Content-Type": "application/json" },
+            });
           }
 
           if (!email || !email.includes("@")) {
-            return new Response(
-              JSON.stringify({ error: "A valid email address is required." }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              }
-            );
+            return new Response(JSON.stringify({ error: "A valid email address is required." }), {
+              status: 400,
+              headers: { "Content-Type": "application/json" },
+            });
           }
 
           const supabase = getSupabaseServerClient();
@@ -67,14 +61,15 @@ export const Route = createFileRoute("/api/public-chat/login")({
 
           const userId = `v-${email.toLowerCase().trim()}`;
           const formattedName = name.trim();
-          
+
           // Generate 2-letter avatar initials (e.g. John Doe -> JD)
-          const initials = formattedName
-            .split(/\s+/)
-            .map((word) => word[0])
-            .join("")
-            .substring(0, 2)
-            .toUpperCase() || "VI";
+          const initials =
+            formattedName
+              .split(/\s+/)
+              .map((word) => word[0])
+              .join("")
+              .substring(0, 2)
+              .toUpperCase() || "VI";
 
           const visitorUser = {
             id: userId,
@@ -89,9 +84,7 @@ export const Route = createFileRoute("/api/public-chat/login")({
           };
 
           // 2. Save visitor to Supabase
-          const { error: upsertError } = await supabase
-            .from("users")
-            .upsert(visitorUser);
+          const { error: upsertError } = await supabase.from("users").upsert(visitorUser);
 
           if (upsertError) {
             console.error("[public-chat/login] Upsert visitor failed:", upsertError.message);
@@ -123,7 +116,7 @@ export const Route = createFileRoute("/api/public-chat/login")({
             }),
             {
               headers: { "Content-Type": "application/json" },
-            }
+            },
           );
         } catch (error) {
           const errMsg = error instanceof Error ? error.message : String(error);
@@ -136,7 +129,7 @@ export const Route = createFileRoute("/api/public-chat/login")({
             {
               status: 500,
               headers: { "Content-Type": "application/json" },
-            }
+            },
           );
         }
       },

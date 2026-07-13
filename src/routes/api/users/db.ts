@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/users/db")({
               .from("users")
               .select("name, domain, password, role, email")
               .eq("company", company.toLowerCase().trim());
-            
+
             if (error) throw error;
 
             const credentialsDb: Record<string, any> = {};

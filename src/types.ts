@@ -61,8 +61,8 @@ export interface Document {
   id: string;
   name: string;
   category: string;
-  content: string;       // In-memory content (used for seed docs or fallback)
-  filePath?: string;     // On-disk path; if set, content is read from disk at query time
+  content: string; // In-memory content (used for seed docs or fallback)
+  filePath?: string; // On-disk path; if set, content is read from disk at query time
   dateUploaded: string;
   uploadedBy: string;
   fileType: "pdf" | "docx" | "pptx" | "txt";

@@ -22,7 +22,9 @@ export const Route = createFileRoute("/api/documents")({
         let filtered = documents;
         if (company) {
           const normalized = company.toLowerCase().trim();
-          filtered = documents.filter((d) => (d.company || "ekaba").toLowerCase().trim() === normalized);
+          filtered = documents.filter(
+            (d) => (d.company || "ekaba").toLowerCase().trim() === normalized,
+          );
         }
 
         return new Response(JSON.stringify(filtered), {
@@ -49,16 +51,22 @@ export const Route = createFileRoute("/api/documents")({
             documents.splice(index, 1);
           }
 
-          return new Response(JSON.stringify({ success: true, message: `Document ${id} deleted.` }), {
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ success: true, message: `Document ${id} deleted.` }),
+            {
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error("[delete-document] Delete failed:", errorMessage);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to delete document" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to delete document" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
     },

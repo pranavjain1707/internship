@@ -34,7 +34,7 @@ export const Route = createFileRoute("/api/users/kick")({
                 console.error("Supabase fetch user for kick failed:", fetchErr);
                 return new Response(
                   JSON.stringify({ error: `Database fetch failed: ${fetchErr.message}` }),
-                  { status: 400, headers: { "Content-Type": "application/json" } }
+                  { status: 400, headers: { "Content-Type": "application/json" } },
                 );
               }
 
@@ -52,15 +52,16 @@ export const Route = createFileRoute("/api/users/kick")({
                 .eq("id", userId)
                 .eq("company", companyKey.toLowerCase().trim())
                 .select();
-              
+
               if (error) throw error;
 
               if (userProfile && (!deletedData || deletedData.length === 0)) {
                 return new Response(
                   JSON.stringify({
-                    error: "Deletion denied. Please ensure you have configured Row Level Security (RLS) delete policies for the 'users' table in Supabase, or disable RLS for this table.",
+                    error:
+                      "Deletion denied. Please ensure you have configured Row Level Security (RLS) delete policies for the 'users' table in Supabase, or disable RLS for this table.",
                   }),
-                  { status: 403, headers: { "Content-Type": "application/json" } }
+                  { status: 403, headers: { "Content-Type": "application/json" } },
                 );
               }
 
@@ -84,10 +85,10 @@ export const Route = createFileRoute("/api/users/kick")({
             } catch (err) {
               console.error("Supabase user delete failed:", err);
               const errMsg = err instanceof Error ? err.message : String(err);
-              return new Response(
-                JSON.stringify({ error: `Supabase delete failed: ${errMsg}` }),
-                { status: 500, headers: { "Content-Type": "application/json" } }
-              );
+              return new Response(JSON.stringify({ error: `Supabase delete failed: ${errMsg}` }), {
+                status: 500,
+                headers: { "Content-Type": "application/json" },
+              });
             }
           }
 
@@ -111,7 +112,6 @@ export const Route = createFileRoute("/api/users/kick")({
           const userKey = userToKick.name.toLowerCase().trim();
           delete usersCredentialsDb[userKey];
           persistDb();
-
 
           return new Response(
             JSON.stringify({

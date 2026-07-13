@@ -44,7 +44,7 @@ export const Route = createFileRoute("/api/upload")({
             id: docId,
             name,
             category: category || "General",
-            content,           // keep content in Supabase for search fallback
+            content, // keep content in Supabase for search fallback
             filePath: storagePath,
             uploadedBy: uploadedBy || "Enterprise User",
             dateUploaded,
@@ -52,7 +52,9 @@ export const Route = createFileRoute("/api/upload")({
             size: sizeKb,
             company: company || "ekaba",
           });
-          console.log(`[upload] Saved document metadata to Supabase (storage path: ${storagePath})`);
+          console.log(
+            `[upload] Saved document metadata to Supabase (storage path: ${storagePath})`,
+          );
 
           // ── 3. Add to in-memory documents array (for current session) ────
           const newDoc: Document = {
@@ -77,10 +79,13 @@ export const Route = createFileRoute("/api/upload")({
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error("[upload] Upload failed:", errorMessage);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to process upload" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to process upload" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
     },

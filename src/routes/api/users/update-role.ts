@@ -49,7 +49,6 @@ export const Route = createFileRoute("/api/users/update-role")({
           }
           persistDb();
 
-
           return new Response(JSON.stringify(user), {
             headers: { "Content-Type": "application/json" },
           });

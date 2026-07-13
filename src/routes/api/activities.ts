@@ -20,10 +20,7 @@ export const Route = createFileRoute("/api/activities")({
           // 1. Automatically delete records older than 2 days (48 hours)
           const cutoffDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
           try {
-            await supabase
-              .from("user_activities")
-              .delete()
-              .lt("created_at", cutoffDate);
+            await supabase.from("user_activities").delete().lt("created_at", cutoffDate);
           } catch (cleanupErr) {
             console.error("[activities] Cleanup failed:", cleanupErr);
           }
@@ -37,7 +34,9 @@ export const Route = createFileRoute("/api/activities")({
 
           if (error) {
             if (error.message.includes("relation") && error.message.includes("does not exist")) {
-              console.warn("[activities] user_activities table not found in Supabase. Running fallback mockup.");
+              console.warn(
+                "[activities] user_activities table not found in Supabase. Running fallback mockup.",
+              );
               return new Response(JSON.stringify([]), {
                 headers: { "Content-Type": "application/json" },
               });
@@ -51,10 +50,13 @@ export const Route = createFileRoute("/api/activities")({
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           console.error("[activities] GET failed:", errorMessage);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to fetch activities" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to fetch activities" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
       POST: async ({ request }) => {
@@ -63,10 +65,13 @@ export const Route = createFileRoute("/api/activities")({
           const { userId, userName, action } = body;
 
           if (!userId || !action) {
-            return new Response(JSON.stringify({ error: "Missing required fields: userId, action." }), {
-              status: 400,
-              headers: { "Content-Type": "application/json" },
-            });
+            return new Response(
+              JSON.stringify({ error: "Missing required fields: userId, action." }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
           }
 
           const supabase = getSupabaseServerClient();
@@ -74,10 +79,7 @@ export const Route = createFileRoute("/api/activities")({
           // 1. Clean up old records on insertion too
           const cutoffDate = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
           try {
-            await supabase
-              .from("user_activities")
-              .delete()
-              .lt("created_at", cutoffDate);
+            await supabase.from("user_activities").delete().lt("created_at", cutoffDate);
           } catch (cleanupErr) {
             console.error("[activities] Cleanup failed:", cleanupErr);
           }
@@ -92,10 +94,15 @@ export const Route = createFileRoute("/api/activities")({
 
           if (error) {
             if (error.message.includes("relation") && error.message.includes("does not exist")) {
-              console.warn("[activities] user_activities table not found. Run SQL script to initialize.");
-              return new Response(JSON.stringify({ success: true, warning: "Database table not initialized." }), {
-                headers: { "Content-Type": "application/json" },
-              });
+              console.warn(
+                "[activities] user_activities table not found. Run SQL script to initialize.",
+              );
+              return new Response(
+                JSON.stringify({ success: true, warning: "Database table not initialized." }),
+                {
+                  headers: { "Content-Type": "application/json" },
+                },
+              );
             }
             throw error;
           }

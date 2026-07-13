@@ -33,7 +33,13 @@ export const Route = createFileRoute("/api/analytics")({
         // Calculate daily usage based on log timestamps
         const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const dayCounts: Record<string, number> = {
-          Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0
+          Mon: 0,
+          Tue: 0,
+          Wed: 0,
+          Thu: 0,
+          Fri: 0,
+          Sat: 0,
+          Sun: 0,
         };
         logs.forEach((log) => {
           try {
@@ -75,9 +81,12 @@ export const Route = createFileRoute("/api/analytics")({
           const txt = (log.queryText || "").toLowerCase();
           if (txt.includes("leave") || txt.includes("process")) topicCounts["Leave Policy"]++;
           if (txt.includes("sso") || txt.includes("login")) topicCounts["SSO Logins"]++;
-          if (txt.includes("meal") || txt.includes("travel") || txt.includes("stipend")) topicCounts["Meals Stipend"]++;
-          if (txt.includes("encrypt") || txt.includes("crypt") || txt.includes("security")) topicCounts["Data Encryption"]++;
-          if (txt.includes("audit") || txt.includes("wiki") || txt.includes("operations")) topicCounts["Audits & Wiki"]++;
+          if (txt.includes("meal") || txt.includes("travel") || txt.includes("stipend"))
+            topicCounts["Meals Stipend"]++;
+          if (txt.includes("encrypt") || txt.includes("crypt") || txt.includes("security"))
+            topicCounts["Data Encryption"]++;
+          if (txt.includes("audit") || txt.includes("wiki") || txt.includes("operations"))
+            topicCounts["Audits & Wiki"]++;
         });
 
         const topSearchedTopics = [

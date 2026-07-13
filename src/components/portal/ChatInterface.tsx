@@ -194,7 +194,11 @@ export default function ChatInterface({
     setFeedbackQueryId(queryId);
     setFeedbackComment("");
     setFeedbackPromptOpen(true);
-    logUserActivity(currentUser.id, currentUser.name, `Submitted query feedback rating: ${rating.toUpperCase()}`);
+    logUserActivity(
+      currentUser.id,
+      currentUser.name,
+      `Submitted query feedback rating: ${rating.toUpperCase()}`,
+    );
 
     // Optimistic state update in UI
     setMessages((prev) =>
@@ -289,7 +293,11 @@ export default function ChatInterface({
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
                   className="bg-transparent text-[11px] font-semibold text-slate-700 focus:outline-none cursor-pointer appearance-none pr-4"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0 center' }}
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 0 center",
+                  }}
                 >
                   {LANGUAGES.map((lang) => (
                     <option key={lang.code} value={lang.code}>

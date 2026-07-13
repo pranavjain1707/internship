@@ -25,18 +25,10 @@ function getGeminiClient(): GoogleGenAI {
 async function cleanupOldRecords(supabase: any) {
   try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    
-    await supabase
-      .from("query_logs")
-      .delete()
-      .lt("timestamp", sevenDaysAgo)
-      .like("user_id", "v-%");
 
-    await supabase
-      .from("users")
-      .delete()
-      .eq("company", "visitor")
-      .lt("created_at", sevenDaysAgo);
+    await supabase.from("query_logs").delete().lt("timestamp", sevenDaysAgo).like("user_id", "v-%");
+
+    await supabase.from("users").delete().eq("company", "visitor").lt("created_at", sevenDaysAgo);
   } catch (err) {
     console.error("[message-cleanup] Exception during old records cleanup:", err);
   }
@@ -76,18 +68,15 @@ export const Route = createFileRoute("/api/public-chat/message")({
               {
                 status: 401,
                 headers: { "Content-Type": "application/json" },
-              }
+              },
             );
           }
 
           if (!message || !message.trim()) {
-            return new Response(
-              JSON.stringify({ error: "Message text cannot be empty." }),
-              {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-              }
-            );
+            return new Response(JSON.stringify({ error: "Message text cannot be empty." }), {
+              status: 400,
+              headers: { "Content-Type": "application/json" },
+            });
           }
 
           const supabase = getSupabaseServerClient();
@@ -101,7 +90,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
 
           if (isApiKeyAvailable) {
             const ai = getGeminiClient();
-            
+
             // Multi-model fallback chain to ensure maximum reliability and availability
             try {
               console.log("[Gemini] Attempting generation with gemini-2.5-flash...");
@@ -112,9 +101,13 @@ export const Route = createFileRoute("/api/public-chat/message")({
                   systemInstruction: SYSTEM_INSTRUCTION,
                 },
               });
-              aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+              aiResponseText =
+                response.text || "I apologize, I could not generate a response. Please try again.";
             } catch (err25: any) {
-              console.warn("[Gemini] gemini-2.5-flash failed or was overloaded. Trying gemini-1.5-flash...", err25.message || err25);
+              console.warn(
+                "[Gemini] gemini-2.5-flash failed or was overloaded. Trying gemini-1.5-flash...",
+                err25.message || err25,
+              );
               try {
                 const response = await ai.models.generateContent({
                   model: "gemini-1.5-flash",
@@ -123,9 +116,14 @@ export const Route = createFileRoute("/api/public-chat/message")({
                     systemInstruction: SYSTEM_INSTRUCTION,
                   },
                 });
-                aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+                aiResponseText =
+                  response.text ||
+                  "I apologize, I could not generate a response. Please try again.";
               } catch (err15: any) {
-                console.warn("[Gemini] gemini-1.5-flash failed. Trying gemini-3.5-flash...", err15.message || err15);
+                console.warn(
+                  "[Gemini] gemini-1.5-flash failed. Trying gemini-3.5-flash...",
+                  err15.message || err15,
+                );
                 const response = await ai.models.generateContent({
                   model: "gemini-3.5-flash",
                   contents: message,
@@ -133,7 +131,9 @@ export const Route = createFileRoute("/api/public-chat/message")({
                     systemInstruction: SYSTEM_INSTRUCTION,
                   },
                 });
-                aiResponseText = response.text || "I apologize, I could not generate a response. Please try again.";
+                aiResponseText =
+                  response.text ||
+                  "I apologize, I could not generate a response. Please try again.";
               }
             }
           } else {
@@ -154,9 +154,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
             status: "success",
           };
 
-          const { error: insertError } = await supabase
-            .from("query_logs")
-            .insert(newLog);
+          const { error: insertError } = await supabase.from("query_logs").insert(newLog);
 
           if (insertError) {
             console.error("[public-chat/message] Logging query failed:", insertError.message);
@@ -168,7 +166,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
             }),
             {
               headers: { "Content-Type": "application/json" },
-            }
+            },
           );
         } catch (error) {
           const errMsg = error instanceof Error ? error.message : String(error);
@@ -181,7 +179,7 @@ export const Route = createFileRoute("/api/public-chat/message")({
             {
               status: 500,
               headers: { "Content-Type": "application/json" },
-            }
+            },
           );
         }
       },

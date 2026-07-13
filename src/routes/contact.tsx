@@ -45,12 +45,12 @@ function DemoBooking3D() {
   const steps = [
     { title: "Select Session Date", detail: "Jul 10, 2026 at 2:00 PM EST" },
     { title: "Enter Meeting Details", detail: "Asha Mehta (Acme Corp)" },
-    { title: "Confirm Calendar Invitation", detail: "Invitation sent. Check inbox." }
+    { title: "Confirm Calendar Invitation", detail: "Invitation sent. Check inbox." },
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setStage(s => (s + 1) % steps.length);
+      setStage((s) => (s + 1) % steps.length);
     }, 2800);
     return () => clearInterval(timer);
   }, []);
@@ -60,7 +60,7 @@ function DemoBooking3D() {
       <div className="screen-3d screen-glow rounded-2xl border border-border/60 bg-card p-6 shadow-2xl overflow-hidden relative">
         <div className="screen-gloss" />
         <div className="scan-line" />
-        
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
           <div className="flex items-center gap-1.5 font-mono text-[9px] text-muted-foreground">
@@ -77,11 +77,11 @@ function DemoBooking3D() {
           {steps.map((step, i) => {
             const isActive = i === stage;
             return (
-              <div 
+              <div
                 key={step.title}
                 className={`p-3 rounded-xl border transition-all duration-500 ${
-                  isActive 
-                    ? "border-primary bg-primary/10 shadow-md shadow-primary/10 scale-[1.02]" 
+                  isActive
+                    ? "border-primary bg-primary/10 shadow-md shadow-primary/10 scale-[1.02]"
                     : "border-border/40 opacity-40 bg-background/30"
                 }`}
               >
@@ -106,10 +106,15 @@ function DemoBooking3D() {
 function useScrollReveal() {
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("visible");
+        }),
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" },
     );
-    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale").forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 }
@@ -118,7 +123,13 @@ function Contact() {
   useScrollReveal();
   const [sent, setSent] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors, isSubmitting }, reset } = useForm<ContactFormValues>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: { name: "", email: "", company: "", role: "", size: undefined, message: "" },
   });
@@ -134,7 +145,11 @@ function Contact() {
       });
       if (res.ok) {
         setSent(true);
-        toast.success("Thanks, " + data.name + "! Your demo request was received. An email confirmation has been simulated.");
+        toast.success(
+          "Thanks, " +
+            data.name +
+            "! Your demo request was received. An email confirmation has been simulated.",
+        );
         reset();
       } else {
         toast.error("Failed to submit demo request.");
@@ -158,15 +173,17 @@ function Contact() {
           <div className="md:col-span-5">
             <div className="reveal inline-flex items-center gap-2 rounded-full badge-glow px-4 py-2 mb-6">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">Talk to us</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+                Talk to us
+              </span>
             </div>
             <h1 className="reveal delay-100 mt-4 font-display text-6xl leading-[0.95] md:text-7xl">
-              Let's see EKABA{" "}
-              <span className="shimmer-text">answer</span>{" "}
-              a question about your documents.
+              Let's see EKABA <span className="shimmer-text">answer</span> a question about your
+              documents.
             </h1>
             <p className="reveal delay-200 mt-8 max-w-md text-muted-foreground leading-relaxed">
-              30-minute working session. Bring a sample document and a question. Leave with a working assistant.
+              30-minute working session. Bring a sample document and a question. Leave with a
+              working assistant.
             </p>
 
             <div className="reveal delay-300 mt-12 space-y-5 border-t border-border/60 pt-8">
@@ -180,7 +197,9 @@ function Contact() {
                     <Icon className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                      {label}
+                    </p>
                     <p className="mt-1 text-sm">{value}</p>
                   </div>
                 </div>
@@ -190,8 +209,12 @@ function Contact() {
             {/* Mini social proof */}
             <div className="reveal delay-400 mt-10 flex flex-wrap gap-3">
               {["SOC 2 Certified", "GDPR Ready", "< 3s Answers"].map((badge) => (
-                <span key={badge} className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-mono text-primary">
-                  <CheckCircle2 className="h-3 w-3" />{badge}
+                <span
+                  key={badge}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-mono text-primary"
+                >
+                  <CheckCircle2 className="h-3 w-3" />
+                  {badge}
                 </span>
               ))}
             </div>
@@ -211,33 +234,76 @@ function Contact() {
               <div className="relative">
                 <div className="flex items-center gap-2 mb-6">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-primary">Request a Demo</span>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-primary">
+                    Request a Demo
+                  </span>
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Full name" id="name" placeholder="Asha Mehta" error={errors.name?.message} registration={register("name")} />
-                  <Field label="Work email" id="email" type="email" placeholder="asha@company.com" error={errors.email?.message} registration={register("email")} />
-                  <Field label="Company" id="company" placeholder="Acme Corp" error={errors.company?.message} registration={register("company")} />
-                  <Field label="Role" id="role" placeholder="Head of IT" error={errors.role?.message} registration={register("role")} />
+                  <Field
+                    label="Full name"
+                    id="name"
+                    placeholder="Asha Mehta"
+                    error={errors.name?.message}
+                    registration={register("name")}
+                  />
+                  <Field
+                    label="Work email"
+                    id="email"
+                    type="email"
+                    placeholder="asha@company.com"
+                    error={errors.email?.message}
+                    registration={register("email")}
+                  />
+                  <Field
+                    label="Company"
+                    id="company"
+                    placeholder="Acme Corp"
+                    error={errors.company?.message}
+                    registration={register("company")}
+                  />
+                  <Field
+                    label="Role"
+                    id="role"
+                    placeholder="Head of IT"
+                    error={errors.role?.message}
+                    registration={register("role")}
+                  />
                 </div>
 
                 <div className="mt-5">
-                  <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Company size</label>
+                  <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    Company size
+                  </label>
                   <div className="mt-2 grid grid-cols-2 gap-2 md:grid-cols-4">
                     {(["1–50", "51–500", "501–5K", "5K+"] as const).map((s) => (
                       <label key={s} className="cursor-pointer">
-                        <input type="radio" value={s} {...register("size")} className="peer sr-only" />
-                        <div className={`rounded-lg border px-3 py-2.5 text-center text-sm transition-all duration-200 hover:border-primary/40 ${selectedSize === s ? "border-primary bg-primary/10 text-primary font-medium shadow-sm shadow-primary/20" : "border-border/60 bg-background/60 text-foreground"}`}>
+                        <input
+                          type="radio"
+                          value={s}
+                          {...register("size")}
+                          className="peer sr-only"
+                        />
+                        <div
+                          className={`rounded-lg border px-3 py-2.5 text-center text-sm transition-all duration-200 hover:border-primary/40 ${selectedSize === s ? "border-primary bg-primary/10 text-primary font-medium shadow-sm shadow-primary/20" : "border-border/60 bg-background/60 text-foreground"}`}
+                        >
                           {s}
                         </div>
                       </label>
                     ))}
                   </div>
-                  {errors.size && <p className="mt-1 text-[11px] text-destructive font-mono">{errors.size.message}</p>}
+                  {errors.size && (
+                    <p className="mt-1 text-[11px] text-destructive font-mono">
+                      {errors.size.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mt-5">
-                  <label htmlFor="message" className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  <label
+                    htmlFor="message"
+                    className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+                  >
                     What would you like to discuss?
                   </label>
                   <textarea
@@ -247,7 +313,11 @@ function Contact() {
                     {...register("message")}
                     className={`mt-2 w-full rounded-lg border bg-background/60 px-3 py-2.5 text-sm placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none transition-colors ${errors.message ? "border-destructive" : "border-border/60"}`}
                   />
-                  {errors.message && <p className="mt-1 text-[11px] text-destructive font-mono">{errors.message.message}</p>}
+                  {errors.message && (
+                    <p className="mt-1 text-[11px] text-destructive font-mono">
+                      {errors.message.message}
+                    </p>
+                  )}
                 </div>
 
                 <button
@@ -255,9 +325,18 @@ function Contact() {
                   disabled={isSubmitting}
                   className="btn-gradient mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3.5 text-sm font-semibold text-white shadow-lg disabled:opacity-60 cursor-pointer"
                 >
-                  {sent ? "Message sent ✓" : <><span>Send message</span><ArrowUpRight className="h-4 w-4" /></>}
+                  {sent ? (
+                    "Message sent ✓"
+                  ) : (
+                    <>
+                      <span>Send message</span>
+                      <ArrowUpRight className="h-4 w-4" />
+                    </>
+                  )}
                 </button>
-                <p className="mt-4 text-center text-xs text-muted-foreground">We reply within one business day. No marketing sequences.</p>
+                <p className="mt-4 text-center text-xs text-muted-foreground">
+                  We reply within one business day. No marketing sequences.
+                </p>
               </div>
             </form>
           </div>
@@ -268,10 +347,20 @@ function Contact() {
       <section className="border-b border-border/60 bg-secondary/20">
         <div className="mx-auto max-w-7xl px-6 py-10">
           <div className="reveal grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/60 bg-border/40 md:grid-cols-4 shadow-lg">
-            {[["30 min", "Demo length"], ["1 day", "Response time"], ["0", "Marketing emails"], ["∞", "Questions answered"]].map(([n, l]) => (
-              <div key={l} className="bg-background/80 backdrop-blur-sm p-6 group hover:bg-secondary/30 transition-colors text-center">
+            {[
+              ["30 min", "Demo length"],
+              ["1 day", "Response time"],
+              ["0", "Marketing emails"],
+              ["∞", "Questions answered"],
+            ].map(([n, l]) => (
+              <div
+                key={l}
+                className="bg-background/80 backdrop-blur-sm p-6 group hover:bg-secondary/30 transition-colors text-center"
+              >
                 <div className="stat-number font-display text-3xl">{n}</div>
-                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">{l}</div>
+                <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {l}
+                </div>
               </div>
             ))}
           </div>
@@ -281,14 +370,34 @@ function Contact() {
   );
 }
 
-function Field({ label, id, type = "text", placeholder, error, registration }: {
-  label: string; id: string; type?: string; placeholder?: string; error?: string; registration: UseFormRegisterReturn;
+function Field({
+  label,
+  id,
+  type = "text",
+  placeholder,
+  error,
+  registration,
+}: {
+  label: string;
+  id: string;
+  type?: string;
+  placeholder?: string;
+  error?: string;
+  registration: UseFormRegisterReturn;
 }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</label>
+      <label
+        htmlFor={id}
+        className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+      >
+        {label}
+      </label>
       <input
-        id={id} type={type} placeholder={placeholder} {...registration}
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        {...registration}
         className={`mt-2 w-full rounded-lg border bg-background/60 px-3 py-2.5 text-sm placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none transition-colors ${error ? "border-destructive" : "border-border/60 focus:border-primary"}`}
       />
       {error && <p className="mt-1 text-[11px] text-destructive font-mono">{error}</p>}

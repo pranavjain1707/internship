@@ -23,13 +23,99 @@ import {
 import { Document, User } from "../../types";
 import { logUserActivity } from "../../lib/activity-client";
 
+const loadExternalScript = (src: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script ${src}`));
+    document.head.appendChild(script);
+  });
+};
+
+const extractTextFromPdf = async (file: File): Promise<string> => {
+  await loadExternalScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pdfjsLib = (window as any).pdfjsLib;
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  const arrayBuffer = await file.arrayBuffer();
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
+
+  let fullText = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map((item: any) => item.str).join(" ");
+
+    // Page formatted to Section chunk identifier
+    fullText += `Section ${i}.1 - Page ${i}\n${pageText}\n\n`;
+  }
+  return fullText.trim() || "[No text content found in PDF]";
+};
+
+const extractTextFromDocx = async (file: File): Promise<string> => {
+  await loadExternalScript(
+    "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js",
+  );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mammoth = (window as any).mammoth;
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return result.value.trim() || "[No text content found in DOCX]";
+};
+
+const extractTextFromPptx = async (file: File): Promise<string> => {
+  await loadExternalScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const JSZip = (window as any).JSZip;
+  const arrayBuffer = await file.arrayBuffer();
+  const zip = await JSZip.loadAsync(arrayBuffer);
+
+  let fullText = "";
+  const slideFiles = Object.keys(zip.files)
+    .filter((name) => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"))
+    .sort((a, b) => {
+      const aNum = parseInt(a.replace(/[^0-9]/g, "")) || 0;
+      const bNum = parseInt(b.replace(/[^0-9]/g, "")) || 0;
+      return aNum - bNum;
+    });
+
+  const parser = new DOMParser();
+  for (let idx = 0; idx < slideFiles.length; idx++) {
+    const slideName = slideFiles[idx];
+    const xmlText = await zip.files[slideName].async("text");
+    const doc = parser.parseFromString(xmlText, "application/xml");
+    const textNodes = doc.getElementsByTagName("a:t");
+    let slideText = "";
+    for (let i = 0; i < textNodes.length; i++) {
+      slideText += (textNodes[i].textContent || "") + " ";
+    }
+
+    const slideNumber = idx + 1;
+    fullText += `Section ${slideNumber}.1 - Slide ${slideNumber}\n${slideText.trim()}\n\n`;
+  }
+
+  return fullText.trim() || "[No text content found in PPTX]";
+};
+
 interface DocumentCenterProps {
   currentUser: User;
   triggerUndo: (message: string, onUndo: () => void, onConfirm?: () => void) => void;
   companyName?: string;
 }
 
-export default function DocumentCenter({ currentUser, triggerUndo, companyName }: DocumentCenterProps) {
+export default function DocumentCenter({
+  currentUser,
+  triggerUndo,
+  companyName,
+}: DocumentCenterProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -81,15 +167,13 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
   }, [companyName]);
 
   const handleDownloadPDF = async (doc: Document) => {
-    // Owner is bypass / can do what he wants
     if (currentUser.role === "Owner") {
       performDownload(doc);
       return;
     }
 
-    // Check if there is an approved request
     const myRequest = downloadRequestsList.find(
-      (r) => r.documentId === doc.id && r.requestedBy === currentUser.name
+      (r) => r.documentId === doc.id && r.requestedBy === currentUser.name,
     );
 
     if (myRequest && myRequest.status === "approved") {
@@ -98,15 +182,18 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
     }
 
     if (myRequest && myRequest.status === "pending") {
-      alert(`Download permission is currently PENDING review by ${myRequest.sponsorName || 'upper authorities'}.`);
+      alert(
+        `Download permission is currently PENDING review by ${myRequest.sponsorName || "upper authorities"}.`,
+      );
       return;
     }
 
     if (myRequest && myRequest.status === "rejected") {
-      alert("Download permission was REJECTED by upper authorities. You can submit another request.");
+      alert(
+        "Download permission was REJECTED by upper authorities. You can submit another request.",
+      );
     }
 
-    // Open request modal
     setDownloadRequestDoc(doc);
     if (companyUsersList.length > 0) {
       setSelectedSponsor(companyUsersList[0].name);
@@ -115,8 +202,7 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
 
   const performDownload = async (doc: Document) => {
     setDownloadingDocId(doc.id);
-    
-    // Simulate compilation/loading phase
+
     await new Promise((resolve) => setTimeout(resolve, 800));
 
     const printWindow = window.open("", "_blank");
@@ -148,94 +234,69 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
               color: #0f172a;
             }
             .meta {
-              font-size: 11px;
+              font-size: 14px;
               color: #64748b;
-              margin-top: 8px;
-              font-family: monospace;
+              margin-top: 5px;
             }
             .content {
-              font-size: 13px;
               white-space: pre-wrap;
-              background: #f8fafc;
-              padding: 20px;
-              border: 1px solid #e2e8f0;
-              border-radius: 8px;
-              margin-top: 20px;
-            }
-            .footer {
-              margin-top: 40px;
-              font-size: 9px;
-              color: #94a3b8;
-              border-top: 1px solid #e2e8f0;
-              padding-top: 10px;
-              text-align: center;
-              font-family: monospace;
             }
           </style>
         </head>
         <body>
           <div class="header">
-            <div class="title">${doc.name}</div>
-            <div class="meta">Category: ${doc.category} | File Type: ${doc.fileType.toUpperCase()} | Size: ${doc.size} | Upload Date: ${doc.dateUploaded}</div>
+            <h1 class="title">${doc.name}</h1>
+            <div class="meta">Category: ${doc.category} | Uploaded by: ${doc.uploadedBy} on ${doc.dateUploaded}</div>
           </div>
           <div class="content">${doc.content}</div>
-          <div class="footer">
-            Generated from EKABA Knowledge Base Portal on ${new Date().toLocaleDateString()}
-          </div>
           <script>
             window.onload = function() {
               window.print();
-              setTimeout(function() { window.close(); }, 500);
-            };
+            }
           </script>
         </body>
       </html>
     `);
     printWindow.document.close();
     setDownloadingDocId(null);
+    logUserActivity(currentUser.id, currentUser.name, `Downloaded document "${doc.name}"`);
+  };
+
+  const deleteDocument = async (docId: string, docName: string) => {
+    try {
+      const res = await fetch(`/api/documents?id=${docId}`, { method: "DELETE" });
+      if (res.ok) {
+        fetchDocuments();
+        logUserActivity(currentUser.id, currentUser.name, `Deleted document "${docName}"`);
+      } else {
+        throw new Error("Deletion rejected by policy.");
+      }
+    } catch (e: unknown) {
+      const errMsg = e instanceof Error ? e.message : String(e);
+      alert(errMsg || "Failed to delete document.");
+    }
   };
 
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/documents?company=${encodeURIComponent(companyName || "ekaba")}`);
+      const res = await fetch(
+        `/api/documents?company=${encodeURIComponent(companyName || "ekaba")}`,
+      );
       if (res.ok) {
         const data = await res.json();
         setDocuments(data);
       }
     } catch (e) {
-      console.error("Failed to load documents list from database:", e);
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteDoc = (docToDelete: Document) => {
-    if (currentUser.role !== "Owner") return;
-    // 1. Optimistically remove from frontend UI list
-    setDocuments((prev) => prev.filter((d) => d.id !== docToDelete.id));
-
-    // 2. Log activity
-    logUserActivity(currentUser.id, currentUser.name, `Deleted document "${docToDelete.name}"`);
-
-    // 3. Trigger 3-second undo
-    triggerUndo(
-      `Deleted document "${docToDelete.name}"`,
-      () => {
-        // Revert UI removal and log
-        setDocuments((prev) => [...prev, docToDelete].sort((a, b) => a.name.localeCompare(b.name)));
-        logUserActivity(currentUser.id, currentUser.name, `Undid deletion of "${docToDelete.name}"`);
-      },
-      async () => {
-        // Confirmed: perform actual delete
-        await fetch(`/api/documents?id=${docToDelete.id}`, { method: "DELETE" });
-      }
-    );
-  };
-
   useEffect(() => {
     fetchDocuments();
-  }, []);
+  }, [companyName]);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -267,7 +328,6 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
     }
   };
 
-  // Process Document and upload
   const processFile = async (file: File) => {
     const extension = file.name.split(".").pop()?.toLowerCase();
     const allowedExtensions = ["pdf", "docx", "pptx", "txt"];
@@ -291,70 +351,70 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
       });
     }, 150);
 
-    // Read the file content
-    const reader = new FileReader();
-
-    reader.onload = async (e) => {
+    try {
       let contentString = "";
-
-      if (extension === "txt") {
-        contentString = (e.target?.result as string) || "";
-      } else {
-        // Mock parsing for rich file formats inside the secure container environment
-        contentString = `[Ingested Binary Material: ${file.name}]\nFormat Context: parsed structure for .${extension}\n\nEnterprise manual segment imported on ${new Date().toLocaleDateString()}:\nThis describes key operational processes extracted semantically from files named ${file.name}. In standard production environments, this text is extracted during backend OCR, indexed using embeddings, and cached inside the Vector Database.\n\nKey policy points:\n- System process approved by ${currentUser.name}.\n- Associated audits must align with ISO 27001.\n- Please follow standard HRMS submission criteria.`;
-      }
-
       try {
-        const categoryMapping: Record<string, string> = {
-          pdf: "Operations & Manuals",
-          docx: "Contracts & Handbook",
-          pptx: "Product Strategy",
-          txt: "System Policies",
-        };
-
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: file.name.substring(0, file.name.lastIndexOf(".")) || file.name,
-            category: categoryMapping[extension] || "General",
-            content: contentString,
-            fileType: extension,
-            uploadedBy: currentUser.name,
-            company: companyName || "ekaba",
-          }),
-        });
-
-        if (res.ok) {
-          const newDoc = await res.json();
-          setUploadProgress(100);
-          setTimeout(() => {
-            setUploadSuccess(true);
-            setUploadProgress(null);
-            fetchDocuments();
-
-            // Log activity and register undo action
-            logUserActivity(currentUser.id, currentUser.name, `Uploaded document "${file.name}"`);
-            triggerUndo(
-              `Uploaded document "${file.name}"`,
-              async () => {
-                await fetch(`/api/documents?id=${newDoc.id}`, { method: "DELETE" });
-                fetchDocuments();
-                logUserActivity(currentUser.id, currentUser.name, `Undid upload of "${file.name}"`);
-              }
-            );
-          }, 300);
-        } else {
-          throw new Error("Unable to parse document in the repository database.");
+        if (extension === "txt") {
+          contentString = await file.text();
+        } else if (extension === "pdf") {
+          contentString = await extractTextFromPdf(file);
+        } else if (extension === "docx") {
+          contentString = await extractTextFromDocx(file);
+        } else if (extension === "pptx") {
+          contentString = await extractTextFromPptx(file);
         }
-      } catch (err) {
-        const errorObj = err instanceof Error ? err : new Error(String(err));
-        setUploadError(errorObj.message || "Failed to catalog document. Network error.");
-        setUploadProgress(null);
+      } catch (parseError: unknown) {
+        console.error("Text extraction failed:", parseError);
+        const errMsg = parseError instanceof Error ? parseError.message : String(parseError);
+        throw new Error(`Failed to extract text from .${extension} file: ${errMsg}`);
       }
-    };
 
-    reader.readAsText(file);
+      const categoryMapping: Record<string, string> = {
+        pdf: "Operations & Manuals",
+        docx: "Contracts & Handbook",
+        pptx: "Product Strategy",
+        txt: "System Policies",
+      };
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: file.name.substring(0, file.name.lastIndexOf(".")) || file.name,
+          category: categoryMapping[extension] || "General",
+          content: contentString,
+          fileType: extension,
+          uploadedBy: currentUser.name,
+          company: companyName || "ekaba",
+        }),
+      });
+
+      if (res.ok) {
+        const newDoc = await res.json();
+        setUploadProgress(100);
+        setTimeout(() => {
+          setUploadSuccess(true);
+          setUploadProgress(null);
+          fetchDocuments();
+
+          // Log activity and register undo action
+          logUserActivity(currentUser.id, currentUser.name, `Uploaded document "${file.name}"`);
+          triggerUndo(`Uploaded document "${file.name}"`, async () => {
+            await fetch(`/api/documents?id=${newDoc.id}`, { method: "DELETE" });
+            fetchDocuments();
+            logUserActivity(currentUser.id, currentUser.name, `Undid upload of "${file.name}"`);
+          });
+        }, 300);
+      } else {
+        throw new Error("Unable to parse document in the repository database.");
+      }
+    } catch (err: unknown) {
+      clearInterval(interval);
+      setUploadProgress(null);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setUploadError(errMsg || "Failed to process upload.");
+      console.error(err);
+    }
   };
 
   const filteredDocs =
@@ -667,13 +727,12 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
           <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center gap-2 text-amber-700 font-bold border-b pb-3">
               <Shield className="w-5 h-5 animate-pulse" />
-              <h3 className="text-sm font-display uppercase tracking-wider">
-                Clearance Required
-              </h3>
+              <h3 className="text-sm font-display uppercase tracking-wider">Clearance Required</h3>
             </div>
             <div className="space-y-2">
               <p className="text-xs text-slate-500 leading-relaxed">
-                To download <strong>{downloadRequestDoc.name}</strong> under RBAC restrictions, an upper authority must grant a sponsoring clearance in their dashboard.
+                To download <strong>{downloadRequestDoc.name}</strong> under RBAC restrictions, an
+                upper authority must grant a sponsoring clearance in their dashboard.
               </p>
               <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 text-[11px] text-slate-600 font-mono">
                 <div>File: {downloadRequestDoc.name}</div>
@@ -718,12 +777,18 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
                   const compKey = (companyName || "ekaba").trim().toLowerCase();
                   let existing: any[] = [];
                   try {
-                    const existingStr = localStorage.getItem(`kb_portal_download_requests_${compKey}`) || "[]";
+                    const existingStr =
+                      localStorage.getItem(`kb_portal_download_requests_${compKey}`) || "[]";
                     existing = JSON.parse(existingStr);
                   } catch (e) {}
 
                   // Remove previous matching requests to avoid duplicates
-                  existing = existing.filter(r => !(r.documentId === downloadRequestDoc.id && r.requestedBy === currentUser.name));
+                  existing = existing.filter(
+                    (r) =>
+                      !(
+                        r.documentId === downloadRequestDoc.id && r.requestedBy === currentUser.name
+                      ),
+                  );
 
                   const newReq = {
                     id: `dl-req-${Date.now()}`,
@@ -737,9 +802,16 @@ export default function DocumentCenter({ currentUser, triggerUndo, companyName }
                   };
 
                   existing.push(newReq);
-                  localStorage.setItem(`kb_portal_download_requests_${compKey}`, JSON.stringify(existing));
-                  
-                  logUserActivity(currentUser.id, currentUser.name, `Requested download clearance for "${downloadRequestDoc.name}"`);
+                  localStorage.setItem(
+                    `kb_portal_download_requests_${compKey}`,
+                    JSON.stringify(existing),
+                  );
+
+                  logUserActivity(
+                    currentUser.id,
+                    currentUser.name,
+                    `Requested download clearance for "${downloadRequestDoc.name}"`,
+                  );
                   setDownloadRequestDoc(null);
                 }}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2 px-4 text-xs font-semibold transition cursor-pointer text-center"

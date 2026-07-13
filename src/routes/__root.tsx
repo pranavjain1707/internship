@@ -144,7 +144,9 @@ function SiteHeader() {
           <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
             <span className="font-display text-lg leading-none">E</span>
           </div>
-          <span className="font-display text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all">EKABA</span>
+          <span className="font-display text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all">
+            EKABA
+          </span>
           <span className="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground md:inline">
             v2.1
           </span>
@@ -307,7 +309,9 @@ function SiteFooter() {
               <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-md shadow-primary/20">
                 <span className="font-display text-lg leading-none">E</span>
               </div>
-              <span className="font-display text-xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">EKABA</span>
+              <span className="font-display text-xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+                EKABA
+              </span>
             </div>
             <p className="mt-4 max-w-sm text-sm text-muted-foreground">
               Enterprise Knowledge Base Assistant — retrieval-augmented intelligence for the

@@ -11,10 +11,13 @@ export const Route = createFileRoute("/api/demo-request/verify")({
           const { company, name, email } = body;
 
           if (!company || !name || !email) {
-            return new Response(JSON.stringify({ error: "Missing required fields: company, name, email." }), {
-              status: 400,
-              headers: { "Content-Type": "application/json" },
-            });
+            return new Response(
+              JSON.stringify({ error: "Missing required fields: company, name, email." }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
           }
 
           const normalizedCompany = company.toLowerCase().trim();
@@ -45,7 +48,10 @@ export const Route = createFileRoute("/api/demo-request/verify")({
               });
             }
           } catch (dbError: any) {
-            console.warn("[demo-request-verify] Supabase verification failed, checking in-memory fallback:", dbError.message || dbError);
+            console.warn(
+              "[demo-request-verify] Supabase verification failed, checking in-memory fallback:",
+              dbError.message || dbError,
+            );
           }
 
           // 2. Fallback to check in-memory list
@@ -58,15 +64,21 @@ export const Route = createFileRoute("/api/demo-request/verify")({
             );
           });
 
-          return new Response(JSON.stringify({ verified: !!matchedInMem, demoRequest: matchedInMem || null }), {
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ verified: !!matchedInMem, demoRequest: matchedInMem || null }),
+            {
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         } catch (error: any) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to verify demo request credentials" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to verify demo request credentials" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
     },

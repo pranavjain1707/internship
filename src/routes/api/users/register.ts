@@ -46,7 +46,10 @@ export const Route = createFileRoute("/api/users/register")({
               return new Response(
                 JSON.stringify({
                   success: true,
-                  message: existingIndex !== -1 ? "User updated in database." : "User registered in database.",
+                  message:
+                    existingIndex !== -1
+                      ? "User updated in database."
+                      : "User registered in database.",
                   user: data,
                 }),
                 { headers: { "Content-Type": "application/json" } },

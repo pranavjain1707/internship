@@ -22,5 +22,5 @@ export const isSupabaseConfigured =
 // Use a placeholder URL/Key to prevent crashes during builds or initialization if keys are missing
 export const supabase = createClient(
   isSupabaseConfigured ? supabaseUrl : "https://placeholder-project.supabase.co",
-  isSupabaseConfigured ? supabaseAnonKey : "placeholder-anon-key"
+  isSupabaseConfigured ? supabaseAnonKey : "placeholder-anon-key",
 );

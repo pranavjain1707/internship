@@ -70,7 +70,7 @@ const formatCompanyName = (name?: string) => {
 function VectorSpace3D() {
   const [rotation, setRotation] = useState({ x: 15, y: 45 });
   const [queryActive, setQueryActive] = useState(false);
-  const [nodes, setNodes] = useState<{x: number, y: number, z: number, label: string}[]>([]);
+  const [nodes, setNodes] = useState<{ x: number; y: number; z: number; label: string }[]>([]);
 
   useEffect(() => {
     // Generate simulated document embedding vectors
@@ -79,15 +79,15 @@ function VectorSpace3D() {
       { x: 60, y: -30, z: 50, label: "Security_Audit.docx" },
       { x: -30, y: -70, z: 40, label: "Travel_Policy.pdf" },
       { x: 40, y: 60, z: -50, label: "GDPR_Rules.pdf" },
-      { x: 20, y: -20, z: -20, label: "Code_of_Conduct.docx" }
+      { x: 20, y: -20, z: -20, label: "Code_of_Conduct.docx" },
     ];
     setNodes(docs);
 
     // Auto rotate
     const timer = setInterval(() => {
-      setRotation(prev => ({
+      setRotation((prev) => ({
         x: (prev.x + 0.2) % 360,
-        y: (prev.y + 0.3) % 360
+        y: (prev.y + 0.3) % 360,
       }));
     }, 40);
 
@@ -123,33 +123,34 @@ function VectorSpace3D() {
       {/* 3D Space Viewport */}
       <div className="flex-1 relative flex items-center justify-center overflow-hidden">
         {/* Isometric grid floor */}
-        <div 
+        <div
           className="absolute w-44 h-44 border border-slate-800/30 rounded-full"
           style={{
             transform: `rotateX(65deg) rotateZ(${rotation.y}deg)`,
-            backgroundImage: "radial-gradient(circle, transparent 30%, oklch(0.86 0.18 120 / 3%) 70%)",
-            transition: "transform 0.1s linear"
+            backgroundImage:
+              "radial-gradient(circle, transparent 30%, oklch(0.86 0.18 120 / 3%) 70%)",
+            transition: "transform 0.1s linear",
           }}
         />
 
         {/* Query Vector Projector Line */}
         {queryActive && (
-          <div 
+          <div
             className="absolute h-24 w-[1.5px] bg-gradient-to-t from-transparent via-amber-500 to-amber-300 origin-bottom animate-pulse"
             style={{
               transform: `rotateX(30deg) rotateY(${rotation.y}deg)`,
-              boxShadow: "0 0 12px oklch(0.86 0.18 120 / 30%)"
+              boxShadow: "0 0 12px oklch(0.86 0.18 120 / 30%)",
             }}
           />
         )}
 
         {/* Embedding Nodes */}
-        <div 
+        <div
           className="relative w-full h-full flex items-center justify-center"
           style={{
             transform: `perspective(500px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
             transformStyle: "preserve-3d",
-            transition: "transform 0.1s linear"
+            transition: "transform 0.1s linear",
           }}
         >
           {nodes.map((node, i) => {
@@ -160,25 +161,32 @@ function VectorSpace3D() {
                 className="absolute flex flex-col items-center"
                 style={{
                   transform: `translate3d(${node.x}px, ${node.y}px, ${node.z}px)`,
-                  transformStyle: "preserve-3d"
+                  transformStyle: "preserve-3d",
                 }}
               >
                 {/* Node Orb */}
-                <div 
+                <div
                   className={`h-2.5 w-2.5 rounded-full transition-all duration-300 relative ${
-                    isTarget 
-                      ? "bg-amber-400 scale-[1.75] shadow-lg shadow-amber-500/50" 
+                    isTarget
+                      ? "bg-amber-400 scale-[1.75] shadow-lg shadow-amber-500/50"
                       : "bg-primary/70"
                   }`}
                 />
-                
+
                 {/* Connecting lines to origin */}
-                <div className="h-[1px] w-10 bg-slate-800/40 origin-left" style={{ transform: "rotateY(90deg)" }} />
+                <div
+                  className="h-[1px] w-10 bg-slate-800/40 origin-left"
+                  style={{ transform: "rotateY(90deg)" }}
+                />
 
                 {/* Node label */}
-                <span className={`text-[7px] mt-1 whitespace-nowrap bg-slate-950/80 px-1 py-0.5 rounded border ${
-                  isTarget ? "border-amber-500 text-amber-300 animate-pulse" : "border-slate-800/80 text-slate-500"
-                }`}>
+                <span
+                  className={`text-[7px] mt-1 whitespace-nowrap bg-slate-950/80 px-1 py-0.5 rounded border ${
+                    isTarget
+                      ? "border-amber-500 text-amber-300 animate-pulse"
+                      : "border-slate-800/80 text-slate-500"
+                  }`}
+                >
                   {node.label}
                 </span>
               </div>
@@ -211,7 +219,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
   const [demoReqList, setDemoReqList] = useState<DemoRequest[]>([]);
   const [ekabaEmployees, setEkabaEmployees] = useState<User[]>([]);
   const [authorizedCompanies, setAuthorizedCompanies] = useState<Record<string, any>>({});
-  
+
   // Active plan selection state
   const [activePlanSelector, setActivePlanSelector] = useState<Record<string, boolean>>({});
 
@@ -256,7 +264,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
     logUserActivity(
       currentUser.id,
       currentUser.name,
-      `${status === "approved" ? "Approved" : "Rejected"} download request for document`
+      `${status === "approved" ? "Approved" : "Rejected"} download request for document`,
     );
   };
 
@@ -279,7 +287,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         logUserActivity(
           currentUser.id,
           currentUser.name,
-          `Started a ${months}-month subscription plan for ${clientCompany}`
+          `Started a ${months}-month subscription plan for ${clientCompany}`,
         );
       }
     } catch (err) {
@@ -346,7 +354,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         logUserActivity(
           currentUser.id,
           currentUser.name,
-          `Generated authorized client ID ${generatedId} for company ${req.company}`
+          `Generated authorized client ID ${generatedId} for company ${req.company}`,
         );
       }
     } catch (err) {
@@ -371,7 +379,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         logUserActivity(
           currentUser.id,
           currentUser.name,
-          `Ended demo request for ${req.name} (${req.company})`
+          `Ended demo request for ${req.name} (${req.company})`,
         );
       }
     } catch (err) {
@@ -396,7 +404,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         logUserActivity(
           currentUser.id,
           currentUser.name,
-          `Accepted demo request from ${req.name} (${req.company})`
+          `Accepted demo request from ${req.name} (${req.company})`,
         );
       }
     } catch (err) {
@@ -404,7 +412,11 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
     }
   };
 
-  const handleManagerAssign = async (req: DemoRequest, assignedToId: string, assignedToName: string) => {
+  const handleManagerAssign = async (
+    req: DemoRequest,
+    assignedToId: string,
+    assignedToName: string,
+  ) => {
     try {
       const res = await fetch("/api/demo-request", {
         method: "PUT",
@@ -421,7 +433,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         logUserActivity(
           currentUser.id,
           currentUser.name,
-          `Manager assigned client ${req.name} (${req.company}) to employee ${assignedToName}`
+          `Manager assigned client ${req.name} (${req.company}) to employee ${assignedToName}`,
         );
       }
     } catch (err) {
@@ -777,7 +789,9 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
       if (details && details.employeeId === currentUser.id) {
         if (details.planExpiresAt) {
           const planExpires = new Date(details.planExpiresAt);
-          const daysLeft = Math.ceil((planExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil(
+            (planExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+          );
           if (daysLeft <= 7 && daysLeft > 0) {
             alerts.push({
               id: `plan-${compKey}`,
@@ -793,7 +807,9 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
           }
         } else if (details.demoExpiresAt) {
           const demoExpires = new Date(details.demoExpiresAt);
-          const daysLeft = Math.ceil((demoExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil(
+            (demoExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+          );
           if (daysLeft <= 7 && daysLeft > 0) {
             alerts.push({
               id: `demo-${compKey}`,
@@ -813,7 +829,9 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
   } else {
     const details = authorizedCompanies[(companyName || "").toLowerCase().trim()];
     if (details) {
-      const repInfo = details.employeeName ? `${details.employeeName} (${details.employeeEmail})` : "EKABA Corporate Support (support@ekaba.com)";
+      const repInfo = details.employeeName
+        ? `${details.employeeName} (${details.employeeEmail})`
+        : "EKABA Corporate Support (support@ekaba.com)";
       if (details.planExpiresAt) {
         const planExpires = new Date(details.planExpiresAt);
         const daysLeft = Math.ceil((planExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -905,7 +923,9 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   : "bg-amber-50 border-amber-200 text-amber-900"
               }`}
             >
-              <AlertCircle className={`w-4 h-4 shrink-0 mt-0.5 ${alert.type === "danger" ? "text-rose-600" : "text-amber-700"}`} />
+              <AlertCircle
+                className={`w-4 h-4 shrink-0 mt-0.5 ${alert.type === "danger" ? "text-rose-600" : "text-amber-700"}`}
+              />
               <div className="flex-1 leading-relaxed">{alert.message}</div>
             </div>
           ))}
@@ -939,40 +959,53 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   <span className="h-2 w-2 rounded-full bg-indigo-600"></span>
                   Incoming Requests Queue (Click to Accept Demo)
                 </h5>
-                {demoReqList.filter(r => r.status === 'pending').length === 0 ? (
-                  <p className="text-[11px] text-slate-500 italic pl-4">No pending demo requests at this moment.</p>
+                {demoReqList.filter((r) => r.status === "pending").length === 0 ? (
+                  <p className="text-[11px] text-slate-500 italic pl-4">
+                    No pending demo requests at this moment.
+                  </p>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {demoReqList.filter(r => r.status === 'pending').map((req) => (
-                      <div key={req.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                        <div className="space-y-2 text-left">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
-                              <span className="text-[10px] text-slate-500 block">{req.email}</span>
-                            </div>
-                            <span className="text-[9px] bg-slate-105 text-slate-600 font-mono px-2 py-0.5 rounded uppercase font-bold">{req.size}</span>
-                          </div>
-                          <div className="text-[10px] text-slate-600 font-mono">
-                            <div>Company: <strong className="text-slate-800">{req.company}</strong></div>
-                            <div>Role: {req.role}</div>
-                          </div>
-                          {req.message && (
-                            <p className="text-[10px] text-slate-500 italic border-t border-slate-100 pt-1.5 line-clamp-2">
-                              &ldquo;{req.message}&rdquo;
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleAcceptDemo(req)}
-                          className="mt-3 w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-[10px] font-bold text-white cursor-pointer transition shadow-sm active:scale-[0.98]"
+                    {demoReqList
+                      .filter((r) => r.status === "pending")
+                      .map((req) => (
+                        <div
+                          key={req.id}
+                          className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm"
                         >
-                          <Check className="w-3.5 h-3.5" />
-                          <span>Accept Request</span>
-                        </button>
-                      </div>
-                    ))}
+                          <div className="space-y-2 text-left">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
+                                <span className="text-[10px] text-slate-500 block">
+                                  {req.email}
+                                </span>
+                              </div>
+                              <span className="text-[9px] bg-slate-105 text-slate-600 font-mono px-2 py-0.5 rounded uppercase font-bold">
+                                {req.size}
+                              </span>
+                            </div>
+                            <div className="text-[10px] text-slate-600 font-mono">
+                              <div>
+                                Company: <strong className="text-slate-800">{req.company}</strong>
+                              </div>
+                              <div>Role: {req.role}</div>
+                            </div>
+                            {req.message && (
+                              <p className="text-[10px] text-slate-500 italic border-t border-slate-100 pt-1.5 line-clamp-2">
+                                &ldquo;{req.message}&rdquo;
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleAcceptDemo(req)}
+                            className="mt-3 w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-[10px] font-bold text-white cursor-pointer transition shadow-sm active:scale-[0.98]"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Accept Request</span>
+                          </button>
+                        </div>
+                      ))}
                   </div>
                 )}
               </div>
@@ -983,204 +1016,270 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   <span className="h-2 w-2 rounded-full bg-emerald-600"></span>
                   Your Assigned Demo Clients (Compulsory)
                 </h5>
-                {demoReqList.filter(r => 
-                  (r.status === 'manager_assigned' && r.assignedTo === currentUser.id) || 
-                  (r.status === 'employee_accepted' && r.acceptedBy === currentUser.id) ||
-                  (r.status === 'ended' && (r.assignedTo === currentUser.id || r.acceptedBy === currentUser.id))
+                {demoReqList.filter(
+                  (r) =>
+                    (r.status === "manager_assigned" && r.assignedTo === currentUser.id) ||
+                    (r.status === "employee_accepted" && r.acceptedBy === currentUser.id) ||
+                    (r.status === "ended" &&
+                      (r.assignedTo === currentUser.id || r.acceptedBy === currentUser.id)),
                 ).length === 0 ? (
-                  <p className="text-[11px] text-slate-555 italic pl-4">You have no active demo client assignments right now.</p>
+                  <p className="text-[11px] text-slate-555 italic pl-4">
+                    You have no active demo client assignments right now.
+                  </p>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {demoReqList.filter(r => 
-                      (r.status === 'manager_assigned' && r.assignedTo === currentUser.id) || 
-                      (r.status === 'employee_accepted' && r.acceptedBy === currentUser.id) ||
-                      (r.status === 'ended' && (r.assignedTo === currentUser.id || r.acceptedBy === currentUser.id))
-                    ).map((req) => {
-                      const isCompulsory = req.status === 'manager_assigned' && req.assignedTo !== req.acceptedBy;
-                      const companyDetails = req.company ? authorizedCompanies[req.company.toLowerCase().trim()] : null;
-                      const authId = typeof companyDetails === "string" ? companyDetails : companyDetails?.authorizedClientId;
-                      return (
-                        <div key={req.id} className={`bg-white border rounded-xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all duration-300 ${
-                          req.status === 'ended' 
-                            ? 'opacity-70 bg-slate-50 border-slate-200 border-dashed' 
-                            : 'border-slate-200 hover:shadow-md'
-                        }`}>
-                          {isCompulsory && (
-                            <div className="absolute top-0 right-0 bg-rose-600 text-white text-[8px] font-bold font-mono px-2 py-0.5 rounded-bl uppercase tracking-wider">
-                              Forced Assignment
-                            </div>
-                          )}
-                          <div className="space-y-2 text-left">
-                            <div>
-                              <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
-                              <span className="text-[10px] text-slate-500 block">{req.email}</span>
-                            </div>
-                            <div className="text-[10px] text-slate-600 font-mono">
-                              <div>Company: <strong className="text-slate-800">{req.company}</strong></div>
-                              <div>Status: 
-                                <span className={`ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                  req.status === 'ended'
-                                    ? 'bg-slate-100 text-slate-600'
-                                    : req.status === 'employee_accepted' 
-                                      ? 'bg-amber-100 text-amber-800' 
-                                      : 'bg-emerald-100 text-emerald-800'
-                                }`}>
-                                  {req.status === 'ended' 
-                                    ? 'Ended' 
-                                    : req.status === 'employee_accepted' 
-                                      ? 'Awaiting Manager Confirm' 
-                                      : 'Active Client'}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Actions and Client ID Display */}
-                            {req.status === 'ended' ? (
-                              <div className="mt-3.5 p-2 bg-rose-50 border border-rose-100 rounded-lg text-rose-700 text-[10px] font-medium text-center">
-                                User didn't choose to be with us
-                              </div>
-                            ) : (
-                              <div className="mt-3.5 space-y-2">
-                                {authId ? (
-                                  <div className="space-y-2">
-                                    <div className="p-2 bg-emerald-50 border border-emerald-100 rounded-lg text-emerald-850 text-[10px] font-mono font-bold text-center">
-                                      Client ID: {authId}
-                                    </div>
-
-                                    {/* Subscription Status details */}
-                                    {(() => {
-                                      const details = req.company ? authorizedCompanies[req.company.toLowerCase().trim()] : null;
-                                      const now = new Date();
-                                      let hasActivePlan = false;
-                                      let planExpiresAt = null;
-                                      let daysLeft = null;
-                                      let showRenewButton = false;
-                                      let planMonths = null;
-
-                                      if (details) {
-                                        planMonths = details.planMonths;
-                                        if (details.planExpiresAt) {
-                                          planExpiresAt = new Date(details.planExpiresAt);
-                                          hasActivePlan = now <= planExpiresAt;
-                                          daysLeft = Math.ceil((planExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-                                          if (daysLeft <= 7) {
-                                            showRenewButton = true;
-                                          }
-                                        } else if (details.demoExpiresAt) {
-                                          const demoExpires = new Date(details.demoExpiresAt);
-                                          daysLeft = Math.ceil((demoExpires.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-                                          showRenewButton = now > demoExpires || daysLeft <= 7;
-                                        }
-                                      }
-
-                                      return (
-                                        <>
-                                          <div className="text-[10px] text-slate-500 font-sans space-y-1 border-t pt-2 text-left">
-                                            {hasActivePlan ? (
-                                              <div>
-                                                Plan: <span className="font-bold text-slate-700">{planMonths} Months</span>
-                                                <span className="block text-[9px] text-indigo-600 font-semibold mt-0.5">
-                                                  Expires in {daysLeft} days ({planExpiresAt?.toLocaleDateString()})
-                                                </span>
-                                              </div>
-                                            ) : (
-                                              <div>
-                                                Plan: <span className="text-amber-600 font-bold">Demo Period (7 Days)</span>
-                                                {daysLeft !== null && (
-                                                  <span className={`block text-[9px] font-semibold mt-0.5 ${daysLeft <= 0 ? 'text-rose-600 font-bold' : 'text-amber-650'}`}>
-                                                    {daysLeft <= 0 ? 'Demo expired (Features locked)' : `Demo expires in ${daysLeft} days`}
-                                                  </span>
-                                                )}
-                                              </div>
-                                            )}
-                                          </div>
-
-                                          {/* Plan Selector */}
-                                          {activePlanSelector[req.id] ? (
-                                            <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-1">
-                                              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide block text-center mb-1">
-                                                Select Subscription Plan
-                                              </span>
-                                              <div className="grid grid-cols-3 gap-1">
-                                                <button
-                                                  type="button"
-                                                  onClick={() => {
-                                                    handleStartPlan(req.company, 1);
-                                                    setActivePlanSelector(prev => ({ ...prev, [req.id]: false }));
-                                                  }}
-                                                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
-                                                >
-                                                  1 Month
-                                                </button>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => {
-                                                    handleStartPlan(req.company, 6);
-                                                    setActivePlanSelector(prev => ({ ...prev, [req.id]: false }));
-                                                  }}
-                                                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
-                                                >
-                                                  6 Months
-                                                </button>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => {
-                                                    handleStartPlan(req.company, 12);
-                                                    setActivePlanSelector(prev => ({ ...prev, [req.id]: false }));
-                                                  }}
-                                                  className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
-                                                >
-                                                  12 Months
-                                                </button>
-                                              </div>
-                                              <button
-                                                type="button"
-                                                onClick={() => setActivePlanSelector(prev => ({ ...prev, [req.id]: false }))}
-                                                className="w-full text-[9px] font-semibold text-slate-400 hover:underline pt-1"
-                                              >
-                                                Cancel
-                                              </button>
-                                            </div>
-                                          ) : (
-                                            (showRenewButton || !hasActivePlan) && (
-                                              <button
-                                                type="button"
-                                                onClick={() => setActivePlanSelector(prev => ({ ...prev, [req.id]: true }))}
-                                                className="w-full flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition duration-200 cursor-pointer shadow-sm"
-                                              >
-                                                <Sparkles className="h-3.5 w-3.5" />
-                                                <span>{!hasActivePlan ? 'Start Plan' : 'Renew Subscription'}</span>
-                                              </button>
-                                            )
-                                          )}
-                                        </>
-                                      );
-                                    })()}
-                                  </div>
-                                ) : (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCreateAuthorizedId(req)}
-                                    className="w-full flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition duration-200 cursor-pointer shadow-sm"
-                                  >
-                                    <ShieldCheck className="h-3.5 w-3.5" />
-                                    <span>Create Authorized Client ID</span>
-                                  </button>
-                                )}
-                                <button
-                                  type="button"
-                                  onClick={() => handleEndDemo(req)}
-                                  className="w-full flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold py-2 px-3 rounded-lg border border-rose-200 hover:border-rose-300 transition duration-200 cursor-pointer"
-                                >
-                                  <X className="h-3.5 w-3.5" />
-                                  <span>End Demo</span>
-                                </button>
+                    {demoReqList
+                      .filter(
+                        (r) =>
+                          (r.status === "manager_assigned" && r.assignedTo === currentUser.id) ||
+                          (r.status === "employee_accepted" && r.acceptedBy === currentUser.id) ||
+                          (r.status === "ended" &&
+                            (r.assignedTo === currentUser.id || r.acceptedBy === currentUser.id)),
+                      )
+                      .map((req) => {
+                        const isCompulsory =
+                          req.status === "manager_assigned" && req.assignedTo !== req.acceptedBy;
+                        const companyDetails = req.company
+                          ? authorizedCompanies[req.company.toLowerCase().trim()]
+                          : null;
+                        const authId =
+                          typeof companyDetails === "string"
+                            ? companyDetails
+                            : companyDetails?.authorizedClientId;
+                        return (
+                          <div
+                            key={req.id}
+                            className={`bg-white border rounded-xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all duration-300 ${
+                              req.status === "ended"
+                                ? "opacity-70 bg-slate-50 border-slate-200 border-dashed"
+                                : "border-slate-200 hover:shadow-md"
+                            }`}
+                          >
+                            {isCompulsory && (
+                              <div className="absolute top-0 right-0 bg-rose-600 text-white text-[8px] font-bold font-mono px-2 py-0.5 rounded-bl uppercase tracking-wider">
+                                Forced Assignment
                               </div>
                             )}
+                            <div className="space-y-2 text-left">
+                              <div>
+                                <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
+                                <span className="text-[10px] text-slate-500 block">
+                                  {req.email}
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-slate-600 font-mono">
+                                <div>
+                                  Company: <strong className="text-slate-800">{req.company}</strong>
+                                </div>
+                                <div>
+                                  Status:
+                                  <span
+                                    className={`ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                                      req.status === "ended"
+                                        ? "bg-slate-100 text-slate-600"
+                                        : req.status === "employee_accepted"
+                                          ? "bg-amber-100 text-amber-800"
+                                          : "bg-emerald-100 text-emerald-800"
+                                    }`}
+                                  >
+                                    {req.status === "ended"
+                                      ? "Ended"
+                                      : req.status === "employee_accepted"
+                                        ? "Awaiting Manager Confirm"
+                                        : "Active Client"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Actions and Client ID Display */}
+                              {req.status === "ended" ? (
+                                <div className="mt-3.5 p-2 bg-rose-50 border border-rose-100 rounded-lg text-rose-700 text-[10px] font-medium text-center">
+                                  User didn't choose to be with us
+                                </div>
+                              ) : (
+                                <div className="mt-3.5 space-y-2">
+                                  {authId ? (
+                                    <div className="space-y-2">
+                                      <div className="p-2 bg-emerald-50 border border-emerald-100 rounded-lg text-emerald-850 text-[10px] font-mono font-bold text-center">
+                                        Client ID: {authId}
+                                      </div>
+
+                                      {/* Subscription Status details */}
+                                      {(() => {
+                                        const details = req.company
+                                          ? authorizedCompanies[req.company.toLowerCase().trim()]
+                                          : null;
+                                        const now = new Date();
+                                        let hasActivePlan = false;
+                                        let planExpiresAt = null;
+                                        let daysLeft = null;
+                                        let showRenewButton = false;
+                                        let planMonths = null;
+
+                                        if (details) {
+                                          planMonths = details.planMonths;
+                                          if (details.planExpiresAt) {
+                                            planExpiresAt = new Date(details.planExpiresAt);
+                                            hasActivePlan = now <= planExpiresAt;
+                                            daysLeft = Math.ceil(
+                                              (planExpiresAt.getTime() - now.getTime()) /
+                                                (1000 * 60 * 60 * 24),
+                                            );
+                                            if (daysLeft <= 7) {
+                                              showRenewButton = true;
+                                            }
+                                          } else if (details.demoExpiresAt) {
+                                            const demoExpires = new Date(details.demoExpiresAt);
+                                            daysLeft = Math.ceil(
+                                              (demoExpires.getTime() - now.getTime()) /
+                                                (1000 * 60 * 60 * 24),
+                                            );
+                                            showRenewButton = now > demoExpires || daysLeft <= 7;
+                                          }
+                                        }
+
+                                        return (
+                                          <>
+                                            <div className="text-[10px] text-slate-500 font-sans space-y-1 border-t pt-2 text-left">
+                                              {hasActivePlan ? (
+                                                <div>
+                                                  Plan:{" "}
+                                                  <span className="font-bold text-slate-700">
+                                                    {planMonths} Months
+                                                  </span>
+                                                  <span className="block text-[9px] text-indigo-600 font-semibold mt-0.5">
+                                                    Expires in {daysLeft} days (
+                                                    {planExpiresAt?.toLocaleDateString()})
+                                                  </span>
+                                                </div>
+                                              ) : (
+                                                <div>
+                                                  Plan:{" "}
+                                                  <span className="text-amber-600 font-bold">
+                                                    Demo Period (7 Days)
+                                                  </span>
+                                                  {daysLeft !== null && (
+                                                    <span
+                                                      className={`block text-[9px] font-semibold mt-0.5 ${daysLeft <= 0 ? "text-rose-600 font-bold" : "text-amber-650"}`}
+                                                    >
+                                                      {daysLeft <= 0
+                                                        ? "Demo expired (Features locked)"
+                                                        : `Demo expires in ${daysLeft} days`}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Plan Selector */}
+                                            {activePlanSelector[req.id] ? (
+                                              <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 space-y-1">
+                                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide block text-center mb-1">
+                                                  Select Subscription Plan
+                                                </span>
+                                                <div className="grid grid-cols-3 gap-1">
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      handleStartPlan(req.company, 1);
+                                                      setActivePlanSelector((prev) => ({
+                                                        ...prev,
+                                                        [req.id]: false,
+                                                      }));
+                                                    }}
+                                                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
+                                                  >
+                                                    1 Month
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      handleStartPlan(req.company, 6);
+                                                      setActivePlanSelector((prev) => ({
+                                                        ...prev,
+                                                        [req.id]: false,
+                                                      }));
+                                                    }}
+                                                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
+                                                  >
+                                                    6 Months
+                                                  </button>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                      handleStartPlan(req.company, 12);
+                                                      setActivePlanSelector((prev) => ({
+                                                        ...prev,
+                                                        [req.id]: false,
+                                                      }));
+                                                    }}
+                                                    className="bg-indigo-600 hover:bg-indigo-700 text-white text-[9px] font-bold py-1.5 px-1 rounded transition cursor-pointer"
+                                                  >
+                                                    12 Months
+                                                  </button>
+                                                </div>
+                                                <button
+                                                  type="button"
+                                                  onClick={() =>
+                                                    setActivePlanSelector((prev) => ({
+                                                      ...prev,
+                                                      [req.id]: false,
+                                                    }))
+                                                  }
+                                                  className="w-full text-[9px] font-semibold text-slate-400 hover:underline pt-1"
+                                                >
+                                                  Cancel
+                                                </button>
+                                              </div>
+                                            ) : (
+                                              (showRenewButton || !hasActivePlan) && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() =>
+                                                    setActivePlanSelector((prev) => ({
+                                                      ...prev,
+                                                      [req.id]: true,
+                                                    }))
+                                                  }
+                                                  className="w-full flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition duration-200 cursor-pointer shadow-sm"
+                                                >
+                                                  <Sparkles className="h-3.5 w-3.5" />
+                                                  <span>
+                                                    {!hasActivePlan
+                                                      ? "Start Plan"
+                                                      : "Renew Subscription"}
+                                                  </span>
+                                                </button>
+                                              )
+                                            )}
+                                          </>
+                                        );
+                                      })()}
+                                    </div>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCreateAuthorizedId(req)}
+                                      className="w-full flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition duration-200 cursor-pointer shadow-sm"
+                                    >
+                                      <ShieldCheck className="h-3.5 w-3.5" />
+                                      <span>Create Authorized Client ID</span>
+                                    </button>
+                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEndDemo(req)}
+                                    className="w-full flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold py-2 px-3 rounded-lg border border-rose-200 hover:border-rose-300 transition duration-200 cursor-pointer"
+                                  >
+                                    <X className="h-3.5 w-3.5" />
+                                    <span>End Demo</span>
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 )}
               </div>
@@ -1194,61 +1293,84 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   <span className="h-2 w-2 rounded-full bg-amber-500"></span>
                   Pending Employee Demo Approvals & Assignments
                 </h5>
-                {demoReqList.filter(r => r.status === 'employee_accepted').length === 0 ? (
-                  <p className="text-[11px] text-slate-555 italic pl-4">No pending assignments waiting for your review.</p>
+                {demoReqList.filter((r) => r.status === "employee_accepted").length === 0 ? (
+                  <p className="text-[11px] text-slate-555 italic pl-4">
+                    No pending assignments waiting for your review.
+                  </p>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {demoReqList.filter(r => r.status === 'employee_accepted').map((req) => (
-                      <div key={req.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                        <div className="space-y-2 text-left">
-                          <div>
-                            <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
-                            <span className="text-[10px] text-slate-500 block">{req.email}</span>
+                    {demoReqList
+                      .filter((r) => r.status === "employee_accepted")
+                      .map((req) => (
+                        <div
+                          key={req.id}
+                          className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm"
+                        >
+                          <div className="space-y-2 text-left">
+                            <div>
+                              <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
+                              <span className="text-[10px] text-slate-500 block">{req.email}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-600 font-mono">
+                              <div>
+                                Company: <strong className="text-slate-800">{req.company}</strong>
+                              </div>
+                              <div className="mt-1 text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 rounded px-2 py-1 flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                                Accepted by: {req.acceptedByName}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-[10px] text-slate-600 font-mono">
-                            <div>Company: <strong className="text-slate-800">{req.company}</strong></div>
-                            <div className="mt-1 text-indigo-700 font-bold bg-indigo-50 border border-indigo-100 rounded px-2 py-1 flex items-center gap-1.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-                              Accepted by: {req.acceptedByName}
+
+                          <div className="space-y-2 mt-4 pt-3 border-t border-slate-100">
+                            {/* Confirm option */}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleManagerAssign(
+                                  req,
+                                  req.acceptedBy || "",
+                                  req.acceptedByName || "",
+                                )
+                              }
+                              className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-[10px] font-bold text-white cursor-pointer transition shadow-sm"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              <span>Confirm assignment to {req.acceptedByName}</span>
+                            </button>
+
+                            {/* Reassign select dropdown */}
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-mono font-bold text-slate-500 uppercase block">
+                                Switch to another employee:
+                              </label>
+                              <select
+                                defaultValue=""
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  if (!val) return;
+                                  const emp = ekabaEmployees.find((u) => u.id === val);
+                                  if (emp) {
+                                    handleManagerAssign(req, emp.id, emp.name);
+                                  }
+                                }}
+                                className="w-full bg-slate-55 border border-slate-200 rounded-lg py-1 px-2 text-[10px] text-slate-700 font-semibold focus:outline-none"
+                              >
+                                <option value="" disabled>
+                                  -- Select Employee to Assign --
+                                </option>
+                                {ekabaEmployees
+                                  .filter((u) => u.id !== req.acceptedBy)
+                                  .map((emp) => (
+                                    <option key={emp.id} value={emp.id}>
+                                      {emp.name} ({emp.role})
+                                    </option>
+                                  ))}
+                              </select>
                             </div>
                           </div>
                         </div>
-
-                        <div className="space-y-2 mt-4 pt-3 border-t border-slate-100">
-                          {/* Confirm option */}
-                          <button
-                            type="button"
-                            onClick={() => handleManagerAssign(req, req.acceptedBy || '', req.acceptedByName || '')}
-                            className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-[10px] font-bold text-white cursor-pointer transition shadow-sm"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Confirm assignment to {req.acceptedByName}</span>
-                          </button>
-
-                          {/* Reassign select dropdown */}
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-mono font-bold text-slate-500 uppercase block">Switch to another employee:</label>
-                            <select
-                              defaultValue=""
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (!val) return;
-                                const emp = ekabaEmployees.find(u => u.id === val);
-                                if (emp) {
-                                  handleManagerAssign(req, emp.id, emp.name);
-                                }
-                              }}
-                              className="w-full bg-slate-55 border border-slate-200 rounded-lg py-1 px-2 text-[10px] text-slate-700 font-semibold focus:outline-none"
-                            >
-                              <option value="" disabled>-- Select Employee to Assign --</option>
-                              {ekabaEmployees.filter(u => u.id !== req.acceptedBy).map((emp) => (
-                                <option key={emp.id} value={emp.id}>{emp.name} ({emp.role})</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>
@@ -1259,26 +1381,35 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   <span className="h-2 w-2 rounded-full bg-slate-650"></span>
                   Active Confirmed Demo Assignments
                 </h5>
-                {demoReqList.filter(r => r.status === 'manager_assigned').length === 0 ? (
-                  <p className="text-[11px] text-slate-555 italic pl-4">No active assignments confirmed yet.</p>
+                {demoReqList.filter((r) => r.status === "manager_assigned").length === 0 ? (
+                  <p className="text-[11px] text-slate-555 italic pl-4">
+                    No active assignments confirmed yet.
+                  </p>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {demoReqList.filter(r => r.status === 'manager_assigned').map((req) => (
-                      <div key={req.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                        <div className="space-y-2 text-left">
-                          <div>
-                            <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
-                            <span className="text-[10px] text-slate-500 block">{req.email}</span>
-                          </div>
-                          <div className="text-[10px] text-slate-600 font-mono">
-                            <div>Company: <strong className="text-slate-800">{req.company}</strong></div>
-                            <div className="mt-1 text-emerald-800 font-bold bg-emerald-55 border border-emerald-100 rounded px-2 py-0.5">
-                              Assigned to: {req.assignedToName}
+                    {demoReqList
+                      .filter((r) => r.status === "manager_assigned")
+                      .map((req) => (
+                        <div
+                          key={req.id}
+                          className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col justify-between shadow-sm"
+                        >
+                          <div className="space-y-2 text-left">
+                            <div>
+                              <h6 className="text-xs font-bold text-slate-800">{req.name}</h6>
+                              <span className="text-[10px] text-slate-500 block">{req.email}</span>
+                            </div>
+                            <div className="text-[10px] text-slate-600 font-mono">
+                              <div>
+                                Company: <strong className="text-slate-800">{req.company}</strong>
+                              </div>
+                              <div className="mt-1 text-emerald-800 font-bold bg-emerald-55 border border-emerald-100 rounded px-2 py-0.5">
+                                Assigned to: {req.assignedToName}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </div>
@@ -1300,7 +1431,8 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   SSO Registration Clearance Requests
                 </h4>
                 <p className="text-[11px] text-stone-500">
-                  The following users requested security clearance to register a new profile with a privileged role.
+                  The following users requested security clearance to register a new profile with a
+                  privileged role.
                 </p>
               </div>
             </div>
@@ -1326,12 +1458,10 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                   </div>
                   <div className="text-[10px]/relaxed text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-100 space-y-1 font-mono">
                     <div className="truncate">
-                      Email:{" "}
-                      <span className="text-stone-800 font-bold">{req.domain}</span>
+                      Email: <span className="text-stone-800 font-bold">{req.domain}</span>
                     </div>
                     <div>
-                      Sponsor:{" "}
-                      <span className="text-stone-800 font-bold">{req.sponsorName}</span>
+                      Sponsor: <span className="text-stone-800 font-bold">{req.sponsorName}</span>
                     </div>
                   </div>
                 </div>
@@ -1436,75 +1566,82 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
       )}
 
       {/* Real-time Document Download Clearance Queue */}
-      {(currentUser.role === "Owner" || currentUser.role === "Manager") && downloadRequests.filter(r => r.status === "pending").length > 0 && (
-        <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-5 shadow-sm space-y-4 animate-subtle-pulse text-left">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-amber-100 rounded-xl text-amber-805">
-                <ShieldCheck className="w-5 h-5 text-amber-700 animate-pulse" />
+      {(currentUser.role === "Owner" || currentUser.role === "Manager") &&
+        downloadRequests.filter((r) => r.status === "pending").length > 0 && (
+          <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-5 shadow-sm space-y-4 animate-subtle-pulse text-left">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-amber-100 rounded-xl text-amber-805">
+                  <ShieldCheck className="w-5 h-5 text-amber-700 animate-pulse" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-stone-850">
+                    Document Download Sponsoring Requests
+                  </h4>
+                  <p className="text-[11px] text-stone-500">
+                    The following users requested security clearance to download a document under
+                    RBAC restrictions.
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-sm font-bold text-stone-850">
-                  Document Download Sponsoring Requests
-                </h4>
-                <p className="text-[11px] text-stone-500">
-                  The following users requested security clearance to download a document under RBAC restrictions.
-                </p>
-              </div>
+              <span className="self-start sm:self-center bg-amber-100 text-amber-900 text-[10px] font-mono px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-amber-200 animate-pulse">
+                {downloadRequests.filter((r) => r.status === "pending").length} Requests
+              </span>
             </div>
-            <span className="self-start sm:self-center bg-amber-100 text-amber-900 text-[10px] font-mono px-3 py-1 rounded-full font-bold uppercase tracking-widest border border-amber-200 animate-pulse">
-              {downloadRequests.filter(r => r.status === "pending").length} Requests
-            </span>
-          </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {downloadRequests.filter(r => r.status === "pending").map((req) => (
-              <div
-                key={req.id}
-                className="bg-white border border-stone-200 hover:border-amber-300 rounded-xl p-4 flex flex-col justify-between shadow-sm hover:shadow transition relative overflow-hidden"
-              >
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-0.5">
-                      <h5 className="text-xs font-bold text-stone-850">{req.requestedBy}</h5>
-                      <span className="text-[9px] text-amber-808 font-mono tracking-wider block bg-amber-55 px-1.5 py-0.5 rounded font-bold uppercase">
-                        Role: {req.requestedByRole}
-                      </span>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {downloadRequests
+                .filter((r) => r.status === "pending")
+                .map((req) => (
+                  <div
+                    key={req.id}
+                    className="bg-white border border-stone-200 hover:border-amber-300 rounded-xl p-4 flex flex-col justify-between shadow-sm hover:shadow transition relative overflow-hidden"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-0.5">
+                          <h5 className="text-xs font-bold text-stone-850">{req.requestedBy}</h5>
+                          <span className="text-[9px] text-amber-808 font-mono tracking-wider block bg-amber-55 px-1.5 py-0.5 rounded font-bold uppercase">
+                            Role: {req.requestedByRole}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-[10px]/relaxed text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-100 space-y-1 font-mono">
+                        <div className="truncate">
+                          File: <span className="text-stone-800 font-bold">{req.documentName}</span>
+                        </div>
+                        <div>
+                          Requested:{" "}
+                          <span className="text-stone-850 font-bold">
+                            {new Date(req.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-stone-100">
+                      <button
+                        type="button"
+                        onClick={() => handleApproveDownload(req.id, "rejected")}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg border border-rose-200 text-[10px] font-bold text-rose-600 hover:bg-rose-50 cursor-pointer transition shadow-none"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Decline</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleApproveDownload(req.id, "approved")}
+                        className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#d97706] text-[10px] font-bold text-white hover:bg-amber-700 cursor-pointer transition shadow-sm hover:shadow active:scale-[0.98]"
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Authorize</span>
+                      </button>
                     </div>
                   </div>
-                  <div className="text-[10px]/relaxed text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-100 space-y-1 font-mono">
-                    <div className="truncate">
-                      File: <span className="text-stone-800 font-bold">{req.documentName}</span>
-                    </div>
-                    <div>
-                      Requested: <span className="text-stone-850 font-bold">{new Date(req.createdAt).toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-stone-100">
-                  <button
-                    type="button"
-                    onClick={() => handleApproveDownload(req.id, "rejected")}
-                    className="flex items-center justify-center gap-1 py-1.5 rounded-lg border border-rose-200 text-[10px] font-bold text-rose-600 hover:bg-rose-50 cursor-pointer transition shadow-none"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                    <span>Decline</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleApproveDownload(req.id, "approved")}
-                    className="flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#d97706] text-[10px] font-bold text-white hover:bg-amber-700 cursor-pointer transition shadow-sm hover:shadow active:scale-[0.98]"
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Authorize</span>
-                  </button>
-                </div>
-              </div>
-            ))}
+                ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Owner-only Real-time Kick Authorization Requests */}
       {currentUser.role === "Owner" && pendingKickRequests.length > 0 && (

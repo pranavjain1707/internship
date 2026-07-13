@@ -1,5 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import { MessageSquare, X, Send, LogOut, Bot, Sparkles, Loader2, Maximize2, Minimize2 } from "lucide-react";
+import {
+  MessageSquare,
+  X,
+  Send,
+  LogOut,
+  Bot,
+  Sparkles,
+  Loader2,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -14,13 +24,13 @@ export default function SiteChatBot() {
   const [name, setName] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState("");
-  
+
   // Session state
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  
+
   // Chat input state
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -98,7 +108,7 @@ export default function SiteChatBot() {
       setUserId(data.userId);
       setUserEmail(data.email);
       setUserName(data.name || name.trim());
-      
+
       // If user has previous logs returned, load them. Else show welcoming message.
       if (data.messages && data.messages.length > 0) {
         setMessages(data.messages);
@@ -204,7 +214,7 @@ Ask me anything!`,
   // Clean formatted rendering helper for basic Markdown
   const formatMessageText = (text: string) => {
     if (!text) return "";
-    
+
     const lines = text.split("\n");
     const formattedHtml = lines
       .map((line) => {
@@ -263,7 +273,6 @@ Ask me anything!`,
               : "mb-4 w-[360px] sm:w-[400px] h-[520px] max-h-[calc(100vh-120px)] rounded-2xl border border-border/80 bg-background/95 backdrop-blur-md shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300"
           }
         >
-          
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border/60 bg-secondary/35 px-4 py-3.5">
             <div className="flex items-center gap-2.5">
@@ -280,7 +289,7 @@ Ask me anything!`,
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-1">
               {userId && (
                 <button
@@ -296,7 +305,11 @@ Ask me anything!`,
                 className="rounded-md p-1.5 text-muted-foreground hover:bg-secondary hover:text-foreground transition cursor-pointer"
                 title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
               >
-                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                {isFullscreen ? (
+                  <Minimize2 className="h-4 w-4" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" />
+                )}
               </button>
               <button
                 onClick={() => {
@@ -320,10 +333,10 @@ Ask me anything!`,
                 </div>
                 <h3 className="font-semibold text-lg text-foreground mb-2">Learn about EKABA</h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Have questions about our security, documents indexing, or platform features? 
-                  Log in below to start chatting with our AI guide.
+                  Have questions about our security, documents indexing, or platform features? Log
+                  in below to start chatting with our AI guide.
                 </p>
-                
+
                 <form onSubmit={handleLogin} className="w-full flex flex-col gap-3">
                   <div className="text-left">
                     <label className="text-xs font-medium text-muted-foreground mb-1 block">
@@ -339,7 +352,7 @@ Ask me anything!`,
                       className="w-full rounded-md border border-border bg-background/50 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                     />
                   </div>
-                  
+
                   <div className="text-left">
                     <label className="text-xs font-medium text-muted-foreground mb-1 block">
                       Email Address
@@ -354,7 +367,7 @@ Ask me anything!`,
                       className="w-full rounded-md border border-border bg-background/50 px-3.5 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
                     />
                   </div>
-                  
+
                   {loginError && (
                     <p className="text-xs text-rose-500 font-medium text-left">{loginError}</p>
                   )}
@@ -385,7 +398,9 @@ Ask me anything!`,
                   <div
                     key={i}
                     className={`flex flex-col max-w-[85%] ${
-                      msg.role === "user" ? "self-end items-end animate-in slide-in-from-right-2 duration-200" : "self-start items-start animate-in slide-in-from-left-2 duration-200"
+                      msg.role === "user"
+                        ? "self-end items-end animate-in slide-in-from-right-2 duration-200"
+                        : "self-start items-start animate-in slide-in-from-left-2 duration-200"
                     }`}
                   >
                     <div
@@ -399,13 +414,22 @@ Ask me anything!`,
                     </div>
                   </div>
                 ))}
-                
+
                 {isSending && (
                   <div className="self-start flex flex-col items-start gap-1 max-w-[85%] animate-in fade-in duration-200">
                     <div className="rounded-2xl rounded-tl-none bg-secondary/40 border border-border/20 px-4 py-3 flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <span
+                        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+                        style={{ animationDelay: "0ms" }}
+                      />
+                      <span
+                        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+                        style={{ animationDelay: "150ms" }}
+                      />
+                      <span
+                        className="h-2 w-2 rounded-full bg-muted-foreground/60 animate-bounce"
+                        style={{ animationDelay: "300ms" }}
+                      />
                     </div>
                   </div>
                 )}

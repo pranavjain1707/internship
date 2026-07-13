@@ -1,6 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { ArrowUpRight, Search, SlidersHorizontal, ChevronRight, Calendar, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  Search,
+  SlidersHorizontal,
+  ChevronRight,
+  Calendar,
+  Sparkles,
+} from "lucide-react";
 
 export const Route = createFileRoute("/roadmap")({
   head: () => ({
@@ -72,14 +79,29 @@ const future = [
 function RoadmapTimeline3D() {
   const [phaseIndex, setPhaseIndex] = useState(0);
   const items = [
-    { name: "Phase 1: MVP Core", status: "100%", detail: "RAG engine, SSO link, PDF upload", color: "bg-emerald-500/20 text-emerald-400" },
-    { name: "Phase 2: RAG Fine-tuning", status: "45%", detail: "Feedback rerank, Slack connector", color: "bg-amber-500/20 text-amber-400 animate-pulse" },
-    { name: "Phase 3: Hybrid Deployment", status: "0%", detail: "Air-gap security, custom API SDK", color: "bg-muted text-muted-foreground" }
+    {
+      name: "Phase 1: MVP Core",
+      status: "100%",
+      detail: "RAG engine, SSO link, PDF upload",
+      color: "bg-emerald-500/20 text-emerald-400",
+    },
+    {
+      name: "Phase 2: RAG Fine-tuning",
+      status: "45%",
+      detail: "Feedback rerank, Slack connector",
+      color: "bg-amber-500/20 text-amber-400 animate-pulse",
+    },
+    {
+      name: "Phase 3: Hybrid Deployment",
+      status: "0%",
+      detail: "Air-gap security, custom API SDK",
+      color: "bg-muted text-muted-foreground",
+    },
   ];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setPhaseIndex(p => (p + 1) % items.length);
+      setPhaseIndex((p) => (p + 1) % items.length);
     }, 2500);
     return () => clearInterval(interval);
   }, []);
@@ -89,7 +111,7 @@ function RoadmapTimeline3D() {
       <div className="screen-3d screen-glow rounded-2xl border border-border/60 bg-card p-6 shadow-2xl overflow-hidden relative">
         <div className="screen-gloss" />
         <div className="scan-line" />
-        
+
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/60 pb-3 mb-4">
           <div className="flex items-center gap-1.5 font-mono text-[9px] text-muted-foreground">
@@ -98,7 +120,9 @@ function RoadmapTimeline3D() {
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
             <span className="ml-2">roadmap-delivery-dashboard</span>
           </div>
-          <span className="font-mono text-[9px] text-primary font-bold animate-pulse">LIVE TRACKER</span>
+          <span className="font-mono text-[9px] text-primary font-bold animate-pulse">
+            LIVE TRACKER
+          </span>
         </div>
 
         {/* Live checklist items */}
@@ -106,11 +130,11 @@ function RoadmapTimeline3D() {
           {items.map((item, i) => {
             const isActive = i === phaseIndex;
             return (
-              <div 
+              <div
                 key={item.name}
                 className={`p-3 rounded-xl border transition-all duration-500 ${
-                  isActive 
-                    ? "border-primary bg-primary/10 shadow-md shadow-primary/10 scale-[1.02]" 
+                  isActive
+                    ? "border-primary bg-primary/10 shadow-md shadow-primary/10 scale-[1.02]"
                     : "border-border/40 opacity-40 bg-background/30"
                 }`}
               >
@@ -137,10 +161,15 @@ function RoadmapTimeline3D() {
 function useScrollReveal() {
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("visible"); }),
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add("visible");
+        }),
+      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" },
     );
-    document.querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale").forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(".reveal, .reveal-left, .reveal-right, .reveal-scale")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 }
@@ -148,7 +177,9 @@ function useScrollReveal() {
 function Roadmap() {
   useScrollReveal();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState<"All" | "Shipped" | "In progress" | "Upcoming">("All");
+  const [selectedStatus, setSelectedStatus] = useState<
+    "All" | "Shipped" | "In progress" | "Upcoming"
+  >("All");
 
   // Filtering phases
   const filteredPhases = phases
@@ -209,14 +240,16 @@ function Roadmap() {
             <div className="lg:col-span-7">
               <div className="reveal inline-flex items-center gap-2 rounded-full badge-glow px-4 py-2 mb-6">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">Roadmap</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+                  Roadmap
+                </span>
               </div>
               <h1 className="reveal delay-100 mt-4 max-w-4xl font-display text-7xl leading-[0.95] md:text-8xl">
                 A 22-week path to <span className="shimmer-text">enterprise scale.</span>
               </h1>
               <p className="reveal delay-200 mt-8 max-w-2xl text-lg text-muted-foreground leading-relaxed mb-8">
-                Three phases, opinionated scope, no roadmap theater. Each phase ships production-ready
-                features your team can use the day they release.
+                Three phases, opinionated scope, no roadmap theater. Each phase ships
+                production-ready features your team can use the day they release.
               </p>
 
               {/* Quick links info */}
@@ -305,14 +338,18 @@ function Roadmap() {
                     style={{ transitionDelay: `${i * 100}ms` }}
                   >
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/3 to-transparent pointer-events-none" />
-                    
+
                     <div className="col-span-12 md:col-span-4 relative">
                       <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                         {ph.p}
                       </span>
-                      <h2 className="mt-3 font-display text-5xl text-primary font-semibold">{ph.n}</h2>
-                      <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">{ph.details}</p>
-                      
+                      <h2 className="mt-3 font-display text-5xl text-primary font-semibold">
+                        {ph.n}
+                      </h2>
+                      <p className="mt-4 text-sm text-muted-foreground leading-relaxed max-w-xs">
+                        {ph.details}
+                      </p>
+
                       <div className="mt-6 flex flex-wrap items-center gap-2 text-xs">
                         <span className="rounded-md border border-border bg-secondary/50 px-2.5 py-1 font-mono text-muted-foreground">
                           {ph.w}
@@ -330,7 +367,7 @@ function Roadmap() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="col-span-12 md:col-span-8 relative">
                       <ul className="grid gap-3 sm:grid-cols-2">
                         {ph.items.map((it) => {
@@ -384,7 +421,9 @@ function Roadmap() {
                       <li
                         key={f}
                         className={`flex items-center gap-5 p-5 transition duration-300 ${
-                          isMatch ? "bg-primary/10 font-semibold text-primary" : "bg-background hover:bg-secondary/20"
+                          isMatch
+                            ? "bg-primary/10 font-semibold text-primary"
+                            : "bg-background hover:bg-secondary/20"
                         }`}
                       >
                         <span className="font-mono text-xs text-muted-foreground">
@@ -410,13 +449,16 @@ function Roadmap() {
         <div className="relative mx-auto max-w-4xl px-6 py-32 text-center">
           <div className="reveal inline-flex items-center gap-2 rounded-full badge-glow px-4 py-2 mb-8">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">Co-create the future</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-primary">
+              Co-create the future
+            </span>
           </div>
           <h2 className="reveal delay-100 font-display text-5xl leading-tight md:text-6xl">
             Have something we <span className="shimmer-text">should build?</span>
           </h2>
           <p className="reveal delay-200 mx-auto mt-6 max-w-xl text-muted-foreground leading-relaxed">
-            Design partners shape the next quarter of EKABA. We listen carefully to compliance, deployment, and security requirements.
+            Design partners shape the next quarter of EKABA. We listen carefully to compliance,
+            deployment, and security requirements.
           </p>
           <div className="reveal delay-300 mt-8 flex flex-wrap justify-center gap-4">
             <Link

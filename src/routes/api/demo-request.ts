@@ -19,7 +19,10 @@ export const Route = createFileRoute("/api/demo-request")({
               .eq("status", "ended")
               .lt("ended_at", sevenDaysAgo);
           } catch (dbError: any) {
-            console.warn("[demo-request] Supabase 7-day auto-delete failed:", dbError.message || dbError);
+            console.warn(
+              "[demo-request] Supabase 7-day auto-delete failed:",
+              dbError.message || dbError,
+            );
           }
 
           // 2. Delete ended demo requests older than 7 days in-memory fallback
@@ -41,7 +44,9 @@ export const Route = createFileRoute("/api/demo-request")({
 
           if (error) {
             if (error.message.includes("relation") && error.message.includes("does not exist")) {
-              console.warn("[demo-request] demo_requests table not found. Returning in-memory fallback.");
+              console.warn(
+                "[demo-request] demo_requests table not found. Returning in-memory fallback.",
+              );
               return new Response(JSON.stringify(demoRequests), {
                 headers: { "Content-Type": "application/json" },
               });
@@ -83,10 +88,13 @@ export const Route = createFileRoute("/api/demo-request")({
           const { name, email, company, role, size, message } = body;
 
           if (!name || !email || !company) {
-            return new Response(JSON.stringify({ error: "Missing required fields: name, email, company." }), {
-              status: 400,
-              headers: { "Content-Type": "application/json" },
-            });
+            return new Response(
+              JSON.stringify({ error: "Missing required fields: name, email, company." }),
+              {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+              },
+            );
           }
 
           const id = `demo-${Date.now()}`;
@@ -108,7 +116,9 @@ export const Route = createFileRoute("/api/demo-request")({
           console.log(`[EMAIL SIMULATOR] SUBJECT: Demo Request Received - EKABA`);
           console.log(`[EMAIL SIMULATOR] BODY:`);
           console.log(`Hello ${name},`);
-          console.log(`We got your demo request for ${company}. Our team will communicate with you in 24 hours.`);
+          console.log(
+            `We got your demo request for ${company}. Our team will communicate with you in 24 hours.`,
+          );
           console.log(`Best regards,\nEKABA Team`);
           console.log(`============================================================\n`);
 
@@ -129,7 +139,10 @@ export const Route = createFileRoute("/api/demo-request")({
 
             if (error) throw error;
           } catch (dbError: any) {
-            console.warn("[demo-request] Supabase insert failed, caching in-memory:", dbError.message || dbError);
+            console.warn(
+              "[demo-request] Supabase insert failed, caching in-memory:",
+              dbError.message || dbError,
+            );
             demoRequests.push(newRequest);
           }
 
@@ -139,16 +152,20 @@ export const Route = createFileRoute("/api/demo-request")({
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to submit demo request" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to submit demo request" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
       PUT: async ({ request }) => {
         try {
           const body = await request.json();
-          const { id, status, acceptedBy, acceptedByName, assignedTo, assignedToName, endedAt } = body;
+          const { id, status, acceptedBy, acceptedByName, assignedTo, assignedToName, endedAt } =
+            body;
 
           if (!id || !status) {
             return new Response(JSON.stringify({ error: "Missing required fields: id, status." }), {
@@ -177,7 +194,10 @@ export const Route = createFileRoute("/api/demo-request")({
 
             if (error) throw error;
           } catch (dbError: any) {
-            console.warn("[demo-request] Supabase update failed, updating in-memory:", dbError.message || dbError);
+            console.warn(
+              "[demo-request] Supabase update failed, updating in-memory:",
+              dbError.message || dbError,
+            );
             const req = demoRequests.find((r) => r.id === id);
             if (req) {
               req.status = status;
@@ -196,10 +216,13 @@ export const Route = createFileRoute("/api/demo-request")({
           });
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
-          return new Response(JSON.stringify({ error: errorMessage || "Failed to update demo request" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-          });
+          return new Response(
+            JSON.stringify({ error: errorMessage || "Failed to update demo request" }),
+            {
+              status: 500,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
         }
       },
     },

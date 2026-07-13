@@ -76,44 +76,200 @@ export const queryLogs: QueryLog[] = [
 ];
 
 export const companyUsers: Record<string, User[]> = {
-  "ekaba": [
-    { id: "u-pranav-jain", name: "Pranav Jain", email: "jainpranav1707@gmail.com", role: "Owner", avatar: "PJ" },
-    { id: "u-alice-smith", name: "Alice Smith", email: "alice.smith@ekaba.com", role: "Employee", avatar: "AS" },
-    { id: "u-john-doe", name: "John Doe", email: "john.doe@ekaba.com", role: "Manager", avatar: "JD" },
-    { id: "u-sarah-connor", name: "Sarah Connor", email: "sarah.connor@ekaba.com", role: "HR Officer", avatar: "SC" },
-    { id: "u-dave-miller", name: "Dave Miller", email: "dave.miller@ekaba.com", role: "IT Administrator", avatar: "DM" }
+  ekaba: [
+    {
+      id: "u-pranav-jain",
+      name: "Pranav Jain",
+      email: "jainpranav1707@gmail.com",
+      role: "Owner",
+      avatar: "PJ",
+    },
+    {
+      id: "u-alice-smith",
+      name: "Alice Smith",
+      email: "alice.smith@ekaba.com",
+      role: "Employee",
+      avatar: "AS",
+    },
+    {
+      id: "u-john-doe",
+      name: "John Doe",
+      email: "john.doe@ekaba.com",
+      role: "Manager",
+      avatar: "JD",
+    },
+    {
+      id: "u-sarah-connor",
+      name: "Sarah Connor",
+      email: "sarah.connor@ekaba.com",
+      role: "HR Officer",
+      avatar: "SC",
+    },
+    {
+      id: "u-dave-miller",
+      name: "Dave Miller",
+      email: "dave.miller@ekaba.com",
+      role: "IT Administrator",
+      avatar: "DM",
+    },
   ],
   "ekaba internal": [
-    { id: "u-pranav-jain", name: "Pranav Jain", email: "jainpranav1707@gmail.com", role: "Owner", avatar: "PJ" }
+    {
+      id: "u-pranav-jain",
+      name: "Pranav Jain",
+      email: "jainpranav1707@gmail.com",
+      role: "Owner",
+      avatar: "PJ",
+    },
   ],
-  "google": [
-    { id: "u-sundar-pichai", name: "Sundar Pichai", email: "sundar.pichai@google.com", role: "Owner", avatar: "SP" },
-    { id: "u-larry-page", name: "Larry Page", email: "larry.page@google.com", role: "Employee", avatar: "LP" },
-    { id: "u-sergey-brin", name: "Sergey Brin", email: "sergey.brin@google.com", role: "Manager", avatar: "SB" },
-    { id: "u-ruth-porat", name: "Ruth Porat", email: "ruth.porat@google.com", role: "HR Officer", avatar: "RP" },
-    { id: "u-jeff-dean", name: "Jeff Dean", email: "jeff.dean@google.com", role: "IT Administrator", avatar: "JD" }
+  google: [
+    {
+      id: "u-sundar-pichai",
+      name: "Sundar Pichai",
+      email: "sundar.pichai@google.com",
+      role: "Owner",
+      avatar: "SP",
+    },
+    {
+      id: "u-larry-page",
+      name: "Larry Page",
+      email: "larry.page@google.com",
+      role: "Employee",
+      avatar: "LP",
+    },
+    {
+      id: "u-sergey-brin",
+      name: "Sergey Brin",
+      email: "sergey.brin@google.com",
+      role: "Manager",
+      avatar: "SB",
+    },
+    {
+      id: "u-ruth-porat",
+      name: "Ruth Porat",
+      email: "ruth.porat@google.com",
+      role: "HR Officer",
+      avatar: "RP",
+    },
+    {
+      id: "u-jeff-dean",
+      name: "Jeff Dean",
+      email: "jeff.dean@google.com",
+      role: "IT Administrator",
+      avatar: "JD",
+    },
   ],
   "acme corp": [
-    { id: "u-wile-e-coyote", name: "Wile E. Coyote", email: "wile.e@acme.com", role: "Owner", avatar: "WC" },
-    { id: "u-road-runner", name: "Road Runner", email: "road.runner@acme.com", role: "Employee", avatar: "RR" },
-    { id: "u-bugs-bunny", name: "Bugs Bunny", email: "bugs.bunny@acme.com", role: "Manager", avatar: "BB" },
-    { id: "u-daffy-duck", name: "Daffy Duck", email: "daffy.duck@acme.com", role: "HR Officer", avatar: "DD" },
-    { id: "u-elmer-fudd", name: "Elmer Fudd", email: "elmer.fudd@acme.com", role: "IT Administrator", avatar: "EF" }
+    {
+      id: "u-wile-e-coyote",
+      name: "Wile E. Coyote",
+      email: "wile.e@acme.com",
+      role: "Owner",
+      avatar: "WC",
+    },
+    {
+      id: "u-road-runner",
+      name: "Road Runner",
+      email: "road.runner@acme.com",
+      role: "Employee",
+      avatar: "RR",
+    },
+    {
+      id: "u-bugs-bunny",
+      name: "Bugs Bunny",
+      email: "bugs.bunny@acme.com",
+      role: "Manager",
+      avatar: "BB",
+    },
+    {
+      id: "u-daffy-duck",
+      name: "Daffy Duck",
+      email: "daffy.duck@acme.com",
+      role: "HR Officer",
+      avatar: "DD",
+    },
+    {
+      id: "u-elmer-fudd",
+      name: "Elmer Fudd",
+      email: "elmer.fudd@acme.com",
+      role: "IT Administrator",
+      avatar: "EF",
+    },
   ],
-  "microsoft": [
-    { id: "u-satya-nadella", name: "Satya Nadella", email: "satya.nadella@microsoft.com", role: "Owner", avatar: "SN" },
-    { id: "u-bill-gates", name: "Bill Gates", email: "bill.gates@microsoft.com", role: "Employee", avatar: "BG" },
-    { id: "u-paul-allen", name: "Paul Allen", email: "paul.allen@microsoft.com", role: "Manager", avatar: "PA" },
-    { id: "u-steve-ballmer", name: "Steve Ballmer", email: "steve.ballmer@microsoft.com", role: "HR Officer", avatar: "SB" },
-    { id: "u-kevin-scott", name: "Kevin Scott", email: "kevin.scott@microsoft.com", role: "IT Administrator", avatar: "KS" }
+  microsoft: [
+    {
+      id: "u-satya-nadella",
+      name: "Satya Nadella",
+      email: "satya.nadella@microsoft.com",
+      role: "Owner",
+      avatar: "SN",
+    },
+    {
+      id: "u-bill-gates",
+      name: "Bill Gates",
+      email: "bill.gates@microsoft.com",
+      role: "Employee",
+      avatar: "BG",
+    },
+    {
+      id: "u-paul-allen",
+      name: "Paul Allen",
+      email: "paul.allen@microsoft.com",
+      role: "Manager",
+      avatar: "PA",
+    },
+    {
+      id: "u-steve-ballmer",
+      name: "Steve Ballmer",
+      email: "steve.ballmer@microsoft.com",
+      role: "HR Officer",
+      avatar: "SB",
+    },
+    {
+      id: "u-kevin-scott",
+      name: "Kevin Scott",
+      email: "kevin.scott@microsoft.com",
+      role: "IT Administrator",
+      avatar: "KS",
+    },
   ],
-  "apple": [
-    { id: "u-tim-cook", name: "Tim Cook", email: "tim.cook@apple.com", role: "Owner", avatar: "TC" },
-    { id: "u-steve-jobs", name: "Steve Jobs", email: "steve.jobs@apple.com", role: "Employee", avatar: "SJ" },
-    { id: "u-steve-wozniak", name: "Steve Wozniak", email: "steve.wozniak@apple.com", role: "Manager", avatar: "SW" },
-    { id: "u-craig-federighi", name: "Craig Federighi", email: "craig.federighi@apple.com", role: "HR Officer", avatar: "CF" },
-    { id: "u-phil-schiller", name: "Phil Schiller", email: "phil.schiller@apple.com", role: "IT Administrator", avatar: "PS" }
-  ]
+  apple: [
+    {
+      id: "u-tim-cook",
+      name: "Tim Cook",
+      email: "tim.cook@apple.com",
+      role: "Owner",
+      avatar: "TC",
+    },
+    {
+      id: "u-steve-jobs",
+      name: "Steve Jobs",
+      email: "steve.jobs@apple.com",
+      role: "Employee",
+      avatar: "SJ",
+    },
+    {
+      id: "u-steve-wozniak",
+      name: "Steve Wozniak",
+      email: "steve.wozniak@apple.com",
+      role: "Manager",
+      avatar: "SW",
+    },
+    {
+      id: "u-craig-federighi",
+      name: "Craig Federighi",
+      email: "craig.federighi@apple.com",
+      role: "HR Officer",
+      avatar: "CF",
+    },
+    {
+      id: "u-phil-schiller",
+      name: "Phil Schiller",
+      email: "phil.schiller@apple.com",
+      role: "IT Administrator",
+      avatar: "PS",
+    },
+  ],
 };
 
 export interface StoredUserCredentials {
@@ -124,44 +280,174 @@ export interface StoredUserCredentials {
 }
 
 export const companyUsersDb: Record<string, Record<string, StoredUserCredentials>> = {
-  "ekaba": {
-    "pranav jain": { name: "Pranav Jain", domain: "jainpranav1707@gmail.com", password: "Pj@17072006", role: "Owner" },
-    "alice smith": { name: "Alice Smith", domain: "ekaba.com", password: "Password@123", role: "Employee" },
-    "john doe": { name: "John Doe", domain: "ekaba.com", password: "Password@123", role: "Manager" },
-    "sarah connor": { name: "Sarah Connor", domain: "ekaba.com", password: "Password@123", role: "HR Officer" },
-    "dave miller": { name: "Dave Miller", domain: "ekaba.com", password: "Password@123", role: "IT Administrator" }
+  ekaba: {
+    "pranav jain": {
+      name: "Pranav Jain",
+      domain: "jainpranav1707@gmail.com",
+      password: "Pj@17072006",
+      role: "Owner",
+    },
+    "alice smith": {
+      name: "Alice Smith",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "Employee",
+    },
+    "john doe": {
+      name: "John Doe",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "Manager",
+    },
+    "sarah connor": {
+      name: "Sarah Connor",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "HR Officer",
+    },
+    "dave miller": {
+      name: "Dave Miller",
+      domain: "ekaba.com",
+      password: "Password@123",
+      role: "IT Administrator",
+    },
   },
   "ekaba internal": {
-    "pranav jain": { name: "Pranav Jain", domain: "jainpranav1707@gmail.com", password: "Pj@17072006", role: "Owner" }
+    "pranav jain": {
+      name: "Pranav Jain",
+      domain: "jainpranav1707@gmail.com",
+      password: "Pj@17072006",
+      role: "Owner",
+    },
   },
-  "google": {
-    "sundar pichai": { name: "Sundar Pichai", domain: "google.com", password: "GoogleOwner@2026", role: "Owner" },
-    "larry page": { name: "Larry Page", domain: "google.com", password: "GoogleEmp@2026", role: "Employee" },
-    "sergey brin": { name: "Sergey Brin", domain: "google.com", password: "GoogleMgr@2026", role: "Manager" },
-    "ruth porat": { name: "Ruth Porat", domain: "google.com", password: "GoogleHR@2026", role: "HR Officer" },
-    "jeff dean": { name: "Jeff Dean", domain: "google.com", password: "GoogleIT@2026", role: "IT Administrator" }
+  google: {
+    "sundar pichai": {
+      name: "Sundar Pichai",
+      domain: "google.com",
+      password: "GoogleOwner@2026",
+      role: "Owner",
+    },
+    "larry page": {
+      name: "Larry Page",
+      domain: "google.com",
+      password: "GoogleEmp@2026",
+      role: "Employee",
+    },
+    "sergey brin": {
+      name: "Sergey Brin",
+      domain: "google.com",
+      password: "GoogleMgr@2026",
+      role: "Manager",
+    },
+    "ruth porat": {
+      name: "Ruth Porat",
+      domain: "google.com",
+      password: "GoogleHR@2026",
+      role: "HR Officer",
+    },
+    "jeff dean": {
+      name: "Jeff Dean",
+      domain: "google.com",
+      password: "GoogleIT@2026",
+      role: "IT Administrator",
+    },
   },
   "acme corp": {
-    "wile e. coyote": { name: "Wile E. Coyote", domain: "acme.com", password: "AcmeOwner@2026", role: "Owner" },
-    "road runner": { name: "Road Runner", domain: "acme.com", password: "AcmeEmp@2026", role: "Employee" },
-    "bugs bunny": { name: "Bugs Bunny", domain: "acme.com", password: "AcmeMgr@2026", role: "Manager" },
-    "daffy duck": { name: "Daffy Duck", domain: "acme.com", password: "AcmeHR@2026", role: "HR Officer" },
-    "elmer fudd": { name: "Elmer Fudd", domain: "acme.com", password: "AcmeIT@2026", role: "IT Administrator" }
+    "wile e. coyote": {
+      name: "Wile E. Coyote",
+      domain: "acme.com",
+      password: "AcmeOwner@2026",
+      role: "Owner",
+    },
+    "road runner": {
+      name: "Road Runner",
+      domain: "acme.com",
+      password: "AcmeEmp@2026",
+      role: "Employee",
+    },
+    "bugs bunny": {
+      name: "Bugs Bunny",
+      domain: "acme.com",
+      password: "AcmeMgr@2026",
+      role: "Manager",
+    },
+    "daffy duck": {
+      name: "Daffy Duck",
+      domain: "acme.com",
+      password: "AcmeHR@2026",
+      role: "HR Officer",
+    },
+    "elmer fudd": {
+      name: "Elmer Fudd",
+      domain: "acme.com",
+      password: "AcmeIT@2026",
+      role: "IT Administrator",
+    },
   },
-  "microsoft": {
-    "satya nadella": { name: "Satya Nadella", domain: "microsoft.com", password: "MsftOwner@2026", role: "Owner" },
-    "bill gates": { name: "Bill Gates", domain: "microsoft.com", password: "MsftEmp@2026", role: "Employee" },
-    "paul allen": { name: "Paul Allen", domain: "microsoft.com", password: "MsftMgr@2026", role: "Manager" },
-    "steve ballmer": { name: "Steve Ballmer", domain: "microsoft.com", password: "MsftHR@2026", role: "HR Officer" },
-    "kevin scott": { name: "Kevin Scott", domain: "microsoft.com", password: "MsftIT@2026", role: "IT Administrator" }
+  microsoft: {
+    "satya nadella": {
+      name: "Satya Nadella",
+      domain: "microsoft.com",
+      password: "MsftOwner@2026",
+      role: "Owner",
+    },
+    "bill gates": {
+      name: "Bill Gates",
+      domain: "microsoft.com",
+      password: "MsftEmp@2026",
+      role: "Employee",
+    },
+    "paul allen": {
+      name: "Paul Allen",
+      domain: "microsoft.com",
+      password: "MsftMgr@2026",
+      role: "Manager",
+    },
+    "steve ballmer": {
+      name: "Steve Ballmer",
+      domain: "microsoft.com",
+      password: "MsftHR@2026",
+      role: "HR Officer",
+    },
+    "kevin scott": {
+      name: "Kevin Scott",
+      domain: "microsoft.com",
+      password: "MsftIT@2026",
+      role: "IT Administrator",
+    },
   },
-  "apple": {
-    "tim cook": { name: "Tim Cook", domain: "apple.com", password: "AppleOwner@2026", role: "Owner" },
-    "steve jobs": { name: "Steve Jobs", domain: "apple.com", password: "AppleEmp@2026", role: "Employee" },
-    "steve wozniak": { name: "Steve Wozniak", domain: "apple.com", password: "AppleMgr@2026", role: "Manager" },
-    "craig federighi": { name: "Craig Federighi", domain: "apple.com", password: "AppleHR@2026", role: "HR Officer" },
-    "phil schiller": { name: "Phil Schiller", domain: "apple.com", password: "AppleIT@2026", role: "IT Administrator" }
-  }
+  apple: {
+    "tim cook": {
+      name: "Tim Cook",
+      domain: "apple.com",
+      password: "AppleOwner@2026",
+      role: "Owner",
+    },
+    "steve jobs": {
+      name: "Steve Jobs",
+      domain: "apple.com",
+      password: "AppleEmp@2026",
+      role: "Employee",
+    },
+    "steve wozniak": {
+      name: "Steve Wozniak",
+      domain: "apple.com",
+      password: "AppleMgr@2026",
+      role: "Manager",
+    },
+    "craig federighi": {
+      name: "Craig Federighi",
+      domain: "apple.com",
+      password: "AppleHR@2026",
+      role: "HR Officer",
+    },
+    "phil schiller": {
+      name: "Phil Schiller",
+      domain: "apple.com",
+      password: "AppleIT@2026",
+      role: "IT Administrator",
+    },
+  },
 };
 
 const DB_FILE_PATH = path.resolve(process.cwd(), "db_users.json");
@@ -192,7 +478,7 @@ export function persistDb() {
     fs.writeFileSync(
       DB_FILE_PATH,
       JSON.stringify({ companyUsers, companyUsersDb }, null, 2),
-      "utf-8"
+      "utf-8",
     );
   } catch (e) {
     console.error("Failed to save users DB file:", e);
@@ -224,7 +510,6 @@ export function getCompanyUsersDb(company: string): Record<string, StoredUserCre
   return companyUsersDb[key];
 }
 
-
 // Simple helper to read document content from disk (when file_path is set)
 export function getDocumentContent(doc: Document): string {
   if (doc.filePath) {
@@ -235,7 +520,9 @@ export function getDocumentContent(doc: Document): string {
       if (fs.existsSync(resolved)) {
         return fs.readFileSync(resolved, "utf-8");
       } else {
-        console.warn(`[db] file_path set but file not found on disk: ${resolved}. Falling back to in-memory content.`);
+        console.warn(
+          `[db] file_path set but file not found on disk: ${resolved}. Falling back to in-memory content.`,
+        );
       }
     } catch (e) {
       console.error(`[db] Error reading file at ${doc.filePath}:`, e);
@@ -256,7 +543,7 @@ export interface TextChunk {
 export function getDocumentChunks(company?: string): TextChunk[] {
   const chunks: TextChunk[] = [];
   const normalizedCompany = company ? company.toLowerCase().trim() : undefined;
-  
+
   const filteredDocs = normalizedCompany
     ? documents.filter((d) => (d.company || "ekaba").toLowerCase().trim() === normalizedCompany)
     : documents;

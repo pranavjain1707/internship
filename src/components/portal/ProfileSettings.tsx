@@ -94,7 +94,9 @@ export default function ProfileSettings({
 
     const checkRequest = () => {
       try {
-        const reqsStr = localStorage.getItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`);
+        const reqsStr = localStorage.getItem(
+          `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+        );
         if (reqsStr) {
           const reqs: PendingProfileRequest[] = JSON.parse(reqsStr);
           const myReq = reqs.find((r) => r.userId === currentUser.id && r.status === "pending");
@@ -124,12 +126,18 @@ export default function ProfileSettings({
               setNewPassword("");
 
               const updated = reqs.filter((r) => r.userId !== currentUser.id);
-              localStorage.setItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`, JSON.stringify(updated));
+              localStorage.setItem(
+                `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+                JSON.stringify(updated),
+              );
               setPendingRequest(null);
             } else if (processedReq.status === "rejected") {
               setError(`Your security update request was declined by ${processedReq.approvedBy}.`);
               const updated = reqs.filter((r) => r.userId !== currentUser.id);
-              localStorage.setItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`, JSON.stringify(updated));
+              localStorage.setItem(
+                `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+                JSON.stringify(updated),
+              );
               setPendingRequest(null);
             }
           } else {
@@ -168,7 +176,9 @@ export default function ProfileSettings({
     setTimeout(async () => {
       try {
         // Update Local Storage
-        const dbStr = localStorage.getItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`);
+        const dbStr = localStorage.getItem(
+          `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+        );
         if (dbStr) {
           const db = JSON.parse(dbStr);
           const oldKey = currentUser.name.toLowerCase();
@@ -184,7 +194,10 @@ export default function ProfileSettings({
             delete db[oldKey];
           }
           db[newKey] = updatedRecord;
-          localStorage.setItem(`kb_portal_users_db_${companyName.toLowerCase().trim()}`, JSON.stringify(db));
+          localStorage.setItem(
+            `kb_portal_users_db_${companyName.toLowerCase().trim()}`,
+            JSON.stringify(db),
+          );
         }
 
         // Update Backend
@@ -255,7 +268,9 @@ export default function ProfileSettings({
     setTimeout(() => {
       try {
         const reqs: PendingProfileRequest[] = JSON.parse(
-          localStorage.getItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`) || "[]",
+          localStorage.getItem(
+            `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+          ) || "[]",
         );
 
         // Get sponsor's actual name
@@ -278,7 +293,10 @@ export default function ProfileSettings({
         // Clean up duplicates
         const updated = reqs.filter((r) => r.userId !== currentUser.id);
         updated.push(newReq);
-        localStorage.setItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`, JSON.stringify(updated));
+        localStorage.setItem(
+          `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+          JSON.stringify(updated),
+        );
 
         setPendingRequest(newReq);
         setSuccess("Security clearance dispatch success! Waiting on sponsoring signature.");
@@ -293,10 +311,15 @@ export default function ProfileSettings({
   const cancelRequest = () => {
     try {
       const reqs: PendingProfileRequest[] = JSON.parse(
-        localStorage.getItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`) || "[]",
+        localStorage.getItem(
+          `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+        ) || "[]",
       );
       const updated = reqs.filter((r) => r.userId !== currentUser.id);
-      localStorage.setItem(`kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`, JSON.stringify(updated));
+      localStorage.setItem(
+        `kb_portal_pending_profile_reqs_${companyName.toLowerCase().trim()}`,
+        JSON.stringify(updated),
+      );
       setPendingRequest(null);
       setError("");
       setSuccess("Request successfully pulled back.");
@@ -488,7 +511,18 @@ export default function ProfileSettings({
                   {eligibleSponsors.length === 0 ? (
                     <div className="p-3 bg-rose-50 border border-rose-100 rounded-xl text-xs text-rose-650">
                       System Notice: No registered supervisor accounts found with higher rank.
-                      Override via Owner {companyName.toLowerCase().trim() === "google" ? "Sundar Pichai" : companyName.toLowerCase().trim() === "acme corp" || companyName.toLowerCase().trim() === "acme" ? "Wile E. Coyote" : companyName.toLowerCase().trim() === "microsoft" ? "Satya Nadella" : companyName.toLowerCase().trim() === "apple" ? "Tim Cook" : "Pranav Jain"} is required to proceed.
+                      Override via Owner{" "}
+                      {companyName.toLowerCase().trim() === "google"
+                        ? "Sundar Pichai"
+                        : companyName.toLowerCase().trim() === "acme corp" ||
+                            companyName.toLowerCase().trim() === "acme"
+                          ? "Wile E. Coyote"
+                          : companyName.toLowerCase().trim() === "microsoft"
+                            ? "Satya Nadella"
+                            : companyName.toLowerCase().trim() === "apple"
+                              ? "Tim Cook"
+                              : "Pranav Jain"}{" "}
+                      is required to proceed.
                     </div>
                   ) : (
                     <select
@@ -545,8 +579,19 @@ export default function ProfileSettings({
             <div className="space-y-1">
               <strong>1. Absolute Owner Override</strong>
               <p className="text-stone-505">
-                The Global System Owner ({companyName.toLowerCase().trim() === "google" ? "Sundar Pichai" : companyName.toLowerCase().trim() === "acme corp" || companyName.toLowerCase().trim() === "acme" ? "Wile E. Coyote" : companyName.toLowerCase().trim() === "microsoft" ? "Satya Nadella" : companyName.toLowerCase().trim() === "apple" ? "Tim Cook" : "Pranav Jain"}) possesses keys to overwrite their security
-                profile immediately without routing signatures.
+                The Global System Owner (
+                {companyName.toLowerCase().trim() === "google"
+                  ? "Sundar Pichai"
+                  : companyName.toLowerCase().trim() === "acme corp" ||
+                      companyName.toLowerCase().trim() === "acme"
+                    ? "Wile E. Coyote"
+                    : companyName.toLowerCase().trim() === "microsoft"
+                      ? "Satya Nadella"
+                      : companyName.toLowerCase().trim() === "apple"
+                        ? "Tim Cook"
+                        : "Pranav Jain"}
+                ) possesses keys to overwrite their security profile immediately without routing
+                signatures.
               </p>
             </div>
 

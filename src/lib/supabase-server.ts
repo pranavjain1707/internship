@@ -5,16 +5,12 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 // when the server handler runs.
 
 export function getSupabaseServerClient(): SupabaseClient {
-  const url =
-    process.env.VITE_SUPABASE_URL || "";
-  const key =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.VITE_SUPABASE_ANON_KEY ||
-    "";
+  const url = process.env.VITE_SUPABASE_URL || "";
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || "";
 
   if (!url || !key) {
     throw new Error(
-      "Supabase server config missing: VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY (or VITE_SUPABASE_ANON_KEY) not set."
+      "Supabase server config missing: VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY (or VITE_SUPABASE_ANON_KEY) not set.",
     );
   }
 
@@ -72,7 +68,9 @@ export async function saveDocumentToSupabase(params: {
   if (error) {
     // If file_path column doesn't exist yet, retry without it
     if (error.message.includes("file_path") && error.message.includes("schema")) {
-      console.warn("[supabase] file_path column not found, saving without it. Run: ALTER TABLE documents ADD COLUMN IF NOT EXISTS file_path TEXT;");
+      console.warn(
+        "[supabase] file_path column not found, saving without it. Run: ALTER TABLE documents ADD COLUMN IF NOT EXISTS file_path TEXT;",
+      );
       const { file_path, ...rowWithoutFilePath } = rowWithFilePath;
       const { error: retryError } = await supabase.from("documents").upsert(rowWithoutFilePath);
       if (retryError) {
@@ -91,7 +89,9 @@ export async function fetchDocumentsFromSupabase(): Promise<SupabaseDocumentRow[
 
   const { data, error } = await supabase
     .from("documents")
-    .select("id, name, category, content, file_path, uploaded_by, date_uploaded, file_type, size, created_at, company")
+    .select(
+      "id, name, category, content, file_path, uploaded_by, date_uploaded, file_type, size, created_at, company",
+    )
     .order("created_at", { ascending: true });
 
   if (error) {
@@ -100,7 +100,9 @@ export async function fetchDocumentsFromSupabase(): Promise<SupabaseDocumentRow[
       console.warn("[supabase] column not found, fetching fallback columns. Run migrations.");
       const { data: fallbackData, error: fallbackError } = await supabase
         .from("documents")
-        .select("id, name, category, content, uploaded_by, date_uploaded, file_type, size, created_at")
+        .select(
+          "id, name, category, content, uploaded_by, date_uploaded, file_type, size, created_at",
+        )
         .order("created_at", { ascending: true });
 
       if (fallbackError) {
@@ -175,12 +177,10 @@ export async function uploadFileToSupabaseStorage(params: {
   const storagePath = `uploads/${params.fileName}`;
   const blob = new Blob([params.content], { type: params.contentType || "text/plain" });
 
-  const { error } = await supabase.storage
-    .from(STORAGE_BUCKET)
-    .upload(storagePath, blob, {
-      upsert: true,
-      contentType: params.contentType || "text/plain",
-    });
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(storagePath, blob, {
+    upsert: true,
+    contentType: params.contentType || "text/plain",
+  });
 
   if (error) {
     throw new Error(`Supabase Storage upload failed: ${error.message}`);
@@ -192,13 +192,11 @@ export async function uploadFileToSupabaseStorage(params: {
 
 export async function deleteDocumentFromSupabase(docId: string): Promise<void> {
   const supabase = getSupabaseServerClient();
-  
+
   // Try to find file_path to delete from storage bucket if it exists
   const filePath = await fetchDocumentPathById(docId);
   if (filePath) {
-    const { error: storageError } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .remove([filePath]);
+    const { error: storageError } = await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
     if (storageError) {
       console.error(`[supabase] Failed to delete file from storage: ${storageError.message}`);
     }
@@ -277,7 +275,7 @@ export async function saveFeedbackToSupabase(feedback: {
 export async function fetchQueryLogsFromSupabase(): Promise<any[]> {
   try {
     const supabase = getSupabaseServerClient();
-    
+
     // 1. Fetch logs
     const { data: logs, error: logsError } = await supabase
       .from("query_logs")
@@ -288,14 +286,10 @@ export async function fetchQueryLogsFromSupabase(): Promise<any[]> {
     if (!logs || logs.length === 0) return [];
 
     // 2. Fetch citations
-    const { data: citations, error: citationsError } = await supabase
-      .from("citations")
-      .select("*");
+    const { data: citations, error: citationsError } = await supabase.from("citations").select("*");
 
     // 3. Fetch feedback
-    const { data: feedbacks, error: feedbackError } = await supabase
-      .from("feedback")
-      .select("*");
+    const { data: feedbacks, error: feedbackError } = await supabase.from("feedback").select("*");
 
     // Map and assemble
     return logs.map((log) => {
@@ -333,5 +327,3 @@ export async function fetchQueryLogsFromSupabase(): Promise<any[]> {
     return [];
   }
 }
-
-
