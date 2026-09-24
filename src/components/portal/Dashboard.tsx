@@ -1991,72 +1991,72 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
         <>
           {/* Key Metrics row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-2 transition hover:shadow-md">
+            <div className="bg-card rounded-2xl border border-border/60 p-5 shadow-sm space-y-2 transition hover:shadow-md hover:border-primary/25">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400">ACTIVE USERS</span>
-                <div className="p-1.5 bg-[#0b0e14]/50 border border-slate-800 text-primary rounded-lg">
+                <span className="text-xs font-bold text-muted-foreground">ACTIVE USERS</span>
+                <div className="p-1.5 bg-muted border border-border text-primary rounded-lg">
                   <Users className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3.5xl font-display font-bold text-slate-100">
+              <div className="text-2xl sm:text-3.5xl font-display font-bold text-foreground">
                 {analytics.activeUsers}
               </div>
-              <p className="text-[10px] text-slate-500 font-mono">SEAMLESS LOGINS TODAY</p>
+              <p className="text-[10px] text-muted-foreground font-mono">SEAMLESS LOGINS TODAY</p>
             </div>
 
             <div className="bg-card rounded-2xl border border-border/60 p-5 shadow-sm space-y-2 transition hover:shadow-md hover:border-primary/25">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400">SEARCH SUCCESS</span>
-                <div className="p-1.5 bg-[#0b0e14]/50 border border-slate-800 text-emerald-500 rounded-lg">
+                <span className="text-xs font-bold text-muted-foreground">SEARCH SUCCESS</span>
+                <div className="p-1.5 bg-muted border border-border text-emerald-500 rounded-lg">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3.5xl font-display font-bold text-slate-100">
+              <div className="text-2xl sm:text-3.5xl font-display font-bold text-foreground">
                 {analytics.searchSuccessRate}%
               </div>
               {/* Mini visual success metric progress bar */}
-              <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1">
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-1">
                 <div
                   className="h-full bg-emerald-500"
                   style={{ width: `${analytics.searchSuccessRate}%` }}
                 ></div>
               </div>
-              <p className="text-[10px] text-slate-500 font-mono uppercase">
+              <p className="text-[10px] text-muted-foreground font-mono uppercase">
                 Target Accuracy Achieved
               </p>
             </div>
 
             <div className="bg-card rounded-2xl border border-border/60 p-5 shadow-sm space-y-2 transition hover:shadow-md hover:border-primary/25">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400">QUERY VOLUME</span>
-                <div className="p-1.5 bg-[#0b0e14]/50 border border-slate-800 text-primary rounded-lg">
+                <span className="text-xs font-bold text-muted-foreground">QUERY VOLUME</span>
+                <div className="p-1.5 bg-muted border border-border text-primary rounded-lg">
                   <MessageSquare className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3.5xl font-display font-bold text-slate-100">
+              <div className="text-2xl sm:text-3.5xl font-display font-bold text-foreground">
                 {analytics.queryVolume}
               </div>
-              <p className="text-[10px] text-slate-500 font-mono">TOTAL CONVERSATIONS LOGGED</p>
+              <p className="text-[10px] text-muted-foreground font-mono">TOTAL CONVERSATIONS LOGGED</p>
             </div>
 
             <div className="bg-card rounded-2xl border border-border/60 p-5 shadow-sm space-y-2 transition hover:shadow-md hover:border-primary/25">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400">SATISFACTION INDEX</span>
-                <div className="p-1.5 bg-[#0b0e14]/50 border border-slate-800 text-primary rounded-lg">
+                <span className="text-xs font-bold text-muted-foreground">SATISFACTION INDEX</span>
+                <div className="p-1.5 bg-muted border border-border text-primary rounded-lg">
                   <ThumbsUp className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3.5xl font-display font-bold text-slate-100">
+              <div className="text-2xl sm:text-3.5xl font-display font-bold text-foreground">
                 {analytics.userSatisfaction}%
               </div>
               {/* Mini visual sentiment bar */}
-              <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden mt-1">
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden mt-1">
                 <div
                   className="h-full bg-primary"
                   style={{ width: `${analytics.userSatisfaction}%` }}
                 ></div>
               </div>
-              <p className="text-[10px] text-slate-500 font-mono uppercase">User Approval Rate</p>
+              <p className="text-[10px] text-muted-foreground font-mono uppercase">User Approval Rate</p>
             </div>
           </div>
 
@@ -2065,12 +2065,12 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
             {/* Daily Usage Bar Chart */}
             <div className="md:col-span-8 bg-card rounded-2xl border border-border/60 p-6 shadow-sm space-y-6 transition hover:shadow-md hover:border-primary/25 relative overflow-hidden group">
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/0 via-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="flex justify-between items-center border-b border-slate-800/60 pb-4">
+              <div className="flex justify-between items-center border-b border-border/60 pb-4">
                 <div>
-                  <h3 className="font-display font-bold text-slate-200 text-md">
+                  <h3 className="font-display font-bold text-foreground text-md">
                     Daily System Volume
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Query traffic metrics in the past calendar week
                   </p>
                 </div>
@@ -2083,10 +2083,10 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
               {/* Advanced SVG Bar Chart with subtle gradients and drop shadows */}
               <div className="w-full h-56 flex items-end justify-between px-2 pt-4 relative">
                 {/* Horizontal grid guide lines */}
-                <div className="absolute inset-x-0 bottom-4 border-b border-slate-850 font-sans"></div>
-                <div className="absolute inset-x-0 bottom-16 border-b border-slate-850/50"></div>
-                <div className="absolute inset-x-0 bottom-28 border-b border-slate-850/50"></div>
-                <div className="absolute inset-x-0 bottom-40 border-b border-slate-850/30"></div>
+                <div className="absolute inset-x-0 bottom-4 border-b border-border font-sans"></div>
+                <div className="absolute inset-x-0 bottom-16 border-b border-border/50"></div>
+                <div className="absolute inset-x-0 bottom-28 border-b border-border/50"></div>
+                <div className="absolute inset-x-0 bottom-40 border-b border-border/30"></div>
 
                 {analytics.dailyUsage.map((day, dIdx) => {
                   const maxCount = Math.max(...analytics.dailyUsage.map((d) => d.count), 1);
@@ -2098,16 +2098,16 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                       className="flex-1 flex flex-col items-center group relative z-10 space-y-2"
                     >
                       <div
-                        className="relative w-10 sm:w-12 bg-slate-900 hover:bg-slate-800 rounded-t-lg transition-all duration-300 flex items-end justify-center"
+                        className="relative w-10 sm:w-12 bg-muted hover:bg-muted/80 rounded-t-lg transition-all duration-300 flex items-end justify-center"
                         style={{ height: `${Math.max(barHeightPercent, 10)}%` }}
                       >
-                        <span className="opacity-0 group-hover:opacity-100 block absolute -top-8 bg-slate-950 text-slate-200 rounded border border-slate-800 text-[10px] px-2 py-0.5 whitespace-nowrap transition-all shadow font-mono font-bold z-20">
+                        <span className="opacity-0 group-hover:opacity-100 block absolute -top-8 bg-popover text-popover-foreground rounded border border-border text-[10px] px-2 py-0.5 whitespace-nowrap transition-all shadow font-mono font-bold z-20">
                           {day.count} queries
                         </span>
                         {/* Interactive inner gradients */}
                         <div className="w-full h-full bg-gradient-to-t from-primary/80 to-primary rounded-t-lg transition-all shadow-inner"></div>
                       </div>
-                      <span className="text-xs text-slate-500 font-semibold font-mono">
+                      <span className="text-xs text-muted-foreground font-semibold font-mono">
                         {day.date}
                       </span>
                     </div>
@@ -2120,10 +2120,10 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
             <div className="md:col-span-4 bg-card rounded-2xl border border-border/60 p-6 shadow-sm space-y-4 transition hover:shadow-md hover:border-primary/25 relative overflow-hidden group">
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/0 via-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div>
-                <h3 className="font-display font-bold text-slate-200 text-md">
+                <h3 className="font-display font-bold text-foreground text-md">
                   Top Searched Topics
                 </h3>
-                <p className="text-xs text-slate-500">Most queried terms & compliance documents</p>
+                <p className="text-xs text-muted-foreground">Most queried terms & compliance documents</p>
               </div>
 
               <div className="space-y-4.5 pt-2">
@@ -2136,11 +2136,11 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
 
                   return (
                     <div key={tIdx} className="space-y-1.5">
-                      <div className="flex justify-between items-center text-xs font-semibold text-slate-350">
+                      <div className="flex justify-between items-center text-xs font-semibold text-foreground">
                         <span className="font-bold">{topic.topic}</span>
-                        <span className="text-slate-500 font-mono">{topic.count} hits</span>
+                        <span className="text-muted-foreground font-mono">{topic.count} hits</span>
                       </div>
-                      <div className="h-2.5 bg-slate-900 rounded-full overflow-hidden">
+                      <div className="h-2.5 bg-muted rounded-full overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-primary/80 to-primary rounded-full transition-all duration-500"
                           style={{ width: `${itemWidthPercent}%` }}
@@ -2156,18 +2156,18 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
           {/* Recent Auditable Queries */}
           <div className="bg-card rounded-2xl border border-border/60 p-6 shadow-sm space-y-4 relative overflow-hidden group">
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-primary/0 via-primary/30 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-800/60 pb-4 gap-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-border/60 pb-4 gap-2">
               <div>
-                <h3 className="font-display font-bold text-slate-200 text-md">
+                <h3 className="font-display font-bold text-foreground text-md">
                   Recent Auditable Queries
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   Secure, role-based real-time request log histories
                 </p>
               </div>
               <button
                 onClick={fetchDashboardData}
-                className="text-xs bg-[#0b0e14]/50 hover:bg-[#0b0e14] border border-slate-800 text-slate-300 rounded-lg px-3 py-2 inline-flex items-center gap-1.5 font-bold cursor-pointer transition shadow-sm shrink-0"
+                className="text-xs bg-muted hover:bg-muted/80 border border-border text-foreground rounded-lg px-3 py-2 inline-flex items-center gap-1.5 font-bold cursor-pointer transition shadow-sm shrink-0"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Refresh Logs Channel</span>
@@ -2177,7 +2177,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-[10px] font-mono text-slate-500 font-bold tracking-wider uppercase">
+                  <tr className="border-b border-border text-[10px] font-mono text-muted-foreground font-bold tracking-wider uppercase">
                     <th className="py-2.5 pb-3">User & Access Role</th>
                     <th className="py-2.5 pb-3">Request Text</th>
                     <th className="py-2.5 pb-3">Response Preview</th>
@@ -2185,22 +2185,22 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                     <th className="py-2.5 pb-3 text-right">Verification</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-850 text-slate-300">
+                <tbody className="divide-y divide-border/60 text-foreground">
                   {recentQueries.map((log) => (
                     <tr key={log.id} className="hover:bg-secondary/10 transition">
                       <td className="py-3.5 pr-2 font-medium">
-                        <div className="font-bold text-slate-200">{log.userName}</div>
-                        <div className="text-[10px] font-bold text-slate-500 font-mono tracking-wide">
+                        <div className="font-bold text-foreground">{log.userName}</div>
+                        <div className="text-[10px] font-bold text-muted-foreground font-mono tracking-wide">
                           {log.userRole}
                         </div>
                       </td>
                       <td
-                        className="py-3.5 pr-2 max-w-[200px] sm:max-w-xs truncate font-medium text-slate-200"
+                        className="py-3.5 pr-2 max-w-[200px] sm:max-w-xs truncate font-medium text-foreground"
                         title={log.queryText}
                       >
                         {log.queryText}
                       </td>
-                      <td className="py-3.5 pr-2 max-w-[200px] sm:max-w-xs truncate text-[11px] text-slate-400 font-sans">
+                      <td className="py-3.5 pr-2 max-w-[200px] sm:max-w-xs truncate text-[11px] text-muted-foreground font-sans">
                         {log.responseText}
                       </td>
                       <td className="py-3.5 pr-2 font-mono text-[10px] text-primary font-bold uppercase tracking-wider">
@@ -2210,11 +2210,11 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                       </td>
                       <td className="py-3.5 text-right">
                         {log.feedback?.rating === "like" ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold font-mono border border-emerald-500/20">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold font-mono border border-emerald-500/25">
                             APPROVED
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 text-slate-500 text-[10px] font-bold font-mono border border-slate-800">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-muted text-muted-foreground text-[10px] font-bold font-mono border border-border">
                             PENDING_AUDIT
                           </span>
                         )}

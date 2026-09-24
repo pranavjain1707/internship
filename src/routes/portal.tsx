@@ -24,6 +24,7 @@ import {
   ArrowLeft,
   Info,
   Clock,
+  Palette,
 } from "lucide-react";
 import {
   User,
@@ -32,7 +33,7 @@ import {
   PendingApprovalRequest,
   PendingProfileRequest,
 } from "../types";
-import { useTheme } from "../components/ThemeProvider";
+import { useTheme, THEME_LABELS } from "../components/ThemeProvider";
 import Dashboard from "../components/portal/Dashboard";
 import ChatInterface from "../components/portal/ChatInterface";
 import DocumentCenter from "../components/portal/DocumentCenter";
@@ -968,9 +969,7 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
           <div className="space-y-8 mt-12 md:mt-8 relative z-10">
             <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary text-primary-foreground font-mono font-bold text-lg shadow-md shadow-primary/20">
-                <span className="leading-none">E</span>
-              </div>
+              <img src="/ekaba-bot.jpg" alt="EKABA Bot" className="h-10 w-10 rounded-lg object-cover shadow-md shadow-primary/20" />
               <div>
                 <h2 className="font-display font-semibold text-lg text-slate-100 tracking-tight leading-none">
                   EKABA
@@ -1598,7 +1597,7 @@ export const Route = createFileRoute("/portal")({
 type ActiveTab = "dashboard" | "chat" | "documents" | "admin" | "profile" | "activity";
 
 function PortalPage() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, cycleTheme, setTheme } = useTheme();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [currentCompany, setCurrentCompany] = useState<string>("");
   const [activeTab, setActiveTab] = useState<ActiveTab>("dashboard");
@@ -1742,21 +1741,33 @@ function PortalPage() {
   return (
     <div
       id="workspace_parent"
-      className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-[#FAF6ED] to-[#F3EEE3] flex text-stone-800 font-sans w-full"
+      className="min-h-screen flex font-sans w-full"
+      style={{ backgroundColor: 'var(--background)', color: 'var(--foreground)' }}
     >
       {/* Sleek Enterprise Left Sidebar Navigation */}
-      <aside className="w-64 bg-slate-900 text-slate-300 flex-shrink-0 flex flex-col justify-between border-r border-slate-800 shadow-xl hidden md:flex">
+      <aside
+        className="w-64 flex-shrink-0 flex flex-col justify-between shadow-xl hidden md:flex transition-colors duration-300"
+        style={{
+          backgroundColor: 'var(--portal-sidebar-bg)',
+          color: 'var(--portal-sidebar-fg)',
+          borderRight: '1px solid var(--portal-sidebar-border)',
+        }}
+      >
         <div className="space-y-6 py-6">
           {/* Logo Section */}
           <div className="px-6 flex items-center gap-3">
-            <div className="p-2.5 bg-primary/10 border border-primary/20 rounded-xl text-primary">
-              <Bot className="w-5 h-5 animate-pulse" />
-            </div>
+            <img src="/ekaba-bot.jpg" alt="EKABA Bot" className="h-9 w-9 rounded-xl object-cover shadow-sm" style={{ border: '1px solid color-mix(in oklch, var(--portal-sidebar-active-bg) 25%, transparent)' }} />
             <div>
-              <h1 className="font-display font-bold text-slate-100 text-sm tracking-tight leading-none">
+              <h1
+                className="font-display font-bold text-sm tracking-tight leading-none"
+                style={{ color: 'var(--portal-sidebar-fg)' }}
+              >
                 {formatCompanyName(currentCompany)} Portal
               </h1>
-              <span className="text-[9px] font-mono font-medium text-slate-500 uppercase tracking-wider block mt-1">
+              <span
+                className="text-[9px] font-mono font-medium uppercase tracking-wider block mt-1"
+                style={{ color: 'var(--portal-sidebar-muted)' }}
+              >
                 EKABA RAG Assistant
               </span>
             </div>
@@ -1764,120 +1775,82 @@ function PortalPage() {
 
           {/* Nav Links */}
           <nav className="px-3 space-y-1.5">
-            <button
-              onClick={() => !isLocked && setActiveTab("dashboard")}
-              disabled={isLocked}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
-              } ${
-                activeTab === "dashboard" && !isLocked
-                  ? "bg-primary text-primary-foreground font-bold shadow-md"
-                  : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              <span>Dashboard Console</span>
-            </button>
-
-            <button
-              onClick={() => !isLocked && setActiveTab("chat")}
-              disabled={isLocked}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
-              } ${
-                activeTab === "chat" && !isLocked
-                  ? "bg-primary text-primary-foreground font-bold shadow-md"
-                  : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <MessageSquare className="w-4 h-4" />
-              <span>माँ</span>
-            </button>
-
-            <button
-              onClick={() => !isLocked && setActiveTab("documents")}
-              disabled={isLocked}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
-              } ${
-                activeTab === "documents" && !isLocked
-                  ? "bg-primary text-primary-foreground font-bold shadow-md"
-                  : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              <span>Document Center</span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                activeTab === "profile"
-                  ? "bg-primary text-primary-foreground font-bold shadow-md"
-                  : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Shield
-                  className={`w-4 h-4 ${activeTab === "profile" ? "text-primary-foreground" : "text-primary"}`}
-                />
-                <span>Profile Security</span>
-              </div>
-            </button>
-
-            <button
-              onClick={() => !isLocked && setActiveTab("activity")}
-              disabled={isLocked}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                isLocked ? "opacity-40 cursor-not-allowed text-slate-500" : ""
-              } ${
-                activeTab === "activity" && !isLocked
-                  ? "bg-primary text-primary-foreground font-bold shadow-md"
-                  : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Clock
-                  className={`w-4 h-4 ${activeTab === "activity" && !isLocked ? "text-primary-foreground" : "text-primary"}`}
-                />
-                <span>Activity Logs</span>
-              </div>
-            </button>
-
-            {/* Restricted Compliance panel */}
-            <button
-              onClick={() => {
-                if (isITAdmin && !isLocked) {
-                  setActiveTab("admin");
-                }
-              }}
-              disabled={!isITAdmin || isLocked}
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
-                !isITAdmin || isLocked
-                  ? "opacity-40 cursor-not-allowed text-slate-500"
-                  : activeTab === "admin" && !isLocked
-                    ? "bg-primary text-primary-foreground font-bold shadow-md"
-                    : "hover:bg-slate-800 hover:text-slate-100"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <Settings className="w-4 h-4" />
-                <span>Admin Auditer</span>
-              </div>
-              {(!isITAdmin || isLocked) && <Lock className="w-3 h-3 text-slate-600" />}
-            </button>
+            {[
+              { key: 'dashboard' as ActiveTab, icon: LayoutDashboard, label: 'Dashboard Console', locked: isLocked },
+              { key: 'chat' as ActiveTab, icon: MessageSquare, label: 'मां', locked: isLocked },
+              { key: 'documents' as ActiveTab, icon: BookOpen, label: 'Document Center', locked: isLocked },
+              { key: 'profile' as ActiveTab, icon: Shield, label: 'Profile Security', locked: false },
+              { key: 'activity' as ActiveTab, icon: Clock, label: 'Activity Logs', locked: isLocked },
+              { key: 'admin' as ActiveTab, icon: Settings, label: 'Admin Auditer', locked: !isITAdmin || isLocked },
+            ].map(({ key, icon: Icon, label, locked }) => {
+              const isActive = activeTab === key && !locked;
+              return (
+                <button
+                  key={key}
+                  onClick={() => !locked && setActiveTab(key)}
+                  disabled={locked}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wide transition-all ${
+                    locked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
+                  }`}
+                  style={{
+                    backgroundColor: isActive ? 'var(--portal-sidebar-active-bg)' : 'transparent',
+                    color: isActive ? 'var(--portal-sidebar-active-fg)' : 'var(--portal-sidebar-fg)',
+                    ...(isActive ? { fontWeight: 700, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' } : {}),
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive && !locked) {
+                      e.currentTarget.style.backgroundColor = 'var(--portal-sidebar-hover)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive && !locked) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-4 h-4" />
+                    <span>{label}</span>
+                  </div>
+                  {locked && key === 'admin' && (
+                    <Lock className="w-3 h-3" style={{ color: 'var(--portal-sidebar-muted)' }} />
+                  )}
+                </button>
+              );
+            })}
           </nav>
         </div>
 
         {/* User Identity bottom widget & Sign Out */}
-        <div className="p-4 border-t border-slate-800 bg-[#121110] space-y-4">
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-slate-900/50">
-            <div className="w-9 h-9 rounded-full bg-stone-900 flex items-center justify-center font-display font-bold text-xs text-amber-400 border border-stone-800">
+        <div
+          className="p-4 space-y-4 transition-colors duration-300"
+          style={{
+            borderTop: '1px solid var(--portal-sidebar-border)',
+            backgroundColor: 'var(--portal-sidebar-bottom-bg)',
+          }}
+        >
+          <div
+            className="flex items-center gap-3 p-2 rounded-xl"
+            style={{ backgroundColor: 'color-mix(in oklch, var(--portal-sidebar-bg) 60%, transparent)' }}
+          >
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center font-display font-bold text-xs"
+              style={{
+                backgroundColor: 'var(--portal-sidebar-avatar-bg)',
+                color: 'var(--portal-sidebar-avatar-fg)',
+                border: '1px solid var(--portal-sidebar-border)',
+              }}
+            >
               {currentUser.avatar || "U"}
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-bold text-slate-200 truncate">{currentUser.name}</div>
-              <div className="text-[9px] font-mono text-amber-500 font-semibold uppercase tracking-wider truncate mt-0.5">
+              <div className="text-xs font-bold truncate" style={{ color: 'var(--portal-sidebar-fg)' }}>
+                {currentUser.name}
+              </div>
+              <div
+                className="text-[9px] font-mono font-semibold uppercase tracking-wider truncate mt-0.5"
+                style={{ color: 'var(--portal-sidebar-active-bg)' }}
+              >
                 {currentUser.role}
               </div>
             </div>
@@ -1885,7 +1858,12 @@ function PortalPage() {
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 bg-slate-950 hover:bg-rose-950/20 hover:text-rose-400 text-slate-400 border border-slate-800 rounded-xl py-2 px-3 text-xs font-semibold transition"
+            className="w-full flex items-center justify-center gap-2 rounded-xl py-2 px-3 text-xs font-semibold transition-all hover:text-rose-400 cursor-pointer"
+            style={{
+              backgroundColor: 'var(--portal-sidebar-signout-bg)',
+              border: '1px solid var(--portal-sidebar-signout-border)',
+              color: 'var(--portal-sidebar-muted)',
+            }}
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Sign Out Single SSO</span>
@@ -1896,33 +1874,47 @@ function PortalPage() {
       {/* Main Workspace Frame container */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Header Rail with Mobile Drawer hooks */}
-        <header className="bg-white/60 backdrop-blur-md border-b border-slate-200/80 p-4 flex justify-between items-center bg-[linear-gradient(to_right,rgba(255,255,255,0.7),rgba(248,250,252,0.55))]">
+        <header
+          className="backdrop-blur-md p-4 flex justify-between items-center transition-colors duration-300"
+          style={{
+            backgroundColor: 'var(--portal-header-bg)',
+            borderBottom: '1px solid var(--portal-header-border)',
+          }}
+        >
           <div className="flex items-center gap-3 md:hidden">
-            <div className="p-1.5 bg-primary/10 text-primary rounded-lg border border-primary/20">
-              <Bot className="w-5 h-5 animate-pulse" />
-            </div>
-            <h1 className="font-display font-bold text-slate-800 text-sm">EKABA Assistant</h1>
+            <img src="/ekaba-bot.jpg" alt="EKABA Bot" className="h-7 w-7 rounded-lg object-cover shadow-sm" />
+            <h1 className="font-display font-bold text-sm" style={{ color: 'var(--foreground)' }}>EKABA Assistant</h1>
           </div>
 
-          {/* Theme Toggle & welcome status */}
+          {/* Theme Cycle & welcome status */}
           <div className="flex items-center gap-4">
             <button
-              onClick={toggleTheme}
-              className="rounded-full p-2 hover:bg-slate-100 dark:hover:bg-[#1c1917] text-slate-500 hover:text-slate-800 dark:text-stone-400 dark:hover:text-stone-100 transition cursor-pointer"
-              aria-label="Toggle theme"
+              onClick={cycleTheme}
+              className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+              style={{
+                backgroundColor: 'var(--portal-badge-bg)',
+                border: '1px solid var(--portal-badge-border)',
+                color: 'var(--portal-badge-fg)',
+              }}
+              aria-label="Cycle color theme"
+              title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
             >
-              {theme === "dark" ? (
-                <Sun className="h-4.5 w-4.5" />
-              ) : (
-                <Moon className="h-4.5 w-4.5" />
-              )}
+              <Palette className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">{THEME_LABELS[theme]}</span>
             </button>
 
             {/* Desktop welcome status */}
-            <div className="hidden md:flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
-              <UserCircle className="w-4 h-4 text-slate-400" />
+            <div
+              className="hidden md:flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-lg"
+              style={{
+                backgroundColor: 'var(--portal-badge-bg)',
+                border: '1px solid var(--portal-badge-border)',
+                color: 'var(--portal-badge-fg)',
+              }}
+            >
+              <UserCircle className="w-4 h-4" style={{ color: 'var(--portal-sidebar-muted)' }} />
               <span>ROLE PROFILE ACTIVE:</span>
-              <span className="text-primary font-mono font-bold uppercase">{currentUser.role}</span>
+              <span className="font-mono font-bold uppercase" style={{ color: 'var(--portal-sidebar-active-bg)' }}>{currentUser.role}</span>
             </div>
           </div>
 

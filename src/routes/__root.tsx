@@ -104,6 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
+      { rel: "icon", type: "image/jpeg", href: "/ekaba-bot.jpg" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -141,9 +142,7 @@ function SiteHeader() {
     <header className="site-header sticky top-0 z-40">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 relative">
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
-            <span className="font-display text-lg leading-none">E</span>
-          </div>
+          <img src="/ekaba-bot.jpg" alt="EKABA Bot" className="h-8 w-8 rounded-lg object-cover shadow-md shadow-primary/20 group-hover:shadow-primary/40 transition-shadow" />
           <span className="font-display text-xl tracking-tight bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-accent transition-all">
             EKABA
           </span>
@@ -306,9 +305,7 @@ function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="grid h-7 w-7 place-items-center rounded-md bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-md shadow-primary/20">
-                <span className="font-display text-lg leading-none">E</span>
-              </div>
+              <img src="/ekaba-bot.jpg" alt="EKABA Bot" className="h-8 w-8 rounded-lg object-cover shadow-md shadow-primary/20" />
               <span className="font-display text-xl bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                 EKABA
               </span>

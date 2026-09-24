@@ -843,7 +843,7 @@ header.site-header {
 /* Global Light & Dark Theme Customization to match Landing Page Ink/Lime theme */
 
 /* Light Mode Customizations (when .dark is not active) */
-:root:not(.dark) {
+:root:not(.dark):not(.theme-rose) {
   /* Main background gradient of the dashboard */
   #workspace_parent {
     background-image: linear-gradient(to bottom right, #fcfcf9, #f9f6f0, #f3ede0) !important;
@@ -917,6 +917,29 @@ header.site-header {
   .focus\:ring-amber-600:focus {
     border-color: oklch(0.48 0.14 120) !important;
     --tw-ring-color: rgba(77, 124, 15, 0.2) !important;
+  }
+
+  /* Indigo action buttons → mapped to primary green */
+  .bg-indigo-600 {
+    background-color: oklch(0.48 0.14 120) !important;
+    color: #ffffff !important;
+  }
+  .hover\:bg-indigo-700:hover,
+  .hover\:bg-indigo-500:hover {
+    background-color: oklch(0.42 0.13 120) !important;
+  }
+  .text-indigo-600 { color: oklch(0.48 0.14 120) !important; }
+  .text-indigo-800 { color: oklch(0.38 0.12 120) !important; }
+  .border-indigo-600 { border-color: oklch(0.48 0.14 120) !important; }
+  .shadow-indigo-100 { --tw-shadow-color: rgba(77, 124, 15, 0.12) !important; }
+
+  /* Dark CTA buttons → mapped to primary dark tone */
+  .bg-\[\#1c1917\] {
+    background-color: oklch(0.3 0.05 120) !important;
+    color: #ffffff !important;
+  }
+  .hover\:bg-\[\#2b2721\]:hover {
+    background-color: oklch(0.36 0.06 120) !important;
   }
 }
 
@@ -1128,4 +1151,580 @@ header.site-header {
   .text-stone-700 {
     color: oklch(0.96 0.02 90) !important;
   }
+
+  /* Muted text overrides */
+  .text-slate-400,
+  .text-stone-400 {
+    color: oklch(0.55 0.02 250) !important;
+  }
+  .text-slate-500,
+  .text-stone-500,
+  .text-slate-550 {
+    color: oklch(0.6 0.02 250) !important;
+  }
+  .text-slate-600,
+  .text-stone-600 {
+    color: oklch(0.7 0.02 250) !important;
+  }
+
+  /* Indigo action buttons → mapped to neon lime green */
+  .bg-indigo-600 {
+    background-color: oklch(0.86 0.18 120) !important;
+    color: #0b0f19 !important;
+  }
+  .hover\:bg-indigo-700:hover,
+  .hover\:bg-indigo-500:hover {
+    background-color: oklch(0.82 0.17 120) !important;
+    color: #0b0f19 !important;
+  }
+  .text-indigo-600 { color: oklch(0.86 0.18 120) !important; }
+  .text-indigo-800 { color: oklch(0.8 0.16 120) !important; }
+  .border-indigo-600 { border-color: oklch(0.86 0.18 120) !important; }
+  .border-indigo-700 { border-color: oklch(0.78 0.16 120) !important; }
+  .shadow-indigo-100 { --tw-shadow-color: rgba(163, 230, 53, 0.15) !important; }
+
+  /* Warm panel backgrounds → mapped to dark panels */
+  .bg-\[\#FAF6ED\],
+  .bg-\[\#faf6ed\] {
+    background-color: #1d2433 !important;
+  }
+  .bg-\[\#FAF6ED\]\/50,
+  .bg-\[\#faf6ed\]\/50 {
+    background-color: rgba(29, 36, 51, 0.5) !important;
+  }
+  .hover\:bg-\[\#eae2d5\]:hover {
+    background-color: #242e42 !important;
+  }
+
+  /* Dark CTA buttons → mapped to lime green buttons */
+  .bg-\[\#1c1917\] {
+    background-color: oklch(0.86 0.18 120) !important;
+    color: #0b0f19 !important;
+  }
+  .hover\:bg-\[\#2b2721\]:hover {
+    background-color: oklch(0.82 0.17 120) !important;
+    color: #0b0f19 !important;
+  }
+
+  /* Emerald → soften for dark mode */
+  .bg-emerald-605,
+  .bg-emerald-600 {
+    background-color: rgba(16, 185, 129, 0.9) !important;
+  }
+  .text-emerald-600 { color: #6ee7b7 !important; }
+  .text-emerald-800 { color: #a7f3d0 !important; }
+  .text-rose-600 { color: #fda4af !important; }
+  .text-rose-800 { color: #fecdd3 !important; }
+}
+
+/* ============================================================
+   PORTAL SIDEBAR THEME VARIABLES
+   Used by portal.tsx for theme-aware sidebar rendering
+   ============================================================ */
+
+:root {
+  --portal-sidebar-bg: oklch(0.97 0.01 90);
+  --portal-sidebar-fg: oklch(0.25 0.02 250);
+  --portal-sidebar-border: oklch(0.18 0.02 250 / 12%);
+  --portal-sidebar-hover: oklch(0.93 0.01 90);
+  --portal-sidebar-active-bg: oklch(0.48 0.14 120);
+  --portal-sidebar-active-fg: #ffffff;
+  --portal-sidebar-muted: oklch(0.55 0.02 250);
+  --portal-sidebar-bottom-bg: oklch(0.95 0.01 90);
+  --portal-sidebar-avatar-bg: oklch(0.92 0.01 250);
+  --portal-sidebar-avatar-fg: oklch(0.48 0.14 120);
+  --portal-sidebar-signout-bg: oklch(0.97 0.01 90);
+  --portal-sidebar-signout-border: oklch(0.18 0.02 250 / 12%);
+  --portal-header-bg: oklch(0.98 0.005 90 / 80%);
+  --portal-header-border: oklch(0.18 0.02 250 / 10%);
+  --portal-badge-bg: oklch(0.95 0.01 90);
+  --portal-badge-border: oklch(0.18 0.02 250 / 10%);
+  --portal-badge-fg: oklch(0.45 0.02 250);
+}
+
+.dark {
+  --portal-sidebar-bg: oklch(0.14 0.02 250);
+  --portal-sidebar-fg: oklch(0.82 0.02 250);
+  --portal-sidebar-border: oklch(1 0 0 / 6%);
+  --portal-sidebar-hover: oklch(0.2 0.02 250);
+  --portal-sidebar-active-bg: oklch(0.86 0.18 120);
+  --portal-sidebar-active-fg: oklch(0.14 0.02 250);
+  --portal-sidebar-muted: oklch(0.55 0.02 250);
+  --portal-sidebar-bottom-bg: oklch(0.11 0.02 250);
+  --portal-sidebar-avatar-bg: oklch(0.18 0.02 250);
+  --portal-sidebar-avatar-fg: oklch(0.86 0.18 120);
+  --portal-sidebar-signout-bg: oklch(0.1 0.02 250);
+  --portal-sidebar-signout-border: oklch(1 0 0 / 6%);
+  --portal-header-bg: oklch(0.16 0.02 250 / 80%);
+  --portal-header-border: oklch(1 0 0 / 6%);
+  --portal-badge-bg: oklch(0.2 0.02 250);
+  --portal-badge-border: oklch(1 0 0 / 8%);
+  --portal-badge-fg: oklch(0.7 0.02 250);
+}
+
+
+/* ============================================================
+   THEME: OCEAN BLUE
+   Deep navy with cyan / teal accents
+   ============================================================ */
+.theme-ocean {
+  --background: oklch(0.16 0.03 240);
+  --foreground: oklch(0.94 0.01 220);
+
+  --card: oklch(0.2 0.03 240);
+  --card-foreground: oklch(0.94 0.01 220);
+  --popover: oklch(0.2 0.03 240);
+  --popover-foreground: oklch(0.94 0.01 220);
+
+  --primary: oklch(0.72 0.15 200);
+  --primary-foreground: oklch(0.14 0.03 240);
+
+  --secondary: oklch(0.24 0.03 240);
+  --secondary-foreground: oklch(0.94 0.01 220);
+
+  --muted: oklch(0.22 0.03 240);
+  --muted-foreground: oklch(0.65 0.03 220);
+
+  --accent: oklch(0.65 0.12 180);
+  --accent-foreground: oklch(0.94 0.01 220);
+
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.94 0.01 220);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.72 0.15 200);
+
+  --sidebar: oklch(0.16 0.03 240);
+  --sidebar-foreground: oklch(0.94 0.01 220);
+  --sidebar-primary: oklch(0.72 0.15 200);
+  --sidebar-primary-foreground: oklch(0.14 0.03 240);
+  --sidebar-accent: oklch(0.24 0.03 240);
+  --sidebar-accent-foreground: oklch(0.94 0.01 220);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.72 0.15 200);
+
+  /* Portal sidebar tokens */
+  --portal-sidebar-bg: oklch(0.12 0.04 240);
+  --portal-sidebar-fg: oklch(0.85 0.02 220);
+  --portal-sidebar-border: oklch(1 0 0 / 6%);
+  --portal-sidebar-hover: oklch(0.2 0.04 235);
+  --portal-sidebar-active-bg: oklch(0.72 0.15 200);
+  --portal-sidebar-active-fg: oklch(0.12 0.04 240);
+  --portal-sidebar-muted: oklch(0.5 0.03 220);
+  --portal-sidebar-bottom-bg: oklch(0.1 0.04 240);
+  --portal-sidebar-avatar-bg: oklch(0.18 0.04 240);
+  --portal-sidebar-avatar-fg: oklch(0.72 0.15 200);
+  --portal-sidebar-signout-bg: oklch(0.09 0.04 240);
+  --portal-sidebar-signout-border: oklch(1 0 0 / 6%);
+  --portal-header-bg: oklch(0.16 0.03 240 / 80%);
+  --portal-header-border: oklch(1 0 0 / 6%);
+  --portal-badge-bg: oklch(0.2 0.03 240);
+  --portal-badge-border: oklch(1 0 0 / 8%);
+  --portal-badge-fg: oklch(0.65 0.03 220);
+
+  /* Override workspace background */
+  #workspace_parent {
+    background-image: linear-gradient(to bottom right, #0c1525, #0f1a2e, #091220) !important;
+    color: oklch(0.94 0.01 220) !important;
+  }
+  #login_container {
+    background-color: #0c1525 !important;
+    color: oklch(0.94 0.01 220) !important;
+  }
+
+  /* Card & panel overrides */
+  .bg-white {
+    background-color: #141e33 !important;
+  }
+  .bg-white\/60 { background-color: rgba(20, 30, 51, 0.6) !important; }
+  .bg-white\/70 { background-color: rgba(20, 30, 51, 0.7) !important; }
+  .bg-white\/80 { background-color: rgba(20, 30, 51, 0.8) !important; }
+  .bg-white\/90 { background-color: rgba(20, 30, 51, 0.9) !important; }
+
+  .bg-slate-50, .bg-stone-50, .bg-slate-100, .bg-stone-100, .bg-slate-100\/80 {
+    background-color: #1a2640 !important;
+  }
+  .hover\:bg-slate-50:hover, .hover\:bg-stone-50:hover, .hover\:bg-stone-100:hover,
+  .hover\:bg-slate-100:hover, .hover\:bg-slate-800:hover {
+    background-color: #213050 !important;
+  }
+
+  .border-stone-200, .border-slate-200, .border-stone-200\/80, .border-slate-200\/80,
+  .border-slate-100, .border-stone-100 {
+    border-color: #1e2d4a !important;
+  }
+
+  header[class*="bg-[linear-gradient"], div[class*="bg-[linear-gradient"] {
+    background-image: linear-gradient(to right, #141e33, #1a2640) !important;
+  }
+
+  input, textarea, select {
+    background-color: #0f1a2e !important;
+    border-color: #1e2d4a !important;
+    color: #e8ecf4 !important;
+  }
+  input::placeholder, textarea::placeholder { color: #4a5568 !important; }
+
+  /* Accent overrides — Cyan/Teal */
+  .bg-primary, .bg-amber-600, .bg-amber-500 {
+    background-color: oklch(0.72 0.15 200) !important;
+    color: #0c1525 !important;
+  }
+  .hover\:bg-primary:hover, .hover\:bg-amber-700:hover {
+    background-color: oklch(0.68 0.14 200) !important;
+    color: #0c1525 !important;
+  }
+  .text-primary, .text-amber-500, .text-amber-600 {
+    color: oklch(0.72 0.15 200) !important;
+  }
+  .text-amber-700, .text-amber-800, .text-amber-900 {
+    color: oklch(0.65 0.12 200) !important;
+  }
+  .bg-primary\/10, .bg-amber-500\/10, .bg-amber-600\/10 {
+    background-color: rgba(34, 211, 238, 0.12) !important;
+  }
+  .border-primary, .border-primary\/20, .border-amber-500\/20 {
+    border-color: rgba(34, 211, 238, 0.25) !important;
+  }
+
+  .text-slate-800, .text-slate-900, .text-stone-800, .text-stone-900, .text-stone-700, .text-slate-700 {
+    color: oklch(0.94 0.01 220) !important;
+  }
+  .text-slate-400, .text-stone-400 { color: oklch(0.5 0.03 220) !important; }
+  .text-slate-500, .text-stone-500 { color: oklch(0.58 0.03 220) !important; }
+  .text-slate-600, .text-stone-600 { color: oklch(0.68 0.02 220) !important; }
+
+  /* Indigo → Cyan/Teal */
+  .bg-indigo-600 { background-color: oklch(0.72 0.15 200) !important; color: #0c1525 !important; }
+  .hover\:bg-indigo-700:hover, .hover\:bg-indigo-500:hover { background-color: oklch(0.68 0.14 200) !important; color: #0c1525 !important; }
+  .text-indigo-600 { color: oklch(0.72 0.15 200) !important; }
+  .text-indigo-800 { color: oklch(0.65 0.12 200) !important; }
+  .border-indigo-600 { border-color: oklch(0.72 0.15 200) !important; }
+  .border-indigo-700 { border-color: oklch(0.65 0.12 200) !important; }
+  .shadow-indigo-100 { --tw-shadow-color: rgba(34, 211, 238, 0.12) !important; }
+  .bg-indigo-50 { background-color: rgba(34, 211, 238, 0.12) !important; color: oklch(0.72 0.15 200) !important; }
+  .border-indigo-100 { border-color: rgba(34, 211, 238, 0.15) !important; }
+
+  /* Warm panels → ocean dark panels */
+  .bg-\[\#FAF6ED\], .bg-\[\#faf6ed\] { background-color: #1a2640 !important; }
+  .bg-\[\#FAF6ED\]\/50, .bg-\[\#faf6ed\]\/50 { background-color: rgba(26, 38, 64, 0.5) !important; }
+  .hover\:bg-\[\#eae2d5\]:hover { background-color: #213050 !important; }
+
+  /* Dark CTA → Cyan buttons */
+  .bg-\[\#1c1917\] { background-color: oklch(0.72 0.15 200) !important; color: #0c1525 !important; }
+  .hover\:bg-\[\#2b2721\]:hover { background-color: oklch(0.68 0.14 200) !important; color: #0c1525 !important; }
+  .bg-\[\#d97706\] { background-color: oklch(0.72 0.15 200) !important; color: #0c1525 !important; }
+
+  /* Alert boxes */
+  .bg-rose-50 { background-color: rgba(225, 29, 72, 0.12) !important; color: #fecdd3 !important; border-color: rgba(225, 29, 72, 0.2) !important; }
+  .bg-emerald-50 { background-color: rgba(5, 150, 105, 0.12) !important; color: #a7f3d0 !important; border-color: rgba(5, 150, 105, 0.2) !important; }
+  .text-emerald-600 { color: #6ee7b7 !important; }
+  .text-rose-600 { color: #fda4af !important; }
+}
+
+
+/* ============================================================
+   THEME: ROSE GOLD
+   Warm, light pinkish tone with gold/bronze accents
+   ============================================================ */
+.theme-rose {
+  --background: oklch(0.97 0.01 20);
+  --foreground: oklch(0.22 0.02 20);
+
+  --card: oklch(0.99 0.006 15);
+  --card-foreground: oklch(0.22 0.02 20);
+  --popover: oklch(0.99 0.006 15);
+  --popover-foreground: oklch(0.22 0.02 20);
+
+  --primary: oklch(0.58 0.18 15);
+  --primary-foreground: #ffffff;
+
+  --secondary: oklch(0.93 0.015 20);
+  --secondary-foreground: oklch(0.22 0.02 20);
+
+  --muted: oklch(0.93 0.015 20);
+  --muted-foreground: oklch(0.55 0.03 20);
+
+  --accent: oklch(0.7 0.12 60);
+  --accent-foreground: oklch(0.22 0.02 20);
+
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: #ffffff;
+
+  --border: oklch(0.22 0.02 20 / 10%);
+  --input: oklch(0.22 0.02 20 / 6%);
+  --ring: oklch(0.58 0.18 15);
+
+  --sidebar: oklch(0.97 0.01 20);
+  --sidebar-foreground: oklch(0.22 0.02 20);
+  --sidebar-primary: oklch(0.58 0.18 15);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: oklch(0.93 0.015 20);
+  --sidebar-accent-foreground: oklch(0.22 0.02 20);
+  --sidebar-border: oklch(0.22 0.02 20 / 10%);
+  --sidebar-ring: oklch(0.58 0.18 15);
+
+  /* Portal sidebar tokens */
+  --portal-sidebar-bg: oklch(0.96 0.015 15);
+  --portal-sidebar-fg: oklch(0.3 0.03 20);
+  --portal-sidebar-border: oklch(0.22 0.02 20 / 10%);
+  --portal-sidebar-hover: oklch(0.93 0.02 15);
+  --portal-sidebar-active-bg: oklch(0.58 0.18 15);
+  --portal-sidebar-active-fg: #ffffff;
+  --portal-sidebar-muted: oklch(0.55 0.03 20);
+  --portal-sidebar-bottom-bg: oklch(0.94 0.015 18);
+  --portal-sidebar-avatar-bg: oklch(0.92 0.02 15);
+  --portal-sidebar-avatar-fg: oklch(0.58 0.18 15);
+  --portal-sidebar-signout-bg: oklch(0.96 0.015 15);
+  --portal-sidebar-signout-border: oklch(0.22 0.02 20 / 10%);
+  --portal-header-bg: oklch(0.98 0.008 18 / 80%);
+  --portal-header-border: oklch(0.22 0.02 20 / 8%);
+  --portal-badge-bg: oklch(0.95 0.015 20);
+  --portal-badge-border: oklch(0.22 0.02 20 / 10%);
+  --portal-badge-fg: oklch(0.5 0.03 20);
+
+  /* Workspace background */
+  #workspace_parent {
+    background-image: linear-gradient(to bottom right, #fdf2f0, #fceee8, #f9e8de) !important;
+    color: oklch(0.22 0.02 20) !important;
+  }
+
+  /* Card overrides */
+  .bg-white { background-color: #fef7f4 !important; }
+  .bg-white\/60 { background-color: rgba(254, 247, 244, 0.6) !important; }
+  .bg-white\/80 { background-color: rgba(254, 247, 244, 0.8) !important; }
+
+  .bg-slate-50, .bg-stone-50, .bg-slate-100, .bg-stone-100 {
+    background-color: #fceee8 !important;
+  }
+  .hover\:bg-slate-50:hover, .hover\:bg-stone-50:hover, .hover\:bg-stone-100:hover,
+  .hover\:bg-slate-100:hover {
+    background-color: #f9e5dc !important;
+  }
+
+  .border-stone-200, .border-slate-200, .border-stone-100, .border-slate-100 {
+    border-color: #f0d4c8 !important;
+  }
+
+  header[class*="bg-[linear-gradient"], div[class*="bg-[linear-gradient"] {
+    background-image: linear-gradient(to right, rgba(254, 247, 244, 0.7), rgba(252, 238, 232, 0.55)) !important;
+  }
+
+  /* Accent overrides — Rose/Pink */
+  .bg-primary, .bg-amber-600, .bg-amber-500 {
+    background-color: oklch(0.58 0.18 15) !important;
+    color: #ffffff !important;
+  }
+  .hover\:bg-primary:hover, .hover\:bg-amber-700:hover {
+    background-color: oklch(0.53 0.17 15) !important;
+  }
+  .text-primary, .text-amber-500, .text-amber-600 {
+    color: oklch(0.58 0.18 15) !important;
+  }
+  .text-amber-700, .text-amber-800, .text-amber-900 {
+    color: oklch(0.45 0.15 15) !important;
+  }
+  .bg-primary\/10, .bg-amber-500\/10, .bg-amber-600\/10 {
+    background-color: rgba(220, 80, 70, 0.1) !important;
+  }
+  .border-primary, .border-primary\/20, .border-amber-500\/20 {
+    border-color: rgba(220, 80, 70, 0.2) !important;
+  }
+
+  /* Form inputs */
+  input, textarea, select {
+    background-color: #fef7f4 !important;
+    border-color: #f0d4c8 !important;
+    color: oklch(0.22 0.02 20) !important;
+  }
+  input::placeholder, textarea::placeholder { color: #c9a89c !important; }
+
+  /* Indigo → Rose/Pink */
+  .bg-indigo-600 { background-color: oklch(0.58 0.18 15) !important; color: #ffffff !important; }
+  .hover\:bg-indigo-700:hover, .hover\:bg-indigo-500:hover { background-color: oklch(0.53 0.17 15) !important; }
+  .text-indigo-600 { color: oklch(0.58 0.18 15) !important; }
+  .text-indigo-800 { color: oklch(0.45 0.15 15) !important; }
+  .border-indigo-600 { border-color: oklch(0.58 0.18 15) !important; }
+  .border-indigo-700 { border-color: oklch(0.5 0.16 15) !important; }
+  .shadow-indigo-100 { --tw-shadow-color: rgba(220, 80, 70, 0.1) !important; }
+  .bg-indigo-50 { background-color: rgba(220, 80, 70, 0.08) !important; color: oklch(0.58 0.18 15) !important; }
+  .border-indigo-100 { border-color: rgba(220, 80, 70, 0.15) !important; }
+
+  /* Warm panels → rose warm panels */
+  .bg-\[\#FAF6ED\], .bg-\[\#faf6ed\] { background-color: #fceee8 !important; }
+  .bg-\[\#FAF6ED\]\/50, .bg-\[\#faf6ed\]\/50 { background-color: rgba(252, 238, 232, 0.5) !important; }
+  .hover\:bg-\[\#eae2d5\]:hover { background-color: #f9e5dc !important; }
+
+  /* Dark CTA → Rose buttons */
+  .bg-\[\#1c1917\] { background-color: oklch(0.58 0.18 15) !important; color: #ffffff !important; }
+  .hover\:bg-\[\#2b2721\]:hover { background-color: oklch(0.53 0.17 15) !important; }
+  .bg-\[\#d97706\] { background-color: oklch(0.58 0.18 15) !important; color: #ffffff !important; }
+
+  /* Amber border overrides */
+  .border-amber-200, .border-amber-200\/40, .border-amber-200\/50,
+  .border-amber-100, .border-amber-500\/20 {
+    border-color: rgba(220, 80, 70, 0.15) !important;
+  }
+}
+
+
+/* ============================================================
+   THEME: MIDNIGHT PURPLE
+   Deep purple/violet with bright violet accents
+   ============================================================ */
+.theme-purple {
+  --background: oklch(0.16 0.04 290);
+  --foreground: oklch(0.94 0.02 290);
+
+  --card: oklch(0.2 0.04 290);
+  --card-foreground: oklch(0.94 0.02 290);
+  --popover: oklch(0.2 0.04 290);
+  --popover-foreground: oklch(0.94 0.02 290);
+
+  --primary: oklch(0.7 0.18 290);
+  --primary-foreground: oklch(0.14 0.04 290);
+
+  --secondary: oklch(0.24 0.04 290);
+  --secondary-foreground: oklch(0.94 0.02 290);
+
+  --muted: oklch(0.22 0.04 290);
+  --muted-foreground: oklch(0.65 0.03 290);
+
+  --accent: oklch(0.65 0.16 330);
+  --accent-foreground: oklch(0.94 0.02 290);
+
+  --destructive: oklch(0.62 0.22 25);
+  --destructive-foreground: oklch(0.94 0.02 290);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.7 0.18 290);
+
+  --sidebar: oklch(0.16 0.04 290);
+  --sidebar-foreground: oklch(0.94 0.02 290);
+  --sidebar-primary: oklch(0.7 0.18 290);
+  --sidebar-primary-foreground: oklch(0.14 0.04 290);
+  --sidebar-accent: oklch(0.24 0.04 290);
+  --sidebar-accent-foreground: oklch(0.94 0.02 290);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.7 0.18 290);
+
+  /* Portal sidebar tokens */
+  --portal-sidebar-bg: oklch(0.12 0.05 290);
+  --portal-sidebar-fg: oklch(0.85 0.02 290);
+  --portal-sidebar-border: oklch(1 0 0 / 6%);
+  --portal-sidebar-hover: oklch(0.2 0.05 285);
+  --portal-sidebar-active-bg: oklch(0.7 0.18 290);
+  --portal-sidebar-active-fg: oklch(0.12 0.05 290);
+  --portal-sidebar-muted: oklch(0.5 0.03 290);
+  --portal-sidebar-bottom-bg: oklch(0.1 0.05 290);
+  --portal-sidebar-avatar-bg: oklch(0.18 0.05 290);
+  --portal-sidebar-avatar-fg: oklch(0.7 0.18 290);
+  --portal-sidebar-signout-bg: oklch(0.09 0.05 290);
+  --portal-sidebar-signout-border: oklch(1 0 0 / 6%);
+  --portal-header-bg: oklch(0.16 0.04 290 / 80%);
+  --portal-header-border: oklch(1 0 0 / 6%);
+  --portal-badge-bg: oklch(0.2 0.04 290);
+  --portal-badge-border: oklch(1 0 0 / 8%);
+  --portal-badge-fg: oklch(0.65 0.03 290);
+
+  /* Override workspace background */
+  #workspace_parent {
+    background-image: linear-gradient(to bottom right, #150c25, #1a1030, #100820) !important;
+    color: oklch(0.94 0.02 290) !important;
+  }
+  #login_container {
+    background-color: #150c25 !important;
+    color: oklch(0.94 0.02 290) !important;
+  }
+
+  /* Card & panel overrides */
+  .bg-white {
+    background-color: #1e1435 !important;
+  }
+  .bg-white\/60 { background-color: rgba(30, 20, 53, 0.6) !important; }
+  .bg-white\/70 { background-color: rgba(30, 20, 53, 0.7) !important; }
+  .bg-white\/80 { background-color: rgba(30, 20, 53, 0.8) !important; }
+  .bg-white\/90 { background-color: rgba(30, 20, 53, 0.9) !important; }
+
+  .bg-slate-50, .bg-stone-50, .bg-slate-100, .bg-stone-100, .bg-slate-100\/80 {
+    background-color: #241a40 !important;
+  }
+  .hover\:bg-slate-50:hover, .hover\:bg-stone-50:hover, .hover\:bg-stone-100:hover,
+  .hover\:bg-slate-100:hover, .hover\:bg-slate-800:hover {
+    background-color: #2d2250 !important;
+  }
+
+  .border-stone-200, .border-slate-200, .border-stone-200\/80, .border-slate-200\/80,
+  .border-slate-100, .border-stone-100 {
+    border-color: #2a1e4a !important;
+  }
+
+  header[class*="bg-[linear-gradient"], div[class*="bg-[linear-gradient"] {
+    background-image: linear-gradient(to right, #1e1435, #241a40) !important;
+  }
+
+  input, textarea, select {
+    background-color: #150c25 !important;
+    border-color: #2a1e4a !important;
+    color: #e8e0f4 !important;
+  }
+  input::placeholder, textarea::placeholder { color: #5a4a6a !important; }
+
+  /* Accent overrides — Violet/Purple */
+  .bg-primary, .bg-amber-600, .bg-amber-500 {
+    background-color: oklch(0.7 0.18 290) !important;
+    color: #150c25 !important;
+  }
+  .hover\:bg-primary:hover, .hover\:bg-amber-700:hover {
+    background-color: oklch(0.66 0.17 290) !important;
+    color: #150c25 !important;
+  }
+  .text-primary, .text-amber-500, .text-amber-600 {
+    color: oklch(0.7 0.18 290) !important;
+  }
+  .text-amber-700, .text-amber-800, .text-amber-900 {
+    color: oklch(0.6 0.15 290) !important;
+  }
+  .bg-primary\/10, .bg-amber-500\/10, .bg-amber-600\/10 {
+    background-color: rgba(168, 85, 247, 0.12) !important;
+  }
+  .border-primary, .border-primary\/20, .border-amber-500\/20 {
+    border-color: rgba(168, 85, 247, 0.25) !important;
+  }
+
+  .text-slate-800, .text-slate-900, .text-stone-800, .text-stone-900, .text-stone-700, .text-slate-700 {
+    color: oklch(0.94 0.02 290) !important;
+  }
+  .text-slate-400, .text-stone-400 { color: oklch(0.5 0.03 290) !important; }
+  .text-slate-500, .text-stone-500 { color: oklch(0.58 0.03 290) !important; }
+  .text-slate-600, .text-stone-600 { color: oklch(0.68 0.02 290) !important; }
+
+  /* Indigo → Violet/Purple */
+  .bg-indigo-600 { background-color: oklch(0.7 0.18 290) !important; color: #150c25 !important; }
+  .hover\:bg-indigo-700:hover, .hover\:bg-indigo-500:hover { background-color: oklch(0.66 0.17 290) !important; color: #150c25 !important; }
+  .text-indigo-600 { color: oklch(0.7 0.18 290) !important; }
+  .text-indigo-800 { color: oklch(0.6 0.15 290) !important; }
+  .border-indigo-600 { border-color: oklch(0.7 0.18 290) !important; }
+  .border-indigo-700 { border-color: oklch(0.6 0.15 290) !important; }
+  .shadow-indigo-100 { --tw-shadow-color: rgba(168, 85, 247, 0.12) !important; }
+  .bg-indigo-50 { background-color: rgba(168, 85, 247, 0.12) !important; color: oklch(0.7 0.18 290) !important; }
+  .border-indigo-100 { border-color: rgba(168, 85, 247, 0.15) !important; }
+
+  /* Warm panels → purple dark panels */
+  .bg-\[\#FAF6ED\], .bg-\[\#faf6ed\] { background-color: #241a40 !important; }
+  .bg-\[\#FAF6ED\]\/50, .bg-\[\#faf6ed\]\/50 { background-color: rgba(36, 26, 64, 0.5) !important; }
+  .hover\:bg-\[\#eae2d5\]:hover { background-color: #2d2250 !important; }
+
+  /* Dark CTA → Violet buttons */
+  .bg-\[\#1c1917\] { background-color: oklch(0.7 0.18 290) !important; color: #150c25 !important; }
+  .hover\:bg-\[\#2b2721\]:hover { background-color: oklch(0.66 0.17 290) !important; color: #150c25 !important; }
+  .bg-\[\#d97706\] { background-color: oklch(0.7 0.18 290) !important; color: #150c25 !important; }
+
+  /* Alert boxes */
+  .bg-rose-50 { background-color: rgba(225, 29, 72, 0.12) !important; color: #fecdd3 !important; border-color: rgba(225, 29, 72, 0.2) !important; }
+  .bg-emerald-50 { background-color: rgba(5, 150, 105, 0.12) !important; color: #a7f3d0 !important; border-color: rgba(5, 150, 105, 0.2) !important; }
+  .text-emerald-600 { color: #6ee7b7 !important; }
+  .text-rose-600 { color: #fda4af !important; }
 }
