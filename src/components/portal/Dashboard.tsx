@@ -166,11 +166,10 @@ function VectorSpace3D() {
               >
                 {/* Node Orb */}
                 <div
-                  className={`h-2.5 w-2.5 rounded-full transition-all duration-300 relative ${
-                    isTarget
-                      ? "bg-amber-400 scale-[1.75] shadow-lg shadow-amber-500/50"
-                      : "bg-primary/70"
-                  }`}
+                  className={`h-2.5 w-2.5 rounded-full transition-all duration-300 relative ${isTarget
+                    ? "bg-amber-400 scale-[1.75] shadow-lg shadow-amber-500/50"
+                    : "bg-primary/70"
+                    }`}
                 />
 
                 {/* Connecting lines to origin */}
@@ -181,11 +180,10 @@ function VectorSpace3D() {
 
                 {/* Node label */}
                 <span
-                  className={`text-[7px] mt-1 whitespace-nowrap bg-slate-950/80 px-1 py-0.5 rounded border ${
-                    isTarget
-                      ? "border-amber-500 text-amber-300 animate-pulse"
-                      : "border-slate-800/80 text-slate-500"
-                  }`}
+                  className={`text-[7px] mt-1 whitespace-nowrap bg-slate-950/80 px-1 py-0.5 rounded border ${isTarget
+                    ? "border-amber-500 text-amber-300 animate-pulse"
+                    : "border-slate-800/80 text-slate-500"
+                    }`}
                 >
                   {node.label}
                 </span>
@@ -241,7 +239,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
     if (str) {
       try {
         setDownloadRequests(JSON.parse(str));
-      } catch (e) {}
+      } catch (e) { }
     }
   };
 
@@ -674,7 +672,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
               kicked.push(targetKey);
               localStorage.setItem(`kb_portal_kicked_users_${compKey}`, JSON.stringify(kicked));
             }
-          } catch (e) {}
+          } catch (e) { }
 
           localStorage.setItem(`kb_portal_pending_kick_reqs_${compKey}`, JSON.stringify(reqs));
           fetchPendingApprovals();
@@ -917,11 +915,10 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
           {alerts.map((alert) => (
             <div
               key={alert.id}
-              className={`flex items-start gap-3 border rounded-xl p-4 text-xs font-semibold ${
-                alert.type === "danger"
-                  ? "bg-rose-50 border-rose-200 text-rose-800"
-                  : "bg-amber-50 border-amber-200 text-amber-900"
-              }`}
+              className={`flex items-start gap-3 border rounded-xl p-4 text-xs font-semibold ${alert.type === "danger"
+                ? "bg-rose-50 border-rose-200 text-rose-800"
+                : "bg-amber-50 border-amber-200 text-amber-900"
+                }`}
             >
               <AlertCircle
                 className={`w-4 h-4 shrink-0 mt-0.5 ${alert.type === "danger" ? "text-rose-600" : "text-amber-700"}`}
@@ -1049,11 +1046,10 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                         return (
                           <div
                             key={req.id}
-                            className={`bg-white border rounded-xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all duration-300 ${
-                              req.status === "ended"
-                                ? "opacity-70 bg-slate-50 border-slate-200 border-dashed"
-                                : "border-slate-200 hover:shadow-md"
-                            }`}
+                            className={`bg-white border rounded-xl p-4 flex flex-col justify-between shadow-sm relative overflow-hidden transition-all duration-300 ${req.status === "ended"
+                              ? "opacity-70 bg-slate-50 border-slate-200 border-dashed"
+                              : "border-slate-200 hover:shadow-md"
+                              }`}
                           >
                             {isCompulsory && (
                               <div className="absolute top-0 right-0 bg-rose-600 text-white text-[8px] font-bold font-mono px-2 py-0.5 rounded-bl uppercase tracking-wider">
@@ -1074,13 +1070,12 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                                 <div>
                                   Status:
                                   <span
-                                    className={`ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold ${
-                                      req.status === "ended"
-                                        ? "bg-slate-100 text-slate-600"
-                                        : req.status === "employee_accepted"
-                                          ? "bg-amber-100 text-amber-800"
-                                          : "bg-emerald-100 text-emerald-800"
-                                    }`}
+                                    className={`ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold ${req.status === "ended"
+                                      ? "bg-slate-100 text-slate-600"
+                                      : req.status === "employee_accepted"
+                                        ? "bg-amber-100 text-amber-800"
+                                        : "bg-emerald-100 text-emerald-800"
+                                      }`}
                                   >
                                     {req.status === "ended"
                                       ? "Ended"
@@ -1123,7 +1118,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                                             hasActivePlan = now <= planExpiresAt;
                                             daysLeft = Math.ceil(
                                               (planExpiresAt.getTime() - now.getTime()) /
-                                                (1000 * 60 * 60 * 24),
+                                              (1000 * 60 * 60 * 24),
                                             );
                                             if (daysLeft <= 7) {
                                               showRenewButton = true;
@@ -1132,7 +1127,7 @@ export default function Dashboard({ currentUser, onNavigateToChat, companyName }
                                             const demoExpires = new Date(details.demoExpiresAt);
                                             daysLeft = Math.ceil(
                                               (demoExpires.getTime() - now.getTime()) /
-                                                (1000 * 60 * 60 * 24),
+                                              (1000 * 60 * 60 * 24),
                                             );
                                             showRenewButton = now > demoExpires || daysLeft <= 7;
                                           }
