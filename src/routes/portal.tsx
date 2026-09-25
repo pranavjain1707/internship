@@ -310,7 +310,7 @@ interface LoginScreenProps {
 }
 
 function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, cycleTheme } = useTheme();
   const [selectedRole, setSelectedRole] = useState<UserRole>("Employee");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -947,14 +947,21 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             FIPS 140-2 ENCRYPTED SECURE INFRASTRUCTURE
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={toggleTheme}
-            className="rounded-full p-1.5 hover:bg-secondary text-muted-foreground hover:text-foreground transition cursor-pointer"
-            aria-label="Toggle theme"
+            onClick={cycleTheme}
+            className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 hover:opacity-90 shadow-sm"
+            style={{
+              backgroundColor: 'var(--portal-badge-bg)',
+              border: '1px solid var(--portal-badge-border)',
+              color: 'var(--portal-badge-fg)',
+            }}
+            aria-label="Cycle color theme"
+            title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
           >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            <Palette className="h-3.5 w-3.5" />
+            <span>{THEME_LABELS[theme]}</span>
           </button>
           <div className="hidden sm:block font-medium">STATUS: ONLINE / SECURED</div>
         </div>
@@ -1075,8 +1082,39 @@ function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
                             : "Verify Password"}
                   </h2>
                 </div>
-                {step !== "company_verification" && (
-                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+                {step === "company_verification" ? (
+                  <button
+                    type="button"
+                    onClick={cycleTheme}
+                    className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 hover:opacity-90 shadow-sm shrink-0"
+                    style={{
+                      backgroundColor: 'var(--portal-badge-bg)',
+                      border: '1px solid var(--portal-badge-border)',
+                      color: 'var(--portal-badge-fg)',
+                    }}
+                    aria-label="Cycle color theme"
+                    title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
+                  >
+                    <Palette className="h-3.5 w-3.5" />
+                    <span>{THEME_LABELS[theme]}</span>
+                  </button>
+                ) : (
+                  <div className="flex flex-wrap items-center justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={cycleTheme}
+                      className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 hover:opacity-90 shadow-sm"
+                      style={{
+                        backgroundColor: 'var(--portal-badge-bg)',
+                        border: '1px solid var(--portal-badge-border)',
+                        color: 'var(--portal-badge-fg)',
+                      }}
+                      aria-label="Cycle color theme"
+                      title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
+                    >
+                      <Palette className="h-3.5 w-3.5" />
+                      <span>{THEME_LABELS[theme]}</span>
+                    </button>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 border border-amber-100 text-amber-850">
                       <UserCheck className="w-3.5 h-3.5 text-amber-700" />
                       {selectedRole}

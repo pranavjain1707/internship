@@ -9,7 +9,9 @@ import {
   Loader2,
   Maximize2,
   Minimize2,
+  Palette,
 } from "lucide-react";
+import { useTheme, THEME_LABELS } from "./ThemeProvider";
 
 interface Message {
   role: "user" | "assistant";
@@ -18,6 +20,7 @@ interface Message {
 }
 
 export default function SiteChatBot() {
+  const { theme, cycleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [email, setEmail] = useState("");
@@ -290,7 +293,22 @@ Ask me anything!`,
               </div>
             </div>
 
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={cycleTheme}
+                className="rounded-full px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5 hover:opacity-90 shadow-sm"
+                style={{
+                  backgroundColor: 'var(--portal-badge-bg)',
+                  border: '1px solid var(--portal-badge-border)',
+                  color: 'var(--portal-badge-fg)',
+                }}
+                aria-label="Cycle color theme"
+                title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
+              >
+                <Palette className="h-3 w-3" />
+                <span className="text-[11px] hidden sm:inline">{THEME_LABELS[theme]}</span>
+              </button>
               {userId && (
                 <button
                   onClick={handleLogout}

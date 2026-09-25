@@ -9,8 +9,8 @@ import {
   useLocation,
 } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
-import { ThemeProvider, useTheme } from "@/components/ThemeProvider";
+import { Menu, X, Sun, Moon, Palette } from "lucide-react";
+import { ThemeProvider, useTheme, THEME_LABELS } from "@/components/ThemeProvider";
 import SiteChatBot from "../components/SiteChatBot";
 
 import appCss from "../styles.css?url";
@@ -135,7 +135,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function SiteHeader() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, cycleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -193,13 +193,20 @@ function SiteHeader() {
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Light/Dark Toggle */}
+          {/* Theme Cycle Pill */}
           <button
-            onClick={toggleTheme}
-            className="rounded-full p-2 hover:bg-secondary text-muted-foreground hover:text-foreground transition cursor-pointer"
-            aria-label="Toggle theme"
+            onClick={cycleTheme}
+            className="rounded-full px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 hover:opacity-90 shadow-sm"
+            style={{
+              backgroundColor: 'var(--portal-badge-bg)',
+              border: '1px solid var(--portal-badge-border)',
+              color: 'var(--portal-badge-fg)',
+            }}
+            aria-label="Cycle color theme"
+            title={`Current: ${THEME_LABELS[theme]}. Click to switch.`}
           >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <Palette className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{THEME_LABELS[theme]}</span>
           </button>
 
           {/* Action buttons - Desktop */}
